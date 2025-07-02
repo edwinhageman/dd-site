@@ -17,7 +17,7 @@ public class SheetsController {
     @Value("${google.sheet.range}")
     private String sheetRange;
 
-    @RequestMapping("/")
+    @RequestMapping("/api/events")
     public List<List<Object>> home() throws IOException {
         return service.getData(sheetRange);
     }
