@@ -73,3 +73,15 @@ jobs:
         run: ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORKDIR }} && docker compose pull && docker compose up -d && exit"
       - name: cleanup
         run: rm -rf ~/.ssh
+
+  cleanup:
+    needs: [deploy]
+    name: cleanup artifacts
+    runs-on: ubuntu-latest
+    if: always()
+
+    steps:
+      - name: Delete artifacts
+        uses: geekyeggo/delete-artifact@v5
+        with:
+          name: app
