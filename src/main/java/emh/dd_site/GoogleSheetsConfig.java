@@ -30,6 +30,7 @@ public class GoogleSheetsConfig {
         if (credentialsPath == null || credentialsPath.isEmpty()) {
             throw new IllegalArgumentException("Missing GCP_CREDENTIALS_PATH environment variable");
         }
+        System.out.println("YOLO " + credentialsPath);
         try (InputStream is = new FileInputStream(credentialsPath)) {
             GoogleCredentials credentials = GoogleCredentials.fromStream(is).createScoped(SCOPES);
             HttpCredentialsAdapter credentialsAdapter = new HttpCredentialsAdapter(credentials);

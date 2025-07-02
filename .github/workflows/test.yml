@@ -1,0 +1,30 @@
+name: publish
+
+on:
+  push:
+    branches: [ "*", "!main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: test
+    runs-on: ubuntu-latest
+    env:
+      GCP_CREDENTIALS_PATH: ./secrets/gcp-credentials.json
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup configuration
+        run: |
+          mkdir secrets
+          echo '${{ secrets.GCP_CREDENTIALS }}' >> secrets/gcp-credentials.json
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+      - name: Build with maven
+        run: ./mvnw clean test
+      - name: Cleanup
+        if: always()
+        run: rm -rf secrets
