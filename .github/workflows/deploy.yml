@@ -1,4 +1,4 @@
-name: publish
+name: Build, Test and Deploy
 
 on:
   push:
@@ -25,6 +25,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 21
+          cache: maven
       - name: Build with maven
         run: ./mvnw clean install
       - name: Rename artifact
@@ -58,8 +59,39 @@ jobs:
           docker build . --tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
 
-  deploy:
+  migrate-database:
     needs: publish
+    name: run database migrations
+    runs-on: ubuntu-latest
+    env:
+      FLYWAY_USER: ${{ secrets.DB_USER }}
+      FLYWAY_PASSWORD: ${{ secrets.DB_PASSWORD }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup java
+        uses: actions/setup-java@v3
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+      - name: install ssh keys
+        run: |
+          install -m 600 -D /dev/null ~/.ssh/id_rsa
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
+      - name: Create SSH tunnel to db
+        run: |
+          ssh -fN -L 5432:localhost:${{ secrets.DB_PORT }} ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}
+      - name: Run Flyway Migrate
+        run: |
+          ./mvnw flyway:migrate \
+            -Dflyway.url=jdbc:postgresql://localhost:5432/${{ secrets.DB_NAME }}
+      - name: cleanup
+        run: rm -rf ~/.ssh
+
+  deploy:
+    needs: migrate-database
     name: deploy image
     runs-on: ubuntu-latest
 
@@ -75,7 +107,7 @@ jobs:
         run: rm -rf ~/.ssh
 
   cleanup:
-    needs: [deploy]
+    needs: deploy
     name: cleanup artifacts
     runs-on: ubuntu-latest
     if: always()

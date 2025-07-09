@@ -62,8 +62,8 @@ public class Wine {
     @ToString.Include
     private Year year;
 
-    @OneToMany(mappedBy = "wine", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Course> courses = new ArrayList<>();
+    @OneToMany(mappedBy = "wine", orphanRemoval = true)
+    private final List<Course> courses = new ArrayList<>();
 
     protected Wine() {
     }

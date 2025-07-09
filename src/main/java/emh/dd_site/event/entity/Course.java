@@ -1,14 +1,16 @@
 package emh.dd_site.event.entity;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.Setter;
+import lombok.ToString;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "course")
-@RequiredArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 public class Course {
 
@@ -41,14 +43,14 @@ public class Course {
     @ToString.Include
     private String cook;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "dish_id", nullable = false)
     @NonNull
     @Getter
     @ToString.Include
     private Dish dish;
 
-    @ManyToOne
+    @ManyToOne(optional = false)
     @JoinColumn(name = "wine_id", nullable = false)
     @NonNull
     @Getter
@@ -56,6 +58,20 @@ public class Course {
     private Wine wine;
 
     protected Course() {
+    }
+
+    public Course(@NonNull Event event, @NonNull Integer courseNo, @NonNull String cook, @NonNull Dish dish, @NonNull Wine wine) {
+        this.event = event;
+        this.courseNo = courseNo;
+        this.cook = cook;
+        this.dish = dish;
+        if (this.dish.getCourse() != this) {
+            this.dish.setCourse(this);
+        }
+        this.wine = wine;
+        if (!this.wine.getCourses().contains(this)) {
+            this.wine.addCourse(this);
+        }
     }
 
     public void setDish(@NonNull Dish dish) {

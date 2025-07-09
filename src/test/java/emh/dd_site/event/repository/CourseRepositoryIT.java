@@ -1,0 +1,167 @@
+package emh.dd_site.event.repository;
+
+import emh.dd_site.TestcontainersConfig;
+import emh.dd_site.event.WineType;
+import emh.dd_site.event.entity.Course;
+import emh.dd_site.event.entity.Dish;
+import emh.dd_site.event.entity.Event;
+import emh.dd_site.event.entity.Wine;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.testcontainers.junit.jupiter.Testcontainers;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.Optional;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+
+@DataJpaTest
+@Testcontainers
+@Import(TestcontainersConfig.class)
+class CourseRepositoryIT {
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private EventRepository eventRepository;
+
+    @Autowired
+    private WineRepository wineRepository;
+
+    private Event testEvent;
+    private Dish testDish;
+    private Wine testWine;
+
+    @BeforeEach
+    void setUp() {
+        // Create test event
+        testEvent = new Event(
+                LocalDate.now().plusDays(7),
+                "Test Event"
+        );
+        testEvent.setLocation("Test Location");
+        eventRepository.save(testEvent);
+
+        // Create test dish
+        testDish = new Dish("Test Dish");
+
+        // Create test wine
+        testWine = new Wine("Test Wine", WineType.WHITE, "Sauvignon Blanc", "France");
+        wineRepository.save(testWine);
+    }
+
+    @Test
+    void shouldSaveAndRetrieveCourse() {
+        // Arrange
+        Course course = new Course(testEvent, 1, "Test Cook", testDish, testWine);
+
+        // Act
+        Course savedCourse = courseRepository.save(course);
+
+        // Assert
+        Optional<Course> retrievedCourse = courseRepository.findById(savedCourse.getId());
+        assertTrue(retrievedCourse.isPresent());
+        assertEquals(course.getCourseNo(), retrievedCourse.get().getCourseNo());
+        assertEquals(course.getCook(), retrievedCourse.get().getCook());
+        assertEquals(course.getEvent().getId(), retrievedCourse.get().getEvent().getId());
+        assertEquals(course.getDish().getId(), retrievedCourse.get().getDish().getId());
+        assertEquals(course.getWine().getId(), retrievedCourse.get().getWine().getId());
+    }
+
+    @Test
+    void shouldUpdateCourse() {
+        // Arrange
+        Course course = new Course(testEvent, 1, "Original Cook", testDish, testWine);
+        Course savedCourse = courseRepository.save(course);
+
+        // Act
+        savedCourse.setCook("Updated Cook");
+        savedCourse.setCourseNo(2);
+        Course updatedCourse = courseRepository.save(savedCourse);
+
+        // Assert
+        assertEquals("Updated Cook", updatedCourse.getCook());
+        assertEquals(2, updatedCourse.getCourseNo());
+    }
+
+    @Test
+    void shouldDeleteCourse() {
+        // Arrange
+        Course course = new Course(testEvent, 1, "Test Cook", testDish, testWine);
+        Course savedCourse = courseRepository.save(course);
+
+        // Act
+        courseRepository.deleteById(savedCourse.getId());
+
+        // Assert
+        Optional<Course> deletedCourse = courseRepository.findById(savedCourse.getId());
+        assertFalse(deletedCourse.isPresent());
+    }
+
+    @Test
+    void shouldPaginateAndSortCourses() {
+        // Arrange
+        Course course1 = new Course(testEvent, 1, "Cook A", new Dish("test dish 1"), testWine);
+        Course course2 = new Course(testEvent, 2, "Cook B", new Dish("test dish 2"), testWine);
+        Course course3 = new Course(testEvent, 3, "Cook C", new Dish("test dish 3"), testWine);
+        courseRepository.saveAll(List.of(course1, course2, course3));
+
+        // Act
+        Page<Course> coursePage = courseRepository.findAll(
+                PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "courseNo"))
+        );
+
+        // Assert
+        assertThat(coursePage.getContent()).hasSize(2);
+        assertThat(coursePage.getTotalElements()).isEqualTo(3);
+        assertThat(coursePage.getTotalPages()).isEqualTo(2);
+        assertThat(coursePage.getContent().get(0).getCourseNo()).isEqualTo(1);
+        assertThat(coursePage.getContent().get(1).getCourseNo()).isEqualTo(2);
+    }
+
+    @Test
+    void shouldMaintainRelationshipsWhenSaving() {
+        // Arrange
+        Course course = new Course(testEvent, 1, "Test Cook", testDish, testWine);
+
+        // Act
+        Course savedCourse = courseRepository.save(course);
+
+        // Assert
+        assertNotNull(savedCourse.getId());
+        assertEquals(testEvent.getId(), savedCourse.getEvent().getId());
+        assertEquals(testDish.getId(), savedCourse.getDish().getId());
+        assertEquals(testWine.getId(), savedCourse.getWine().getId());
+
+        // Verify bidirectional relationships
+        assertEquals(savedCourse, savedCourse.getDish().getCourse());
+        assertTrue(savedCourse.getWine().getCourses().contains(savedCourse));
+    }
+
+    @Test
+    void shouldHandleMultipleCoursesForSameEvent() {
+        // Arrange
+        Course firstCourse = new Course(testEvent, 1, "Cook A", new Dish("test dish 1"), testWine);
+        Course secondCourse = new Course(testEvent, 2, "Cook B", new Dish("test dish 2"), testWine);
+
+        // Act
+        courseRepository.saveAll(List.of(firstCourse, secondCourse));
+
+        // Assert
+        List<Course> allCourses = courseRepository.findAll();
+
+        assertThat(allCourses).hasSize(2);
+        assertThat(allCourses)
+                .extracting(Course::getEvent)
+                .containsOnly(testEvent);
+    }
+}

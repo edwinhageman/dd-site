@@ -42,8 +42,8 @@ public class Event {
     @ToString.Include
     private String location;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Course> courses = new ArrayList<>();
+    @OneToMany(mappedBy = "event", orphanRemoval = true)
+    private final List<Course> courses = new ArrayList<>();
 
     protected Event() {}
 

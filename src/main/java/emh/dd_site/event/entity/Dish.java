@@ -21,7 +21,6 @@ public class Dish {
 
     @OneToOne(mappedBy = "dish")
     @Getter
-    @ToString.Include
     private Course course;
 
     @Column(nullable = false)
