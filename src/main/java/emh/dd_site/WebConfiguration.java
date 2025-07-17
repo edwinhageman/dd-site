@@ -13,18 +13,20 @@ import java.io.IOException;
 @Configuration
 public class WebConfiguration implements WebMvcConfigurer {
 
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-            .addResourceLocations("classpath:/static/")
-            .resourceChain(true)
-            .addResolver(new PathResourceResolver() {
-                @Override
-                protected Resource getResource(@Nonnull String resourcePath, @Nonnull Resource location) throws IOException {
-                    Resource requestedResource = location.createRelative(resourcePath);
-                    return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
-                        : new ClassPathResource("/static/index.html");
-                }
-            });
-    }
+	@Override
+	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/**")
+			.addResourceLocations("classpath:/static/")
+			.resourceChain(true)
+			.addResolver(new PathResourceResolver() {
+				@Override
+				protected Resource getResource(@Nonnull String resourcePath, @Nonnull Resource location)
+						throws IOException {
+					Resource requestedResource = location.createRelative(resourcePath);
+					return requestedResource.exists() && requestedResource.isReadable() ? requestedResource
+							: new ClassPathResource("/static/index.html");
+				}
+			});
+	}
+
 }

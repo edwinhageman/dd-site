@@ -11,6 +11,7 @@ import java.util.Optional;
 @Repository
 public interface WineRepository extends JpaRepository<Wine, Long>, PagingAndSortingRepository<Wine, Long> {
 
-    @Query("SELECT w FROM Wine w LEFT JOIN FETCH w.courses WHERE w.id = :id")
-    Optional<Wine> findByIdWithCourses(long id);
+	@Query("SELECT w FROM Wine w LEFT JOIN FETCH w.courses WHERE w.id = :id")
+	Optional<Wine> findByIdWithCourses(long id);
+
 }
