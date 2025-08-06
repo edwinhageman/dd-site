@@ -11,26 +11,26 @@ public class TestDishBuilder {
 		setPrivateField(dish, "id", 1L);
 	}
 
-	static TestDishBuilder aDish() {
+	public static TestDishBuilder aDish() {
 		return new TestDishBuilder("Test Dish");
 	}
 
-	TestDishBuilder withId(Long id) {
+	public TestDishBuilder withId(Long id) {
 		setPrivateField(this.dish, "id", id);
 		return this;
 	}
 
-	TestDishBuilder withName(String name) {
+	public TestDishBuilder withName(String name) {
 		this.dish.setName(name);
 		return this;
 	}
 
-	TestDishBuilder withMainIngredient(String mainIngredient) {
+	public TestDishBuilder withMainIngredient(String mainIngredient) {
 		this.dish.setMainIngredient(mainIngredient);
 		return this;
 	}
 
-	TestDishBuilder withCourse(Course course) {
+	public TestDishBuilder withCourse(Course course) {
 		this.dish.setCourse(course);
 		return this;
 	}

@@ -1,4 +1,4 @@
-package emh.dd_site;
+package emh.dd_site.config;
 
 import jakarta.annotation.Nonnull;
 import org.springframework.context.annotation.Configuration;

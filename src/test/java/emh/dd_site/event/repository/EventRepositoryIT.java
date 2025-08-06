@@ -1,7 +1,11 @@
 package emh.dd_site.event.repository;
 
 import emh.dd_site.TestcontainersConfig;
+import emh.dd_site.event.WineType;
+import emh.dd_site.event.entity.Course;
+import emh.dd_site.event.entity.Dish;
 import emh.dd_site.event.entity.Event;
+import emh.dd_site.event.entity.Wine;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -13,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,6 +32,12 @@ class EventRepositoryIT {
 
 	@Autowired
 	private EventRepository eventRepository;
+
+	@Autowired
+	private CourseRepository courseRepository;
+
+	@Autowired
+	private WineRepository wineRepository;
 
 	@Test
 	void whenSaveEvent_thenEventIsPersisted() {
@@ -113,6 +124,38 @@ class EventRepositoryIT {
 		Event updatedEvent = entityManager.find(Event.class, savedEvent.getId());
 		assertThat(updatedEvent.getHost()).isEqualTo("Updated Host");
 		assertThat(updatedEvent.getLocation()).isEqualTo("Updated Location");
+	}
+
+	@Test
+	void whenDeleteEventWithCourses_thenCoursesAreDeleted() {
+		// Given
+		Event event = new Event(LocalDate.now(), "Test Host");
+		event = eventRepository.save(event);
+
+		Wine wine1 = new Wine("Wine 1", WineType.RED, "Merlot", "France");
+		Wine wine2 = new Wine("Wine 2", WineType.WHITE, "Chardonnay", "France");
+		wineRepository.saveAll(List.of(wine1, wine2));
+
+		Course course1 = new Course(event, 1, "Cook A", new Dish("Test Dish 1"), wine1);
+		Course course2 = new Course(event, 2, "Cook B", new Dish("Test Dish 2"), wine2);
+		courseRepository.saveAll(List.of(course1, course2));
+
+		event.addCourse(course1);
+		event.addCourse(course2);
+
+		eventRepository.save(event);
+		entityManager.flush();
+		entityManager.clear();
+
+		// When
+		eventRepository.deleteById(event.getId());
+		entityManager.flush();
+		entityManager.clear();
+
+		// Then
+		assertThat(entityManager.find(Event.class, event.getId())).isNull();
+		assertThat(entityManager.find(Course.class, course1.getId())).isNull();
+		assertThat(entityManager.find(Course.class, course2.getId())).isNull();
 	}
 
 }

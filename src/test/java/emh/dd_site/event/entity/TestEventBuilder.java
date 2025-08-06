@@ -13,31 +13,31 @@ public class TestEventBuilder {
 		setPrivateField(event, "id", 1L);
 	}
 
-	static TestEventBuilder anEvent() {
+	public static TestEventBuilder anEvent() {
 		return new TestEventBuilder(LocalDate.now(), "Test Host");
 	}
 
-	TestEventBuilder withId(Long id) {
+	public TestEventBuilder withId(Long id) {
 		setPrivateField(event, "id", id);
 		return this;
 	}
 
-	TestEventBuilder withDate(LocalDate date) {
+	public TestEventBuilder withDate(LocalDate date) {
 		event.setDate(date);
 		return this;
 	}
 
-	TestEventBuilder withHost(String host) {
+	public TestEventBuilder withHost(String host) {
 		event.setHost(host);
 		return this;
 	}
 
-	TestEventBuilder withLocation(String location) {
+	public TestEventBuilder withLocation(String location) {
 		event.setLocation(location);
 		return this;
 	}
 
-	Event build() {
+	public Event build() {
 		return event;
 	}
 
