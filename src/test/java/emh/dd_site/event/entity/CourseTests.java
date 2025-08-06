@@ -51,31 +51,19 @@ class CourseTests {
 		@Test
 		@DisplayName("Should throw NullPointerException when event is null")
 		void shouldThrowExceptionWhenEventIsNull() {
-			assertThrows(NullPointerException.class, () -> new Course(null, testCourseNo, testCook, dish, wine));
+			assertThrows(NullPointerException.class, () -> new Course(null, testCourseNo, testCook));
 		}
 
 		@Test
 		@DisplayName("Should throw NullPointerException when courseNo is null")
 		void shouldThrowExceptionWhenCourseNoIsNull() {
-			assertThrows(NullPointerException.class, () -> new Course(event, null, testCook, dish, wine));
+			assertThrows(NullPointerException.class, () -> new Course(event, null, testCook));
 		}
 
 		@Test
 		@DisplayName("Should throw NullPointerException when cook is null")
 		void shouldThrowExceptionWhenCookIsNull() {
-			assertThrows(NullPointerException.class, () -> new Course(event, testCourseNo, null, dish, wine));
-		}
-
-		@Test
-		@DisplayName("Should throw NullPointerException when dish is null")
-		void shouldThrowExceptionWhenDishIsNull() {
-			assertThrows(NullPointerException.class, () -> new Course(event, testCourseNo, testCook, null, wine));
-		}
-
-		@Test
-		@DisplayName("Should throw NullPointerException when wine is null")
-		void shouldThrowExceptionWhenWineIsNull() {
-			assertThrows(NullPointerException.class, () -> new Course(event, testCourseNo, testCook, dish, null));
+			assertThrows(NullPointerException.class, () -> new Course(event, testCourseNo, null));
 		}
 
 	}

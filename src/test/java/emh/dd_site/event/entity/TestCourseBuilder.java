@@ -7,7 +7,9 @@ public class TestCourseBuilder {
 	private final Course course;
 
 	private TestCourseBuilder(Event event, Integer courseNo, String cook, Dish dish, Wine wine) {
-		this.course = new Course(event, courseNo, cook, dish, wine);
+		this.course = new Course(event, courseNo, cook);
+		this.course.setDish(dish);
+		this.course.setWine(wine);
 		setPrivateField(course, "id", 1L);
 	}
 

@@ -123,7 +123,9 @@ class WineTests {
 		void setUp() {
 			event = new Event(LocalDate.now(), "Test Host");
 			dish = new Dish("Test Dish");
-			course = new Course(event, 1, "Test Cook", dish, wine);
+			course = new Course(event, 1, "Test Cook");
+			course.setDish(dish);
+			course.setWine(wine);
 		}
 
 		@Test

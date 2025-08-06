@@ -61,7 +61,9 @@ class CourseRepositoryIT {
 	@Test
 	void shouldSaveAndRetrieveCourse() {
 		// Arrange
-		Course course = new Course(testEvent, 1, "Test Cook", testDish, testWine);
+		Course course = new Course(testEvent, 1, "Test Cook");
+		course.setDish(testDish);
+		course.setWine(testWine);
 
 		// Act
 		Course savedCourse = courseRepository.save(course);
@@ -79,7 +81,9 @@ class CourseRepositoryIT {
 	@Test
 	void shouldUpdateCourse() {
 		// Arrange
-		Course course = new Course(testEvent, 1, "Original Cook", testDish, testWine);
+		Course course = new Course(testEvent, 1, "Original Cook");
+		course.setDish(testDish);
+		course.setWine(testWine);
 		Course savedCourse = courseRepository.save(course);
 
 		// Act
@@ -95,7 +99,10 @@ class CourseRepositoryIT {
 	@Test
 	void shouldDeleteCourse() {
 		// Arrange
-		Course course = new Course(testEvent, 1, "Test Cook", testDish, testWine);
+		Course course = new Course(testEvent, 1, "Test Cook");
+		course.setDish(testDish);
+		course.setWine(testWine);
+
 		Course savedCourse = courseRepository.save(course);
 
 		// Act
@@ -109,9 +116,15 @@ class CourseRepositoryIT {
 	@Test
 	void shouldPaginateAndSortCourses() {
 		// Arrange
-		Course course1 = new Course(testEvent, 1, "Cook A", new Dish("test dish 1"), testWine);
-		Course course2 = new Course(testEvent, 2, "Cook B", new Dish("test dish 2"), testWine);
-		Course course3 = new Course(testEvent, 3, "Cook C", new Dish("test dish 3"), testWine);
+		Course course1 = new Course(testEvent, 1, "Cook A");
+		course1.setDish(new Dish("test dish 1"));
+		course1.setWine(testWine);
+		Course course2 = new Course(testEvent, 2, "Cook B");
+		course2.setDish(new Dish("test dish 2"));
+		course2.setWine(testWine);
+		Course course3 = new Course(testEvent, 3, "Cook C");
+		course3.setDish(new Dish("test dish 3"));
+		course3.setWine(testWine);
 		courseRepository.saveAll(List.of(course1, course2, course3));
 
 		// Act
@@ -129,7 +142,9 @@ class CourseRepositoryIT {
 	@Test
 	void shouldMaintainRelationshipsWhenSaving() {
 		// Arrange
-		Course course = new Course(testEvent, 1, "Test Cook", testDish, testWine);
+		Course course = new Course(testEvent, 1, "Test Cook");
+		course.setDish(testDish);
+		course.setWine(testWine);
 
 		// Act
 		Course savedCourse = courseRepository.save(course);
@@ -148,8 +163,12 @@ class CourseRepositoryIT {
 	@Test
 	void shouldHandleMultipleCoursesForSameEvent() {
 		// Arrange
-		Course firstCourse = new Course(testEvent, 1, "Cook A", new Dish("test dish 1"), testWine);
-		Course secondCourse = new Course(testEvent, 2, "Cook B", new Dish("test dish 2"), testWine);
+		Course firstCourse = new Course(testEvent, 1, "Cook A");
+		firstCourse.setDish(new Dish("test dish 1"));
+		firstCourse.setWine(testWine);
+		Course secondCourse = new Course(testEvent, 2, "Cook B");
+		secondCourse.setDish(new Dish("test dish 2"));
+		secondCourse.setWine(testWine);
 
 		// Act
 		courseRepository.saveAll(List.of(firstCourse, secondCourse));

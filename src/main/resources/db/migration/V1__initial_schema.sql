@@ -4,8 +4,8 @@ CREATE TABLE course
     event_id  BIGINT                                  NOT NULL,
     course_no INTEGER                                 NOT NULL,
     cook      VARCHAR(255)                            NOT NULL,
-    dish_id   BIGINT                                  NOT NULL,
-    wine_id   BIGINT                                  NOT NULL,
+    dish_id   BIGINT,
+    wine_id   BIGINT,
     CONSTRAINT pk_course PRIMARY KEY (course_id)
 );
 

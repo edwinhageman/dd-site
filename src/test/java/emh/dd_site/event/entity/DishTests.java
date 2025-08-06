@@ -83,7 +83,9 @@ class DishTests {
 			event = new Event(LocalDate.now(), "Test Host");
 			wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
 			dish = new Dish("Test Dish");
-			course = new Course(event, 1, "Test Cook", new Dish("Initial dish"), wine);
+			course = new Course(event, 1, "Test Cook");
+			course.setDish(new Dish("Initial dish"));
+			course.setWine(wine);
 		}
 
 		@Test

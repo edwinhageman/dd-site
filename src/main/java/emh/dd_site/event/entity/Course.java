@@ -43,16 +43,14 @@ public class Course {
 	@ToString.Include
 	private String cook;
 
-	@OneToOne(cascade = CascadeType.ALL, optional = false)
-	@JoinColumn(name = "dish_id", nullable = false)
-	@NonNull
+	@OneToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "dish_id")
 	@Getter
 	@ToString.Include
 	private Dish dish;
 
-	@ManyToOne(optional = false)
-	@JoinColumn(name = "wine_id", nullable = false)
-	@NonNull
+	@ManyToOne
+	@JoinColumn(name = "wine_id")
 	@Getter
 	@ToString.Include
 	private Wine wine;
@@ -60,19 +58,10 @@ public class Course {
 	protected Course() {
 	}
 
-	public Course(@NonNull Event event, @NonNull Integer courseNo, @NonNull String cook, @NonNull Dish dish,
-			@NonNull Wine wine) {
+	public Course(@NonNull Event event, @NonNull Integer courseNo, @NonNull String cook) {
 		this.event = event;
 		this.courseNo = courseNo;
 		this.cook = cook;
-		this.dish = dish;
-		if (this.dish.getCourse() != this) {
-			this.dish.setCourse(this);
-		}
-		this.wine = wine;
-		if (!this.wine.getCourses().contains(this)) {
-			this.wine.addCourse(this);
-		}
 	}
 
 	public void setDish(@NonNull Dish dish) {
@@ -83,7 +72,7 @@ public class Course {
 	}
 
 	public void setWine(@NonNull Wine wine) {
-		if (this.wine.getCourses().contains(this)) {
+		if (this.wine != null && this.wine.getCourses().contains(this)) {
 			this.wine.removeCourse(this);
 		}
 		this.wine = wine;

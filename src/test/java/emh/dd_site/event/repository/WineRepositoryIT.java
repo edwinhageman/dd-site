@@ -122,8 +122,12 @@ class WineRepositoryIT {
 		Event event = new Event(LocalDate.now(), "Test Event");
 		event = eventRepository.save(event);
 
-		Course course1 = new Course(event, 1, "Cook A", new Dish("Test Dish 1"), wine);
-		Course course2 = new Course(event, 2, "Cook B", new Dish("Test Dish 2"), wine);
+		Course course1 = new Course(event, 1, "Cook A");
+		course1.setDish(new Dish("Test Dish 1"));
+		course1.setWine(wine);
+		Course course2 = new Course(event, 2, "Cook B");
+		course2.setDish(new Dish("Test Dish 2"));
+		course2.setWine(wine);
 
 		// Act
 		courseRepository.saveAll(List.of(course1, course2));
@@ -145,7 +149,9 @@ class WineRepositoryIT {
 		Event event = new Event(LocalDate.now(), "Test Event");
 		eventRepository.save(event);
 
-		Course course = new Course(event, 1, "Test Cook", new Dish("Test Dish"), wine);
+		Course course = new Course(event, 1, "Test Cook");
+		course.setDish(new Dish("Test Dish"));
+		course.setWine(wine);
 		courseRepository.save(course);
 
 		// Act & Assert

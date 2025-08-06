@@ -136,8 +136,12 @@ class EventRepositoryIT {
 		Wine wine2 = new Wine("Wine 2", WineType.WHITE, "Chardonnay", "France");
 		wineRepository.saveAll(List.of(wine1, wine2));
 
-		Course course1 = new Course(event, 1, "Cook A", new Dish("Test Dish 1"), wine1);
-		Course course2 = new Course(event, 2, "Cook B", new Dish("Test Dish 2"), wine2);
+		Course course1 = new Course(event, 1, "Cook A");
+		course1.setDish(new Dish("Test Dish 1"));
+		course1.setWine(wine1);
+		Course course2 = new Course(event, 2, "Cook B");
+		course1.setDish(new Dish("Test Dish 2"));
+		course1.setWine(wine2);
 		courseRepository.saveAll(List.of(course1, course2));
 
 		event.addCourse(course1);

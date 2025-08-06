@@ -90,8 +90,9 @@ class EventTests {
 
 		@BeforeEach
 		void setUp() {
-			course = new Course(event, 1, "Test Cook", new Dish("Test Dish"),
-					new Wine("Test Wine", WineType.RED, "Merlot", "France"));
+			course = new Course(event, 1, "Test Cook");
+			course.setDish(new Dish("Test Dish"));
+			course.setWine(new Wine("Test Wine", WineType.RED, "Merlot", "France"));
 		}
 
 		@Test
