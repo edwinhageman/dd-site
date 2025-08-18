@@ -105,12 +105,6 @@ class DishTests {
 			assertEquals(dish, course.getDish());
 		}
 
-		@Test
-		@DisplayName("Should throw NullPointerException when setting null course")
-		void shouldThrowExceptionWhenSettingNullCourse() {
-			assertThrows(NullPointerException.class, () -> dish.setCourse(null));
-		}
-
 	}
 
 	@Nested

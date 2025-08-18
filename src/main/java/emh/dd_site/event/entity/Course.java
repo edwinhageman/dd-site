@@ -64,19 +64,19 @@ public class Course {
 		this.cook = cook;
 	}
 
-	public void setDish(@NonNull Dish dish) {
+	public void setDish(Dish dish) {
 		this.dish = dish;
-		if (this.dish.getCourse() != this) {
+		if (this.dish != null && this.dish.getCourse() != this) {
 			this.dish.setCourse(this);
 		}
 	}
 
-	public void setWine(@NonNull Wine wine) {
+	public void setWine(Wine wine) {
 		if (this.wine != null && this.wine.getCourses().contains(this)) {
 			this.wine.removeCourse(this);
 		}
 		this.wine = wine;
-		if (!this.wine.getCourses().contains(this)) {
+		if (this.wine != null && !this.wine.getCourses().contains(this)) {
 			this.wine.addCourse(this);
 		}
 	}

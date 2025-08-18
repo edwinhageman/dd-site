@@ -180,4 +180,45 @@ class CourseRepositoryIT {
 		assertThat(allCourses).extracting(Course::getEvent).containsOnly(testEvent);
 	}
 
+	@Test
+	void shouldFindByEventId_withPaginationAndSorting() {
+		// Arrange: three courses for the primary event
+		Course c1 = new Course(testEvent, 1, "Cook A");
+		Course c2 = new Course(testEvent, 2, "Cook B");
+		Course c3 = new Course(testEvent, 3, "Cook C");
+		courseRepository.saveAll(List.of(c1, c2, c3));
+
+		// And an extra course for another event that must not be returned
+		Event otherEvent = new Event(LocalDate.now().plusDays(10), "Other Event");
+		otherEvent.setLocation("Elsewhere");
+		eventRepository.save(otherEvent);
+		courseRepository.save(new Course(otherEvent, 1, "Other Cook"));
+
+		// Act
+		Page<Course> page = courseRepository.findByEventId(testEvent.getId(),
+				PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "courseNo")));
+
+		// Assert
+		assertThat(page.getContent()).hasSize(2);
+		assertThat(page.getTotalElements()).isEqualTo(3);
+		assertThat(page.getTotalPages()).isEqualTo(2);
+		assertThat(page.getContent()).extracting(Course::getCourseNo).containsExactly(1, 2);
+		assertThat(page.getContent()).extracting(Course::getEvent).containsOnly(testEvent);
+	}
+
+	@Test
+	void shouldReturnEmptyPage_whenFindingByUnknownEventId() {
+		// Arrange
+		long unknownEventId = 999_999L;
+
+		// Act
+		Page<Course> page = courseRepository.findByEventId(unknownEventId,
+				PageRequest.of(0, 5, Sort.by(Sort.Direction.ASC, "courseNo")));
+
+		// Assert
+		assertThat(page.getContent()).isEmpty();
+		assertThat(page.getTotalElements()).isZero();
+		assertThat(page.getTotalPages()).isZero();
+	}
+
 }

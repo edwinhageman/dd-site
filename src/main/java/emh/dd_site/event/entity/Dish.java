@@ -39,10 +39,10 @@ public class Dish {
 	protected Dish() {
 	}
 
-	public void setCourse(@NonNull Course course) {
+	public void setCourse(Course course) {
 		this.course = course;
-		if (course.getDish() != this) {
-			course.setDish(this);
+		if (this.course != null && this.course.getDish() != this) {
+			this.course.setDish(this);
 		}
 	}
 

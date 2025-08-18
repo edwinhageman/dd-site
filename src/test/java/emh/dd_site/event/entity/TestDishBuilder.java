@@ -35,7 +35,7 @@ public class TestDishBuilder {
 		return this;
 	}
 
-	Dish build() {
+	public Dish build() {
 		return dish;
 	}
 

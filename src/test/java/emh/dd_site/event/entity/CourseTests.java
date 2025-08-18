@@ -30,7 +30,13 @@ class CourseTests {
 		event = new Event(LocalDate.now(), "Test Host");
 		dish = new Dish("Test Dish");
 		wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
-		course = TestCourseBuilder.aCourse(event, dish, wine).withCourseNo(testCourseNo).withCook(testCook).build();
+		course = TestCourseBuilder.aCourse()
+			.withEvent(event)
+			.withCourseNo(testCourseNo)
+			.withCook(testCook)
+			.withDish(dish)
+			.withWine(wine)
+			.build();
 	}
 
 	@Nested
@@ -137,18 +143,6 @@ class CourseTests {
 		}
 
 		@Test
-		@DisplayName("Should throw NullPointerException when setting null dish")
-		void shouldThrowExceptionWhenSettingNullDish() {
-			assertThrows(NullPointerException.class, () -> course.setDish(null));
-		}
-
-		@Test
-		@DisplayName("Should throw NullPointerException when setting null wine")
-		void shouldThrowExceptionWhenSettingNullWine() {
-			assertThrows(NullPointerException.class, () -> course.setWine(null));
-		}
-
-		@Test
 		@DisplayName("Should properly handle wine replacement")
 		void shouldProperlyHandleWineReplacement() {
 			Wine newWine = new Wine("New Wine", WineType.WHITE, "Chardonnay", "France");
@@ -170,8 +164,18 @@ class CourseTests {
 		@Test
 		@DisplayName("Courses with null IDs should not be equal")
 		void coursesWithNullIdsShouldNotBeEqual() {
-			Course course1 = TestCourseBuilder.aCourse(event, dish, wine).withId(null).build();
-			Course course2 = TestCourseBuilder.aCourse(event, dish, wine).withId(null).build();
+			Course course1 = TestCourseBuilder.aCourse()
+				.withId(null)
+				.withEvent(event)
+				.withDish(dish)
+				.withWine(wine)
+				.build();
+			Course course2 = TestCourseBuilder.aCourse()
+				.withId(null)
+				.withEvent(event)
+				.withDish(dish)
+				.withWine(wine)
+				.build();
 			assertNotEquals(course1, course2);
 		}
 
@@ -190,16 +194,36 @@ class CourseTests {
 		@Test
 		@DisplayName("Courses with same non-null ID should be equal")
 		void coursesWithSameNonNullIdShouldBeEqual() {
-			Course course1 = TestCourseBuilder.aCourse(event, dish, wine).withId(1L).build();
-			Course course2 = TestCourseBuilder.aCourse(event, dish, wine).withId(1L).build();
+			Course course1 = TestCourseBuilder.aCourse()
+				.withId(1L)
+				.withEvent(event)
+				.withDish(dish)
+				.withWine(wine)
+				.build();
+			Course course2 = TestCourseBuilder.aCourse()
+				.withId(1L)
+				.withEvent(event)
+				.withDish(dish)
+				.withWine(wine)
+				.build();
 			assertEquals(course1, course2);
 		}
 
 		@Test
 		@DisplayName("Courses with different IDs should not be equal")
 		void coursesWithDifferentIdsShouldNotBeEqual() {
-			Course course1 = TestCourseBuilder.aCourse(event, dish, wine).withId(1L).build();
-			Course course2 = TestCourseBuilder.aCourse(event, dish, wine).withId(2L).build();
+			Course course1 = TestCourseBuilder.aCourse()
+				.withId(1L)
+				.withEvent(event)
+				.withDish(dish)
+				.withWine(wine)
+				.build();
+			Course course2 = TestCourseBuilder.aCourse()
+				.withId(2L)
+				.withEvent(event)
+				.withDish(dish)
+				.withWine(wine)
+				.build();
 			assertNotEquals(course1, course2);
 		}
 

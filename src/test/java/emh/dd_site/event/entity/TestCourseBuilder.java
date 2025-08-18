@@ -1,5 +1,9 @@
 package emh.dd_site.event.entity;
 
+import emh.dd_site.event.WineType;
+
+import java.time.LocalDate;
+
 import static emh.dd_site.RecursionUtils.setPrivateField;
 
 public class TestCourseBuilder {
@@ -13,8 +17,9 @@ public class TestCourseBuilder {
 		setPrivateField(course, "id", 1L);
 	}
 
-	public static TestCourseBuilder aCourse(Event event, Dish dish, Wine wine) {
-		return new TestCourseBuilder(event, 1, "Test Cook", dish, wine);
+	public static TestCourseBuilder aCourse() {
+		return new TestCourseBuilder(new Event(LocalDate.of(2025, 1, 1), "Host name"), 1, "Test Cook",
+				new Dish("Dish name"), new Wine("Wine name", WineType.RED, "Merlot", "France"));
 	}
 
 	public TestCourseBuilder withId(Long id) {
@@ -47,7 +52,7 @@ public class TestCourseBuilder {
 		return this;
 	}
 
-	Course build() {
+	public Course build() {
 		return course;
 	}
 
