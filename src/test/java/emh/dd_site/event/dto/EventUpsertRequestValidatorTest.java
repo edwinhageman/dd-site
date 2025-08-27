@@ -15,8 +15,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("CreateUpdateEventDto")
-class CreateUpdateEventDtoValidatorTest {
+@DisplayName("EventUpsertRequest validation tests")
+class EventUpsertRequestValidatorTest {
 
 	private Validator validator;
 
@@ -34,18 +34,18 @@ class CreateUpdateEventDtoValidatorTest {
 		@Test
 		@DisplayName("should accept valid date")
 		void shouldAcceptValidDate() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), "Test Host", "Test Location");
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), "Test Host", "Test Location");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 			assertThat(violations).isEmpty();
 		}
 
 		@Test
 		@DisplayName("should reject null date")
 		void shouldRejectNullDate() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(null, "Test Host", "Test Location");
+			EventUpsertRequest dto = new EventUpsertRequest(null, "Test Host", "Test Location");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("date");
@@ -62,18 +62,18 @@ class CreateUpdateEventDtoValidatorTest {
 		@Test
 		@DisplayName("should accept valid host")
 		void shouldAcceptValidHost() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), "Test Host", "Test Location");
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), "Test Host", "Test Location");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 			assertThat(violations).isEmpty();
 		}
 
 		@Test
 		@DisplayName("should reject null host")
 		void shouldRejectNullHost() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), null, "Test Location");
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), null, "Test Location");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("host");
@@ -84,9 +84,9 @@ class CreateUpdateEventDtoValidatorTest {
 		@Test
 		@DisplayName("should reject empty host")
 		void shouldRejectEmptyHost() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), "", "Test Location");
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), "", "Test Location");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("host");
@@ -97,9 +97,9 @@ class CreateUpdateEventDtoValidatorTest {
 		@Test
 		@DisplayName("should reject whitespace-only host")
 		void shouldRejectWhitespaceOnlyHost() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), "   ", "Test Location");
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), "   ", "Test Location");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("host");
@@ -116,27 +116,27 @@ class CreateUpdateEventDtoValidatorTest {
 		@Test
 		@DisplayName("should accept valid location")
 		void shouldAcceptValidLocation() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), "Test Host", "Test Location");
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), "Test Host", "Test Location");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 			assertThat(violations).isEmpty();
 		}
 
 		@Test
 		@DisplayName("should accept null location")
 		void shouldAcceptNullLocation() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), "Test Host", null);
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), "Test Host", null);
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 			assertThat(violations).isEmpty();
 		}
 
 		@Test
 		@DisplayName("should accept empty location")
 		void shouldAcceptEmptyLocation() {
-			CreateUpdateEventDto dto = new CreateUpdateEventDto(LocalDate.now(), "Test Host", "");
+			EventUpsertRequest dto = new EventUpsertRequest(LocalDate.now(), "Test Host", "");
 
-			Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 			assertThat(violations).isEmpty();
 		}
 
@@ -145,9 +145,9 @@ class CreateUpdateEventDtoValidatorTest {
 	@Test
 	@DisplayName("should validate multiple fields")
 	void shouldValidateMultipleFields() {
-		CreateUpdateEventDto dto = new CreateUpdateEventDto(null, "", null);
+		EventUpsertRequest dto = new EventUpsertRequest(null, "", null);
 
-		Set<ConstraintViolation<CreateUpdateEventDto>> violations = validator.validate(dto);
+		Set<ConstraintViolation<EventUpsertRequest>> violations = validator.validate(dto);
 
 		assertThat(violations).hasSize(2)
 			.extracting(violation -> violation.getPropertyPath().toString())

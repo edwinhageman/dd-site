@@ -1,8 +1,8 @@
 
 package emh.dd_site.event.controller;
 
-import emh.dd_site.event.dto.CreateUpdateEventDto;
-import emh.dd_site.event.dto.EventDto;
+import emh.dd_site.event.dto.EventResponse;
+import emh.dd_site.event.dto.EventUpsertRequest;
 import emh.dd_site.event.service.EventService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -37,9 +37,9 @@ class EventControllerTest {
 
 	private final LocalDate testDate = LocalDate.of(2024, 1, 1);
 
-	private final EventDto testEventDto = new EventDto(1L, testDate, "Test Host", "Test Location");
+	private final EventResponse testEventResponse = new EventResponse(1L, testDate, "Test Host", "Test Location");
 
-	private final CreateUpdateEventDto createDto = new CreateUpdateEventDto(testDate, "Test Host", "Test Location");
+	private final EventUpsertRequest createDto = new EventUpsertRequest(testDate, "Test Host", "Test Location");
 
 	@Nested
 	@DisplayName("GET /api/events")
@@ -53,14 +53,14 @@ class EventControllerTest {
 																// DESC
 			// date sort
 			PageRequest expectedRequest = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "date"));
-			PageImpl<EventDto> page = new PageImpl<>(List.of(testEventDto), expectedRequest, 1);
+			PageImpl<EventResponse> page = new PageImpl<>(List.of(testEventResponse), expectedRequest, 1);
 			given(eventService.listAll(any(PageRequest.class))).willReturn(page);
 
 			// when
-			Page<EventDto> result = eventController.list(inputRequest);
+			Page<EventResponse> result = eventController.list(inputRequest);
 
 			// then
-			assertThat(result.getContent()).containsExactly(testEventDto);
+			assertThat(result.getContent()).containsExactly(testEventResponse);
 			assertThat(result.getTotalElements()).isEqualTo(1);
 			assertThat(result.getNumber()).isEqualTo(0);
 			assertThat(result.getSize()).isEqualTo(20);
@@ -82,13 +82,13 @@ class EventControllerTest {
 		@DisplayName("should return single event")
 		void shouldReturnSingleEvent() {
 			// given
-			given(eventService.findById(1L)).willReturn(testEventDto);
+			given(eventService.findById(1L)).willReturn(testEventResponse);
 
 			// when
-			EventDto result = eventController.one(1L);
+			EventResponse result = eventController.one(1L);
 
 			// then
-			assertThat(result).isEqualTo(testEventDto);
+			assertThat(result).isEqualTo(testEventResponse);
 			verify(eventService).findById(1L);
 		}
 
@@ -102,13 +102,13 @@ class EventControllerTest {
 		@DisplayName("should create and return event")
 		void shouldCreateAndReturnEvent() {
 			// given
-			given(eventService.create(any(CreateUpdateEventDto.class))).willReturn(testEventDto);
+			given(eventService.create(any(EventUpsertRequest.class))).willReturn(testEventResponse);
 
 			// when
-			EventDto result = eventController.create(createDto);
+			EventResponse result = eventController.create(createDto);
 
 			// then
-			assertThat(result).isEqualTo(testEventDto);
+			assertThat(result).isEqualTo(testEventResponse);
 			verify(eventService).create(createDto);
 		}
 
@@ -122,13 +122,13 @@ class EventControllerTest {
 		@DisplayName("should update and return event")
 		void shouldUpdateAndReturnEvent() {
 			// given
-			given(eventService.update(eq(1L), any(CreateUpdateEventDto.class))).willReturn(testEventDto);
+			given(eventService.update(eq(1L), any(EventUpsertRequest.class))).willReturn(testEventResponse);
 
 			// when
-			EventDto result = eventController.update(1L, createDto);
+			EventResponse result = eventController.update(1L, createDto);
 
 			// then
-			assertThat(result).isEqualTo(testEventDto);
+			assertThat(result).isEqualTo(testEventResponse);
 			verify(eventService).update(1L, createDto);
 		}
 

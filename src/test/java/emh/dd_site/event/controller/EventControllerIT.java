@@ -1,8 +1,8 @@
 package emh.dd_site.event.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import emh.dd_site.event.dto.CreateUpdateEventDto;
-import emh.dd_site.event.dto.EventDto;
+import emh.dd_site.event.dto.EventResponse;
+import emh.dd_site.event.dto.EventUpsertRequest;
 import emh.dd_site.event.exception.EventNotFoundException;
 import emh.dd_site.event.service.EventService;
 import org.junit.jupiter.api.DisplayName;
@@ -42,9 +42,9 @@ class EventControllerIT {
 
 	private final LocalDate testDate = LocalDate.of(2024, 1, 1);
 
-	private final EventDto testEventDto = new EventDto(1L, testDate, "Test Host", "Test Location");
+	private final EventResponse testEventResponse = new EventResponse(1L, testDate, "Test Host", "Test Location");
 
-	private final CreateUpdateEventDto createDto = new CreateUpdateEventDto(testDate, "Test Host", "Test Location");
+	private final EventUpsertRequest createDto = new EventUpsertRequest(testDate, "Test Host", "Test Location");
 
 	@Test
 	@DisplayName("GET /api/events should return paged list of events")
@@ -52,16 +52,16 @@ class EventControllerIT {
 		// given
 		PageRequest request = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "date"));
 		given(eventService.listAll(any(PageRequest.class)))
-			.willReturn(new PageImpl<>(List.of(testEventDto), request, 1));
+			.willReturn(new PageImpl<>(List.of(testEventResponse), request, 1));
 
 		// when/then
 		mockMvc.perform(get("/api/events"))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.content[0].id").value(testEventDto.id()))
-			.andExpect(jsonPath("$.content[0].date").value(testEventDto.date().toString()))
-			.andExpect(jsonPath("$.content[0].host").value(testEventDto.host()))
-			.andExpect(jsonPath("$.content[0].location").value(testEventDto.location()))
+			.andExpect(jsonPath("$.content[0].id").value(testEventResponse.id()))
+			.andExpect(jsonPath("$.content[0].date").value(testEventResponse.date().toString()))
+			.andExpect(jsonPath("$.content[0].host").value(testEventResponse.host()))
+			.andExpect(jsonPath("$.content[0].location").value(testEventResponse.location()))
 			.andExpect(jsonPath("$.totalElements").value(1))
 			.andExpect(jsonPath("$.number").value(0))
 			.andExpect(jsonPath("$.size").value(20));
@@ -71,16 +71,16 @@ class EventControllerIT {
 	@DisplayName("GET /api/events/{id} should return event")
 	void shouldReturnSingleEvent() throws Exception {
 		// given
-		given(eventService.findById(1L)).willReturn(testEventDto);
+		given(eventService.findById(1L)).willReturn(testEventResponse);
 
 		// when/then
 		mockMvc.perform(get("/api/events/{id}", 1L))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.id").value(testEventDto.id()))
-			.andExpect(jsonPath("$.date").value(testEventDto.date().toString()))
-			.andExpect(jsonPath("$.host").value(testEventDto.host()))
-			.andExpect(jsonPath("$.location").value(testEventDto.location()));
+			.andExpect(jsonPath("$.id").value(testEventResponse.id()))
+			.andExpect(jsonPath("$.date").value(testEventResponse.date().toString()))
+			.andExpect(jsonPath("$.host").value(testEventResponse.host()))
+			.andExpect(jsonPath("$.location").value(testEventResponse.location()));
 	}
 
 	@Test
@@ -99,7 +99,7 @@ class EventControllerIT {
 	@DisplayName("POST /api/events should create and return event")
 	void shouldCreateAndReturnEvent() throws Exception {
 		// given
-		given(eventService.create(any(CreateUpdateEventDto.class))).willReturn(testEventDto);
+		given(eventService.create(any(EventUpsertRequest.class))).willReturn(testEventResponse);
 
 		// when/then
 		mockMvc
@@ -107,19 +107,19 @@ class EventControllerIT {
 				.content(objectMapper.writeValueAsString(createDto)))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.id").value(testEventDto.id()))
-			.andExpect(jsonPath("$.date").value(testEventDto.date().toString()))
-			.andExpect(jsonPath("$.host").value(testEventDto.host()))
-			.andExpect(jsonPath("$.location").value(testEventDto.location()));
+			.andExpect(jsonPath("$.id").value(testEventResponse.id()))
+			.andExpect(jsonPath("$.date").value(testEventResponse.date().toString()))
+			.andExpect(jsonPath("$.host").value(testEventResponse.host()))
+			.andExpect(jsonPath("$.location").value(testEventResponse.location()));
 
-		verify(eventService).create(any(CreateUpdateEventDto.class));
+		verify(eventService).create(any(EventUpsertRequest.class));
 	}
 
 	@Test
 	@DisplayName("PUT /api/events/{id} should update and return event")
 	void shouldUpdateAndReturnEvent() throws Exception {
 		// given
-		given(eventService.update(eq(1L), any(CreateUpdateEventDto.class))).willReturn(testEventDto);
+		given(eventService.update(eq(1L), any(EventUpsertRequest.class))).willReturn(testEventResponse);
 
 		// when/then
 		mockMvc
@@ -127,12 +127,12 @@ class EventControllerIT {
 				.content(objectMapper.writeValueAsString(createDto)))
 			.andExpect(status().isOk())
 			.andExpect(content().contentType(MediaType.APPLICATION_JSON))
-			.andExpect(jsonPath("$.id").value(testEventDto.id()))
-			.andExpect(jsonPath("$.date").value(testEventDto.date().toString()))
-			.andExpect(jsonPath("$.host").value(testEventDto.host()))
-			.andExpect(jsonPath("$.location").value(testEventDto.location()));
+			.andExpect(jsonPath("$.id").value(testEventResponse.id()))
+			.andExpect(jsonPath("$.date").value(testEventResponse.date().toString()))
+			.andExpect(jsonPath("$.host").value(testEventResponse.host()))
+			.andExpect(jsonPath("$.location").value(testEventResponse.location()));
 
-		verify(eventService).update(eq(1L), any(CreateUpdateEventDto.class));
+		verify(eventService).update(eq(1L), any(EventUpsertRequest.class));
 	}
 
 	@Test
@@ -159,7 +159,7 @@ class EventControllerIT {
 	@Test
 	@DisplayName("POST /api/events should return 400 when date is null")
 	void shouldReturn400WhenDateIsNull() throws Exception {
-		CreateUpdateEventDto invalidDto = new CreateUpdateEventDto(null, "Test Host", "Test Location");
+		EventUpsertRequest invalidDto = new EventUpsertRequest(null, "Test Host", "Test Location");
 
 		mockMvc
 			.perform(post("/api/events").contentType(MediaType.APPLICATION_JSON)
@@ -171,7 +171,7 @@ class EventControllerIT {
 	@Test
 	@DisplayName("POST /api/events should return 400 when host is blank")
 	void shouldReturn400WhenHostIsBlank() throws Exception {
-		CreateUpdateEventDto invalidDto = new CreateUpdateEventDto(LocalDate.now(), "", "Test Location");
+		EventUpsertRequest invalidDto = new EventUpsertRequest(LocalDate.now(), "", "Test Location");
 
 		mockMvc
 			.perform(post("/api/events").contentType(MediaType.APPLICATION_JSON)
@@ -183,7 +183,7 @@ class EventControllerIT {
 	@Test
 	@DisplayName("PUT /api/events/{id} should return 400 when request body is invalid")
 	void shouldReturn400WhenUpdateRequestIsInvalid() throws Exception {
-		CreateUpdateEventDto invalidDto = new CreateUpdateEventDto(null, null, "Test Location");
+		EventUpsertRequest invalidDto = new EventUpsertRequest(null, null, "Test Location");
 
 		mockMvc
 			.perform(put("/api/events/{id}", 1L).contentType(MediaType.APPLICATION_JSON)
@@ -196,8 +196,7 @@ class EventControllerIT {
 	@Test
 	@DisplayName("PUT /api/events/{id} should return 404 when updating non-existent event")
 	void shouldReturn404WhenUpdatingNonExistentEvent() throws Exception {
-		given(eventService.update(eq(999L), any(CreateUpdateEventDto.class)))
-			.willThrow(new EventNotFoundException(999L));
+		given(eventService.update(eq(999L), any(EventUpsertRequest.class))).willThrow(new EventNotFoundException(999L));
 
 		mockMvc
 			.perform(put("/api/events/{id}", 999L).contentType(MediaType.APPLICATION_JSON)

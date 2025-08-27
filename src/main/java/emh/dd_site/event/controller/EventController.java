@@ -1,7 +1,7 @@
 package emh.dd_site.event.controller;
 
-import emh.dd_site.event.dto.CreateUpdateEventDto;
-import emh.dd_site.event.dto.EventDto;
+import emh.dd_site.event.dto.EventResponse;
+import emh.dd_site.event.dto.EventUpsertRequest;
 import emh.dd_site.event.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,24 +21,24 @@ public class EventController {
 	private final EventService eventService;
 
 	@GetMapping("/api/events")
-	public Page<EventDto> list(Pageable pageable) {
+	public Page<EventResponse> list(Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), DEFAULT_SORT);
 		return eventService.listAll(pageRequest);
 	}
 
 	@GetMapping("/api/events/{id}")
-	public EventDto one(@PathVariable long id) {
+	public EventResponse one(@PathVariable long id) {
 		return eventService.findById(id);
 	}
 
 	@PostMapping("/api/events")
-	public EventDto create(@Valid @RequestBody CreateUpdateEventDto data) {
-		return eventService.create(data);
+	public EventResponse create(@Valid @RequestBody EventUpsertRequest request) {
+		return eventService.create(request);
 	}
 
 	@PutMapping("/api/events/{id}")
-	public EventDto update(@PathVariable long id, @Valid @RequestBody CreateUpdateEventDto data) {
-		return eventService.update(id, data);
+	public EventResponse update(@PathVariable long id, @Valid @RequestBody EventUpsertRequest request) {
+		return eventService.update(id, request);
 	}
 
 	@DeleteMapping("/api/events/{id}")
