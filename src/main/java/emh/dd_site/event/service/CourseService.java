@@ -1,15 +1,14 @@
 package emh.dd_site.event.service;
 
-import emh.dd_site.event.dto.CourseDto;
-import emh.dd_site.event.dto.CourseDtoMapper;
-import emh.dd_site.event.dto.CreateUpdateCourseDto;
+import emh.dd_site.event.dto.CourseMapper;
+import emh.dd_site.event.dto.CourseResponse;
+import emh.dd_site.event.dto.CourseUpsertRequest;
 import emh.dd_site.event.entity.Course;
-import emh.dd_site.event.entity.Dish;
 import emh.dd_site.event.exception.CourseNotFoundException;
 import emh.dd_site.event.exception.EventNotFoundException;
 import emh.dd_site.event.repository.CourseRepository;
 import emh.dd_site.event.repository.EventRepository;
-import jakarta.validation.Valid;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,41 +22,35 @@ public class CourseService {
 
 	private final CourseRepository courseRepository;
 
-	private final CourseDtoMapper courseDtoMapper;
+	private final CourseMapper courseMapper;
 
-	public Page<CourseDto> listAll(Pageable pageable) {
+	public Page<CourseResponse> listAll(Pageable pageable) {
 		var courses = courseRepository.findAll(pageable);
-		return courseDtoMapper.toDtoPage(courses);
+		return courses.map(courseMapper::toCourseResponse);
 	}
 
-	public Page<CourseDto> listByEvent(long eventId, Pageable pageable) {
+	public Page<CourseResponse> listByEvent(long eventId, Pageable pageable) {
 		var courses = courseRepository.findByEventId(eventId, pageable);
-		return courseDtoMapper.toDtoPage(courses);
+		return courses.map(courseMapper::toCourseResponse);
 	}
 
-	public CourseDto findById(long id) {
+	public CourseResponse findById(long id) {
 		var course = getById(id);
-		return courseDtoMapper.toDto(course);
+		return courseMapper.toCourseResponse(course);
 	}
 
-	public CourseDto create(long eventId, @Valid CreateUpdateCourseDto data) {
+	public CourseResponse create(long eventId, @NonNull CourseUpsertRequest request) {
 		var event = eventRepository.findById(eventId).orElseThrow(() -> new EventNotFoundException(eventId));
-		var course = new Course(event, data.courseNo(), data.cook());
-		var dish = new Dish(data.dish().name());
-		dish.setMainIngredient(data.dish().mainIngredient());
-		course.setDish(dish);
+		var course = courseMapper.fromCourseUpsertRequest(event, request);
 		course = courseRepository.save(course);
-		return courseDtoMapper.toDto(course);
+		return courseMapper.toCourseResponse(course);
 	}
 
-	public CourseDto update(long id, @Valid CreateUpdateCourseDto data) {
+	public CourseResponse update(long id, @NonNull CourseUpsertRequest request) {
 		var course = getById(id);
-		course.setCourseNo(data.courseNo());
-		course.setCook(data.cook());
-		course.getDish().setName(data.dish().name());
-		course.getDish().setMainIngredient(data.dish().mainIngredient());
+		course = courseMapper.mergeWithCourseUpsertRequest(course, request);
 		course = courseRepository.save(course);
-		return courseDtoMapper.toDto(course);
+		return courseMapper.toCourseResponse(course);
 	}
 
 	public void delete(long id) {

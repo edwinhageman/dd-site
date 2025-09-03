@@ -1,9 +1,6 @@
 package emh.dd_site.event.service;
 
-import emh.dd_site.event.dto.CourseDto;
-import emh.dd_site.event.dto.CourseDtoMapper;
-import emh.dd_site.event.dto.CreateUpdateCourseDto;
-import emh.dd_site.event.dto.CreateUpdateDishDto;
+import emh.dd_site.event.dto.*;
 import emh.dd_site.event.entity.Course;
 import emh.dd_site.event.entity.Dish;
 import emh.dd_site.event.entity.Event;
@@ -12,9 +9,10 @@ import emh.dd_site.event.exception.EventNotFoundException;
 import emh.dd_site.event.repository.CourseRepository;
 import emh.dd_site.event.repository.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.data.domain.*;
@@ -25,9 +23,11 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+@DisplayName("CourseService Unit Tests")
 class CourseServiceTest {
 
 	@Mock
@@ -37,225 +37,253 @@ class CourseServiceTest {
 	private EventRepository eventRepository;
 
 	@Mock
-	private CourseDtoMapper courseDtoMapper;
+	private CourseMapper courseMapper;
 
 	@InjectMocks
 	private CourseService courseService;
 
 	private Pageable pageable;
 
+	private CourseResponse response1, response2;
+
 	@BeforeEach
 	void setup() {
 		pageable = PageRequest.of(0, 10, Sort.by("courseNo").ascending());
+		var event = new EventResponse(1L, LocalDate.now(), "Host", "Location");
+		var dish1 = new DishResponse(1L, "Dish 1", "Ingredient 1");
+		var dish2 = new DishResponse(2L, "Dish 2", "Ingredient 2");
+		response1 = new CourseResponse(1L, event, 1, "Cook A", dish1);
+		response2 = new CourseResponse(2L, event, 2, "Cook B", dish2);
 	}
 
-	@Test
-	void listAll_shouldReturnMappedPage() {
-		// Arrange
-		Course course1 = mock(Course.class);
-		Course course2 = mock(Course.class);
-		Page<Course> coursePage = new PageImpl<>(List.of(course1, course2), pageable, 2);
+	@Nested
+	@DisplayName("List courses tests")
+	class ListAllCoursesTests {
 
-		CourseDto dto1 = new CourseDto(1L, 1, "Cook A", null);
-		CourseDto dto2 = new CourseDto(2L, 2, "Cook B", null);
-		Page<CourseDto> dtoPage = new PageImpl<>(List.of(dto1, dto2), pageable, 2);
+		@Test
+		@DisplayName("should return paged list of mapped DTOs")
+		void shouldReturnMappedPage_whenCoursesAvailable() {
+			Course course1 = mock(Course.class);
+			Course course2 = mock(Course.class);
+			Page<Course> coursePage = new PageImpl<>(List.of(course1, course2), pageable, 2);
 
-		when(courseRepository.findAll(pageable)).thenReturn(coursePage);
-		when(courseDtoMapper.toDtoPage(coursePage)).thenReturn(dtoPage);
+			given(courseRepository.findAll(pageable)).willReturn(coursePage);
+			given(courseMapper.toCourseResponse(course1)).willReturn(response1);
+			given(courseMapper.toCourseResponse(course2)).willReturn(response2);
 
-		// Act
-		Page<CourseDto> result = courseService.listAll(pageable);
+			Page<CourseResponse> result = courseService.listAll(pageable);
 
-		// Assert
-		assertThat(result.getTotalElements()).isEqualTo(2);
-		assertThat(result.getContent()).containsExactly(dto1, dto2);
-		verify(courseRepository).findAll(pageable);
-		verify(courseDtoMapper).toDtoPage(coursePage);
+			assertThat(result.getTotalElements()).isEqualTo(2);
+			assertThat(result.getContent()).containsExactly(response1, response2);
+		}
+
+		@Test
+		@DisplayName("should return empty list when no courses available")
+		void shouldReturnEmptyList_whenNoCoursesAvailable() {
+			Page<Course> coursesPage = new PageImpl<>(List.of(), pageable, 0);
+
+			given(courseRepository.findAll(pageable)).willReturn(coursesPage);
+
+			var result = courseService.listAll(pageable);
+
+			assertThat(result.getContent()).isEmpty();
+			assertThat(result.getTotalElements()).isEqualTo(0);
+			assertThat(result.getNumber()).isEqualTo(0);
+			assertThat(result.getSize()).isEqualTo(10);
+
+			verify(courseRepository).findAll(pageable);
+			verifyNoInteractions(courseMapper);
+		}
+
 	}
 
-	@Test
-	void listByEvent_shouldReturnMappedPage() {
-		// Arrange
-		long eventId = 42L;
-		Course course = mock(Course.class);
-		Page<Course> coursePage = new PageImpl<>(List.of(course), pageable, 1);
+	@Nested
+	@DisplayName("List courses by event tests")
+	class ListByEventTests {
 
-		CourseDto dto = new CourseDto(10L, 1, "Cook X", null);
-		Page<CourseDto> dtoPage = new PageImpl<>(List.of(dto), pageable, 1);
+		@Test
+		@DisplayName("should return paged list of mapped DTOs")
+		void shouldReturnMappedPage_whenCoursesAvailableForEvent() {
+			long eventId = 42L;
+			Course course = mock(Course.class);
+			Page<Course> coursePage = new PageImpl<>(List.of(course), pageable, 1);
 
-		when(courseRepository.findByEventId(eventId, pageable)).thenReturn(coursePage);
-		when(courseDtoMapper.toDtoPage(coursePage)).thenReturn(dtoPage);
+			given(courseRepository.findByEventId(eventId, pageable)).willReturn(coursePage);
+			given(courseMapper.toCourseResponse(course)).willReturn(response1);
 
-		// Act
-		Page<CourseDto> result = courseService.listByEvent(eventId, pageable);
+			Page<CourseResponse> result = courseService.listByEvent(eventId, pageable);
 
-		// Assert
-		assertThat(result.getTotalElements()).isEqualTo(1);
-		assertThat(result.getContent()).containsExactly(dto);
-		verify(courseRepository).findByEventId(eventId, pageable);
-		verify(courseDtoMapper).toDtoPage(coursePage);
+			assertThat(result.getTotalElements()).isEqualTo(1);
+			assertThat(result.getContent()).containsExactly(response1);
+		}
+
+		@Test
+		@DisplayName("should return empty list when no courses available")
+		void shouldReturnEmptyList_whenNoCoursesAvailableForEvent() {
+			long eventId = 42L;
+			Page<Course> coursesPage = new PageImpl<>(List.of(), pageable, 0);
+
+			given(courseRepository.findByEventId(eventId, pageable)).willReturn(coursesPage);
+
+			var result = courseService.listByEvent(eventId, pageable);
+
+			assertThat(result.getContent()).isEmpty();
+			assertThat(result.getTotalElements()).isEqualTo(0);
+			assertThat(result.getNumber()).isEqualTo(0);
+			assertThat(result.getSize()).isEqualTo(10);
+
+			verifyNoInteractions(courseMapper);
+		}
+
 	}
 
-	@Test
-	void findById_shouldReturnMappedDto_whenFound() {
-		// Arrange
-		long id = 5L;
-		Course course = mock(Course.class);
-		CourseDto dto = new CourseDto(id, 3, "Cook Y", null);
+	@Nested
+	@DisplayName("Find by id tests")
+	class FindByIdTests {
 
-		when(courseRepository.findById(id)).thenReturn(Optional.of(course));
-		when(courseDtoMapper.toDto(course)).thenReturn(dto);
+		@Test
+		@DisplayName("should return mapped DTO when course exists")
+		void shouldReturnMappedDto_whenCourseExists() {
+			long id = 5L;
+			Course course = mock(Course.class);
 
-		// Act
-		CourseDto result = courseService.findById(id);
+			given(courseRepository.findById(id)).willReturn(Optional.of(course));
+			given(courseMapper.toCourseResponse(course)).willReturn(response1);
 
-		// Assert
-		assertThat(result).isEqualTo(dto);
-		verify(courseRepository).findById(id);
-		verify(courseDtoMapper).toDto(course);
+			CourseResponse result = courseService.findById(id);
+
+			assertThat(result).isEqualTo(response1);
+		}
+
+		@Test
+		@DisplayName("should throw CourseNotFoundException when course does not exist")
+		void shouldThrowCourseNotFoundException_whenCourseNotFound() {
+			long id = 999L;
+			given(courseRepository.findById(id)).willReturn(Optional.empty());
+
+			assertThatThrownBy(() -> courseService.findById(id)).isInstanceOf(CourseNotFoundException.class)
+				.hasMessageContaining(String.valueOf(id));
+
+			verifyNoInteractions(courseMapper);
+		}
+
 	}
 
-	@Test
-	void findById_shouldThrow_whenNotFound() {
-		// Arrange
-		long id = 999L;
-		when(courseRepository.findById(id)).thenReturn(Optional.empty());
+	@Nested
+	@DisplayName("Create course tests")
+	class CreateCourseTest {
 
-		// Act / Assert
-		assertThatThrownBy(() -> courseService.findById(id)).isInstanceOf(CourseNotFoundException.class)
-			.hasMessageContaining(String.valueOf(id));
+		@Test
+		@DisplayName("should create and return mapped DTO")
+		void shouldCreateAndReturnMappedDto() {
+			long eventId = 77L;
 
-		verify(courseRepository).findById(id);
-		verifyNoInteractions(courseDtoMapper);
+			var event = new Event(LocalDate.now(), "Host");
+			var course = new Course(event, 4, "New Cook");
+			var dish = new Dish("Dish Name");
+			course.setDish(dish);
+
+			var request = new CourseUpsertRequest(4, "New Cook", new DishUpsertRequest("Dish Name", "Ingredient X"));
+
+			given(eventRepository.findById(eventId)).willReturn(Optional.of(event));
+			given(courseMapper.fromCourseUpsertRequest(event, request)).willReturn(course);
+			given(courseRepository.save(course)).willReturn(course);
+			given(courseMapper.toCourseResponse(course)).willReturn(response1);
+
+			CourseResponse result = courseService.create(eventId, request);
+
+			assertThat(result).isEqualTo(response1);
+		}
+
+		@Test
+		@DisplayName("should throw NullPointerException when upsertRequest is null")
+		void shouldThrowNullPointerException_whenUpsertRequestIsNull() {
+			assertThatThrownBy(() -> courseService.create(1L, null)).isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		@DisplayName("should throw EventNotFoundException when event does not exist")
+		void shouldThrowEventNotFoundException_whenEventNotFound() {
+			long eventId = 404L;
+			given(eventRepository.findById(eventId)).willReturn(Optional.empty());
+
+			CourseUpsertRequest input = new CourseUpsertRequest(1, "Cook", new DishUpsertRequest("Dish", "Ingredient"));
+
+			assertThatThrownBy(() -> courseService.create(eventId, input)).isInstanceOf(EventNotFoundException.class);
+
+			verify(courseRepository, never()).save(any());
+			verifyNoInteractions(courseMapper);
+		}
+
 	}
 
-	@Test
-	void create_shouldPersistCourseAndReturnDto() {
-		// Arrange
-		long eventId = 77L;
+	@Nested
+	@DisplayName("Update course tests")
+	class UpdateCourseTest {
 
-		// The service now looks up the event first
-		Event event = new Event(LocalDate.now(), "Host");
-		when(eventRepository.findById(eventId)).thenReturn(Optional.of(event));
+		@Test
+		@DisplayName("should update and return mapped DTO when course exists")
+		void shouldUpdateAndReturnMappedDto_whenCourseExists() {
+			long id = 55L;
+			Event event = new Event(LocalDate.now(), "Host");
+			Dish existingDish = new Dish("Old Dish");
+			existingDish.setMainIngredient("Old Ingredient");
+			Course existingCourse = new Course(event, 2, "Old Cook");
 
-		CreateUpdateCourseDto input = new CreateUpdateCourseDto(4, "New Cook",
-				new CreateUpdateDishDto("Dish Name", "Ingredient X"));
+			Dish updatedDish = new Dish("New Dish");
+			updatedDish.setMainIngredient("New Ingredient");
+			Course updatedCourse = new Course(event, 1, "New Cook");
+			updatedCourse.setDish(updatedDish);
 
-		// Capture the entity passed to save to verify construction and relationships
-		ArgumentCaptor<Course> courseCaptor = ArgumentCaptor.forClass(Course.class);
+			CourseUpsertRequest request = new CourseUpsertRequest(7, "New Cook",
+					new DishUpsertRequest("New Dish", "New Ingredient"));
 
-		// Mock repository save to return a persisted course
-		when(courseRepository.save(any(Course.class))).thenAnswer(invocation -> {
-			Course toSave = invocation.getArgument(0);
-			Course saved = new Course(event, toSave.getCourseNo(), toSave.getCook());
-			saved.setDish(toSave.getDish());
-			return saved;
-		});
+			given(courseRepository.findById(id)).willReturn(Optional.of(existingCourse));
+			given(courseMapper.mergeWithCourseUpsertRequest(existingCourse, request)).willReturn(updatedCourse);
+			given(courseRepository.save(updatedCourse)).willReturn(updatedCourse);
+			given(courseMapper.toCourseResponse(updatedCourse)).willReturn(response1);
 
-		CourseDto expectedDto = new CourseDto(123L, 4, "New Cook", null);
-		when(courseDtoMapper.toDto(any(Course.class))).thenReturn(expectedDto);
+			CourseResponse result = courseService.update(id, request);
 
-		// Act
-		CourseDto result = courseService.create(eventId, input);
+			assertThat(result).isEqualTo(response1);
+		}
 
-		// Assert
-		assertThat(result).isEqualTo(expectedDto);
-		verify(eventRepository).findById(eventId);
-		verify(courseRepository).save(courseCaptor.capture());
-		Course created = courseCaptor.getValue();
-		assertThat(created.getEvent()).isSameAs(event);
-		assertThat(created.getCourseNo()).isEqualTo(4);
-		assertThat(created.getCook()).isEqualTo("New Cook");
-		assertThat(created.getDish()).isNotNull();
-		assertThat(created.getDish().getName()).isEqualTo("Dish Name");
-		assertThat(created.getDish().getMainIngredient()).isEqualTo("Ingredient X");
-		verify(courseDtoMapper).toDto(any(Course.class));
+		@Test
+		@DisplayName("should throw NullPointerException when upsertRequest is null")
+		void shouldThrowNullPointerException_whenUpsertRequestIsNull() {
+			assertThatThrownBy(() -> courseService.update(1L, null)).isInstanceOf(NullPointerException.class);
+		}
+
+		@Test
+		@DisplayName("should throw CourseNotFoundException when course does not exist")
+		void shouldThrowCourseNotFoundException_whenCourseNotFound() {
+			long id = 404L;
+			given(courseRepository.findById(id)).willReturn(Optional.empty());
+
+			CourseUpsertRequest input = new CourseUpsertRequest(1, "Cook", new DishUpsertRequest("Dish", "Ingredient"));
+
+			assertThatThrownBy(() -> courseService.update(id, input)).isInstanceOf(CourseNotFoundException.class);
+
+			verify(courseRepository, never()).save(any());
+			verifyNoInteractions(courseMapper);
+		}
+
 	}
 
-	@Test
-	void create_shouldThrow_whenEventNotFound() {
-		// Arrange
-		long eventId = 404L;
-		when(eventRepository.findById(eventId)).thenReturn(Optional.empty());
+	@Nested
+	@DisplayName("Delete course tests")
+	class DeleteTests {
 
-		CreateUpdateCourseDto input = new CreateUpdateCourseDto(1, "Cook",
-				new CreateUpdateDishDto("Dish", "Ingredient"));
+		@Test
+		void shouldDeleteCourse() {
+			long id = 11L;
 
-		// Act / Assert
-		assertThatThrownBy(() -> courseService.create(eventId, input)).isInstanceOf(EventNotFoundException.class);
+			courseService.delete(id);
 
-		verify(eventRepository).findById(eventId);
-		verify(courseRepository, never()).save(any());
-		verifyNoInteractions(courseDtoMapper);
-	}
+			verify(courseRepository).deleteById(id);
+			verifyNoInteractions(courseMapper);
+		}
 
-	@Test
-	void update_shouldModifyExistingCourse_andReturnDto() {
-		// Arrange
-		long id = 55L;
-		Dish existingDish = new Dish("Old Dish");
-		existingDish.setMainIngredient("Old Ingredient");
-		Course existing = mock(Course.class, RETURNS_DEEP_STUBS);
-
-		when(courseRepository.findById(id)).thenReturn(Optional.of(existing));
-
-		// Mutations expectations on existing entity
-		// We'll use doNothing() stubs and verify calls
-		doNothing().when(existing).setCourseNo(7);
-		doNothing().when(existing).setCook("Updated Cook");
-		when(existing.getDish()).thenReturn(existingDish);
-
-		// After save, return the same instance (typical for JPA)
-		when(courseRepository.save(existing)).thenReturn(existing);
-
-		CourseDto expectedDto = new CourseDto(id, 7, "Updated Cook", null);
-		when(courseDtoMapper.toDto(existing)).thenReturn(expectedDto);
-
-		CreateUpdateCourseDto input = new CreateUpdateCourseDto(7, "Updated Cook",
-				new CreateUpdateDishDto("New Dish", "New Ingredient"));
-
-		// Act
-		CourseDto result = courseService.update(id, input);
-
-		// Assert
-		assertThat(result).isEqualTo(expectedDto);
-		verify(courseRepository).findById(id);
-		verify(existing).setCourseNo(7);
-		verify(existing).setCook("Updated Cook");
-		assertThat(existing.getDish().getName()).isEqualTo("New Dish");
-		assertThat(existing.getDish().getMainIngredient()).isEqualTo("New Ingredient");
-		verify(courseRepository).save(existing);
-		verify(courseDtoMapper).toDto(existing);
-	}
-
-	@Test
-	void update_shouldThrow_whenCourseNotFound() {
-		// Arrange
-		long id = 404L;
-		when(courseRepository.findById(id)).thenReturn(Optional.empty());
-
-		CreateUpdateCourseDto input = new CreateUpdateCourseDto(1, "Cook",
-				new CreateUpdateDishDto("Dish", "Ingredient"));
-
-		// Act / Assert
-		assertThatThrownBy(() -> courseService.update(id, input)).isInstanceOf(CourseNotFoundException.class);
-
-		verify(courseRepository).findById(id);
-		verify(courseRepository, never()).save(any());
-		verifyNoInteractions(courseDtoMapper);
-	}
-
-	@Test
-	void delete_shouldDelegateToRepository() {
-		// Arrange
-		long id = 11L;
-
-		// Act
-		courseService.delete(id);
-
-		// Assert
-		verify(courseRepository).deleteById(id);
-		verifyNoInteractions(courseDtoMapper);
 	}
 
 }

@@ -13,8 +13,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("CreateUpdateDishDto")
-class CreateUpdateDishDtoValidatorTest {
+@DisplayName("DishUpsertRequest validation tests")
+class DishUpsertRequestValidatorTest {
 
 	private Validator validator;
 
@@ -28,9 +28,9 @@ class CreateUpdateDishDtoValidatorTest {
 	@Test
 	@DisplayName("should accept valid dish")
 	void shouldAcceptValidDish() {
-		CreateUpdateDishDto dto = new CreateUpdateDishDto("Dish Name", "Main Ingredient");
+		DishUpsertRequest dto = new DishUpsertRequest("Dish Name", "Main Ingredient");
 
-		Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+		Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 		assertThat(violations).isEmpty();
 	}
@@ -42,9 +42,9 @@ class CreateUpdateDishDtoValidatorTest {
 		@Test
 		@DisplayName("should accept valid name")
 		void shouldAcceptValidName() {
-			CreateUpdateDishDto dto = new CreateUpdateDishDto("Dish Name", null);
+			DishUpsertRequest dto = new DishUpsertRequest("Dish Name", null);
 
-			Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isEmpty();
 		}
@@ -52,9 +52,9 @@ class CreateUpdateDishDtoValidatorTest {
 		@Test
 		@DisplayName("should reject null name")
 		void shouldRejectNullName() {
-			CreateUpdateDishDto dto = new CreateUpdateDishDto(null, "Main Ingredient");
+			DishUpsertRequest dto = new DishUpsertRequest(null, "Main Ingredient");
 
-			Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
@@ -65,9 +65,9 @@ class CreateUpdateDishDtoValidatorTest {
 		@Test
 		@DisplayName("should reject empty name")
 		void shouldRejectEmptyName() {
-			CreateUpdateDishDto dto = new CreateUpdateDishDto("", "Main Ingredient");
+			DishUpsertRequest dto = new DishUpsertRequest("", "Main Ingredient");
 
-			Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
@@ -78,9 +78,9 @@ class CreateUpdateDishDtoValidatorTest {
 		@Test
 		@DisplayName("should reject whitespace-only name")
 		void shouldRejectWhitespaceOnlyName() {
-			CreateUpdateDishDto dto = new CreateUpdateDishDto("   ", "Main Ingredient");
+			DishUpsertRequest dto = new DishUpsertRequest("   ", "Main Ingredient");
 
-			Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("name");
@@ -97,9 +97,9 @@ class CreateUpdateDishDtoValidatorTest {
 		@Test
 		@DisplayName("should accept null mainIngredient")
 		void shouldAcceptNullMainIngredient() {
-			CreateUpdateDishDto dto = new CreateUpdateDishDto("Dish Name", null);
+			DishUpsertRequest dto = new DishUpsertRequest("Dish Name", null);
 
-			Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isEmpty();
 		}
@@ -107,9 +107,9 @@ class CreateUpdateDishDtoValidatorTest {
 		@Test
 		@DisplayName("should accept empty mainIngredient")
 		void shouldAcceptEmptyMainIngredient() {
-			CreateUpdateDishDto dto = new CreateUpdateDishDto("Dish Name", "");
+			DishUpsertRequest dto = new DishUpsertRequest("Dish Name", "");
 
-			Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isEmpty();
 		}
@@ -117,9 +117,9 @@ class CreateUpdateDishDtoValidatorTest {
 		@Test
 		@DisplayName("should accept any non-empty mainIngredient")
 		void shouldAcceptAnyNonEmptyMainIngredient() {
-			CreateUpdateDishDto dto = new CreateUpdateDishDto("Dish Name", "Tomato");
+			DishUpsertRequest dto = new DishUpsertRequest("Dish Name", "Tomato");
 
-			Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isEmpty();
 		}
@@ -129,9 +129,9 @@ class CreateUpdateDishDtoValidatorTest {
 	@Test
 	@DisplayName("should report only name violation when name invalid and mainIngredient null")
 	void shouldReportOnlyNameViolation() {
-		CreateUpdateDishDto dto = new CreateUpdateDishDto("", null);
+		DishUpsertRequest dto = new DishUpsertRequest("", null);
 
-		Set<ConstraintViolation<CreateUpdateDishDto>> violations = validator.validate(dto);
+		Set<ConstraintViolation<DishUpsertRequest>> violations = validator.validate(dto);
 
 		assertThat(violations).hasSize(1)
 			.extracting(v -> v.getPropertyPath().toString())

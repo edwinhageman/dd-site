@@ -1,8 +1,10 @@
 package emh.dd_site.event.controller;
 
-import emh.dd_site.event.dto.CourseDto;
-import emh.dd_site.event.dto.CreateUpdateCourseDto;
+import emh.dd_site.event.dto.CourseResponse;
+import emh.dd_site.event.dto.CourseUpsertRequest;
+import emh.dd_site.event.dto.EventResponse;
 import emh.dd_site.event.service.CourseService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
+
+import java.time.LocalDate;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.*;
@@ -31,13 +35,20 @@ class CourseControllerTest {
 	@InjectMocks
 	private CourseController courseController;
 
-	private final CourseDto testCourseDto = new CourseDto(1L, 2, "Cook Name", null);
+	private CourseResponse testResponse;
 
-	private final CreateUpdateCourseDto createDto = new CreateUpdateCourseDto(2, "Cook Name", null);
+	private CourseUpsertRequest testRequest;
+
+	@BeforeEach
+	void setUp() {
+		var event = new EventResponse(1L, LocalDate.now(), "Event Name", null);
+		testResponse = new CourseResponse(1L, event, 2, "Cook Name", null);
+		testRequest = new CourseUpsertRequest(2, "Cook Name", null);
+	}
 
 	@Nested
 	@DisplayName("GET /api/courses")
-	class ListCourses {
+	class ListCoursesTests {
 
 		@Test
 		@DisplayName("should return paged list and enforce DESC sort by event.date")
@@ -45,14 +56,14 @@ class CourseControllerTest {
 			// given
 			PageRequest input = PageRequest.of(1, 10); // controller will enforce sort
 			PageRequest expected = PageRequest.of(1, 10, Sort.by(Sort.Direction.DESC, "event.date"));
-			PageImpl<CourseDto> page = new PageImpl<>(java.util.List.of(testCourseDto), expected, 1);
+			PageImpl<CourseResponse> page = new PageImpl<>(java.util.List.of(testResponse), expected, 1);
 			given(courseService.listAll(any(PageRequest.class))).willReturn(page);
 
 			// when
-			Page<CourseDto> result = courseController.list(input);
+			Page<CourseResponse> result = courseController.list(input);
 
 			// then
-			assertThat(result.getContent()).containsExactly(testCourseDto);
+			assertThat(result.getContent()).containsExactly(testResponse);
 			assertThat(result.getNumber()).isEqualTo(1);
 			assertThat(result.getSize()).isEqualTo(10);
 
@@ -68,7 +79,7 @@ class CourseControllerTest {
 
 	@Nested
 	@DisplayName("GET /api/events/{eventId}/courses")
-	class ListCoursesByEvent {
+	class ListCoursesByEventTests {
 
 		@Test
 		@DisplayName("should return paged list filtered by event and enforce DESC sort by courseNo")
@@ -77,14 +88,14 @@ class CourseControllerTest {
 			long eventId = 42L;
 			PageRequest input = PageRequest.of(0, 5);
 			PageRequest expected = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "courseNo"));
-			PageImpl<CourseDto> page = new PageImpl<>(java.util.List.of(testCourseDto), expected, 1);
+			PageImpl<CourseResponse> page = new PageImpl<>(java.util.List.of(testResponse), expected, 1);
 			given(courseService.listByEvent(eq(eventId), any(PageRequest.class))).willReturn(page);
 
 			// when
-			Page<CourseDto> result = courseController.listByEvent(eventId, input);
+			Page<CourseResponse> result = courseController.listByEvent(eventId, input);
 
 			// then
-			assertThat(result.getContent()).containsExactly(testCourseDto);
+			assertThat(result.getContent()).containsExactly(testResponse);
 
 			// verify page and sort
 			verify(courseService).listByEvent(eq(eventId), argThat(pr -> {
@@ -98,19 +109,19 @@ class CourseControllerTest {
 
 	@Nested
 	@DisplayName("GET /api/courses/{id}")
-	class GetOneCourse {
+	class GetOneCourseTests {
 
 		@Test
 		@DisplayName("should return single course")
 		void shouldReturnSingleCourse() {
 			// given
-			given(courseService.findById(7L)).willReturn(testCourseDto);
+			given(courseService.findById(7L)).willReturn(testResponse);
 
 			// when
-			CourseDto result = courseController.one(7L);
+			CourseResponse result = courseController.one(7L);
 
 			// then
-			assertThat(result).isEqualTo(testCourseDto);
+			assertThat(result).isEqualTo(testResponse);
 			verify(courseService).findById(7L);
 		}
 
@@ -118,49 +129,49 @@ class CourseControllerTest {
 
 	@Nested
 	@DisplayName("POST /api/events/{eventId}/courses")
-	class CreateCourse {
+	class CreateCourseTests {
 
 		@Test
 		@DisplayName("should create and return course")
 		void shouldCreateAndReturnCourse() {
 			// given
 			long eventId = 9L;
-			given(courseService.create(eq(eventId), any(CreateUpdateCourseDto.class))).willReturn(testCourseDto);
+			given(courseService.create(eq(eventId), any(CourseUpsertRequest.class))).willReturn(testResponse);
 
 			// when
-			CourseDto result = courseController.create(eventId, createDto);
+			CourseResponse result = courseController.create(eventId, testRequest);
 
 			// then
-			assertThat(result).isEqualTo(testCourseDto);
-			verify(courseService).create(eventId, createDto);
+			assertThat(result).isEqualTo(testResponse);
+			verify(courseService).create(eventId, testRequest);
 		}
 
 	}
 
 	@Nested
 	@DisplayName("PUT /api/courses/{id}")
-	class UpdateCourse {
+	class UpdateCourseTests {
 
 		@Test
 		@DisplayName("should update and return course")
 		void shouldUpdateAndReturnCourse() {
 			// given
 			long id = 5L;
-			given(courseService.update(eq(id), any(CreateUpdateCourseDto.class))).willReturn(testCourseDto);
+			given(courseService.update(eq(id), any(CourseUpsertRequest.class))).willReturn(testResponse);
 
 			// when
-			CourseDto result = courseController.update(id, createDto);
+			CourseResponse result = courseController.update(id, testRequest);
 
 			// then
-			assertThat(result).isEqualTo(testCourseDto);
-			verify(courseService).update(id, createDto);
+			assertThat(result).isEqualTo(testResponse);
+			verify(courseService).update(id, testRequest);
 		}
 
 	}
 
 	@Nested
 	@DisplayName("DELETE /api/courses/{id}")
-	class DeleteCourse {
+	class DeleteCourseTests {
 
 		@Test
 		@DisplayName("should delete and return 204 No Content")

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record CreateUpdateCourseDto(@NotNull @Positive Integer courseNo, @NotBlank String cook,
-		@Valid CreateUpdateDishDto dish) {
+public record CourseUpsertRequest(@NotNull @Positive Integer courseNo, @NotBlank String cook,
+		@Valid DishUpsertRequest dish) {
 
 }

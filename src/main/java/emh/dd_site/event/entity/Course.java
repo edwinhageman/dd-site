@@ -1,16 +1,14 @@
 package emh.dd_site.event.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
 import java.util.Objects;
 
 @Entity
 @Table(name = "course")
+@RequiredArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
 public class Course {
 
@@ -56,12 +54,6 @@ public class Course {
 	private Wine wine;
 
 	protected Course() {
-	}
-
-	public Course(@NonNull Event event, @NonNull Integer courseNo, @NonNull String cook) {
-		this.event = event;
-		this.courseNo = courseNo;
-		this.cook = cook;
 	}
 
 	public void setDish(Dish dish) {

@@ -13,8 +13,8 @@ import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@DisplayName("CreateUpdateCourseDto")
-public class CreateUpdateCourseDtoValidatorTest {
+@DisplayName("CourseUpsertRequest validation tests")
+public class CourseUpsertRequestValidatorTest {
 
 	private Validator validator;
 
@@ -32,9 +32,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should accept positive courseNo")
 		void shouldAcceptPositiveCourseNo() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(1, "Cook", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(1, "Cook", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isEmpty();
 		}
@@ -42,9 +42,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should reject null courseNo")
 		void shouldRejectNullCourseNo() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(null, "Cook", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(null, "Cook", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("courseNo");
@@ -55,9 +55,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should reject zero courseNo")
 		void shouldRejectZeroCourseNo() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(0, "Cook", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(0, "Cook", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("courseNo");
@@ -68,9 +68,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should reject negative courseNo")
 		void shouldRejectNegativeCourseNo() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(-1, "Cook", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(-1, "Cook", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("courseNo");
@@ -87,9 +87,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should accept valid cook")
 		void shouldAcceptValidCook() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(1, "Cook Name", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(1, "Cook Name", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isEmpty();
 		}
@@ -97,9 +97,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should reject null cook")
 		void shouldRejectNullCook() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(1, null, null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(1, null, null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("cook");
@@ -110,9 +110,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should reject empty cook")
 		void shouldRejectEmptyCook() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(1, "", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(1, "", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("cook");
@@ -123,9 +123,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should reject whitespace-only cook")
 		void shouldRejectWhitespaceOnlyCook() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(1, "   ", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(1, "   ", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
 				assertThat(violation.getPropertyPath().toString()).isEqualTo("cook");
@@ -142,9 +142,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should accept null dish")
 		void shouldAcceptNullDish() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(1, "Cook", null);
+			CourseUpsertRequest dto = new CourseUpsertRequest(1, "Cook", null);
 
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isEmpty();
 		}
@@ -152,8 +152,8 @@ public class CreateUpdateCourseDtoValidatorTest {
 		@Test
 		@DisplayName("should validate dish properties when not null")
 		void shouldValidateDishPropertiesWhenNotNull() {
-			CreateUpdateCourseDto dto = new CreateUpdateCourseDto(1, "Cook", new CreateUpdateDishDto("", null));
-			Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+			CourseUpsertRequest dto = new CourseUpsertRequest(1, "Cook", new DishUpsertRequest("", null));
+			Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 			assertThat(violations).isNotEmpty();
 		}
@@ -163,9 +163,9 @@ public class CreateUpdateCourseDtoValidatorTest {
 	@Test
 	@DisplayName("should validate multiple fields")
 	void shouldValidateMultipleFields() {
-		CreateUpdateCourseDto dto = new CreateUpdateCourseDto(null, "", null);
+		CourseUpsertRequest dto = new CourseUpsertRequest(null, "", null);
 
-		Set<ConstraintViolation<CreateUpdateCourseDto>> violations = validator.validate(dto);
+		Set<ConstraintViolation<CourseUpsertRequest>> violations = validator.validate(dto);
 
 		assertThat(violations).hasSize(2)
 			.extracting(v -> v.getPropertyPath().toString())
