@@ -5,10 +5,10 @@ import emh.dd_site.event.dto.WineUpsertRequest;
 import emh.dd_site.event.service.WineService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +23,17 @@ public class WineController {
 	private final WineService wineService;
 
 	@GetMapping("/api/wines")
-	public Page<WineResponse> list(Pageable pageable) {
+	public PagedModel<WineResponse> list(Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_NAME);
-		return wineService.listAll(pageRequest);
+		var page = wineService.listAll(pageRequest);
+		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/events/{eventId}/wines")
-	public Page<WineResponse> listByEvent(@PathVariable long eventId, Pageable pageable) {
+	public PagedModel<WineResponse> listByEvent(@PathVariable long eventId, Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_EVENT_DATE);
-		return wineService.listByEvent(eventId, pageRequest);
+		var page = wineService.listByEvent(eventId, pageRequest);
+		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/wines/{id}")

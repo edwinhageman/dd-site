@@ -5,10 +5,10 @@ import emh.dd_site.event.dto.CourseUpsertRequest;
 import emh.dd_site.event.service.CourseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,15 +23,17 @@ public class CourseController {
 	private final CourseService courseService;
 
 	@GetMapping("/api/courses")
-	public Page<CourseResponse> list(Pageable pageable) {
+	public PagedModel<CourseResponse> list(Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_EVENT_DATE);
-		return courseService.listAll(pageRequest);
+		var page = courseService.listAll(pageRequest);
+		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/events/{eventId}/courses")
-	public Page<CourseResponse> listByEvent(@PathVariable long eventId, Pageable pageable) {
+	public PagedModel<CourseResponse> listByEvent(@PathVariable long eventId, Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_COURSE_NO);
-		return courseService.listByEvent(eventId, pageRequest);
+		var page = courseService.listByEvent(eventId, pageRequest);
+		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/courses/{id}")

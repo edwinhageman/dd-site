@@ -60,8 +60,9 @@ class WineControllerTest {
 			var response = wineController.list(pageRequest);
 
 			assertThat(response.getContent()).containsExactly(testResponse);
-			assertThat(response.getNumber()).isEqualTo(0);
-			assertThat(response.getSize()).isEqualTo(10);
+			assertThat(response.getMetadata()).isNotNull();
+			assertThat(response.getMetadata().number()).isEqualTo(0);
+			assertThat(response.getMetadata().size()).isEqualTo(10);
 		}
 
 	}
@@ -83,8 +84,9 @@ class WineControllerTest {
 			var response = wineController.listByEvent(eventId, pageRequest);
 
 			assertThat(response.getContent()).containsExactly(testResponse);
-			assertThat(response.getNumber()).isEqualTo(0);
-			assertThat(response.getSize()).isEqualTo(10);
+			assertThat(response.getMetadata()).isNotNull();
+			assertThat(response.getMetadata().number()).isEqualTo(0);
+			assertThat(response.getMetadata().size()).isEqualTo(10);
 		}
 
 	}

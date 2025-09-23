@@ -11,7 +11,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -57,13 +56,14 @@ class EventControllerTest {
 			given(eventService.listAll(any(PageRequest.class))).willReturn(page);
 
 			// when
-			Page<EventResponse> result = eventController.list(inputRequest);
+			var result = eventController.list(inputRequest);
 
 			// then
 			assertThat(result.getContent()).containsExactly(testEventResponse);
-			assertThat(result.getTotalElements()).isEqualTo(1);
-			assertThat(result.getNumber()).isEqualTo(0);
-			assertThat(result.getSize()).isEqualTo(20);
+			assertThat(result.getMetadata()).isNotNull();
+			assertThat(result.getMetadata().totalElements()).isEqualTo(1);
+			assertThat(result.getMetadata().number()).isEqualTo(0);
+			assertThat(result.getMetadata().size()).isEqualTo(20);
 
 			// verify sort is enforced to DESC by date
 			verify(eventService).listAll(argThat(pr -> {

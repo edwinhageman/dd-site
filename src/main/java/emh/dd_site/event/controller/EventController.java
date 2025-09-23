@@ -5,10 +5,10 @@ import emh.dd_site.event.dto.EventUpsertRequest;
 import emh.dd_site.event.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,9 +21,10 @@ public class EventController {
 	private final EventService eventService;
 
 	@GetMapping("/api/events")
-	public Page<EventResponse> list(Pageable pageable) {
+	public PagedModel<EventResponse> list(Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), DEFAULT_SORT);
-		return eventService.listAll(pageRequest);
+		var page = eventService.listAll(pageRequest);
+		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/events/{id}")

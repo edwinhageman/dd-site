@@ -62,9 +62,9 @@ class EventControllerIT {
 			.andExpect(jsonPath("$.content[0].date").value(testEventResponse.date().toString()))
 			.andExpect(jsonPath("$.content[0].host").value(testEventResponse.host()))
 			.andExpect(jsonPath("$.content[0].location").value(testEventResponse.location()))
-			.andExpect(jsonPath("$.totalElements").value(1))
-			.andExpect(jsonPath("$.number").value(0))
-			.andExpect(jsonPath("$.size").value(20));
+			.andExpect(jsonPath("$.page.totalElements").value(1))
+			.andExpect(jsonPath("$.page.number").value(0))
+			.andExpect(jsonPath("$.page.size").value(20));
 	}
 
 	@Test
