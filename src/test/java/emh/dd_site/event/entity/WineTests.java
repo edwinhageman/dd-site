@@ -153,6 +153,14 @@ class WineTests {
 		}
 
 		@Test
+		@DisplayName("Should clear courses")
+		void shouldClearCourses() {
+			wine.addCourse(course);
+			wine.clearCourses();
+			assertTrue(wine.getCourses().isEmpty());
+		}
+
+		@Test
 		@DisplayName("Should throw NullPointerException when adding null course")
 		void shouldThrowExceptionWhenAddingNullCourse() {
 			assertThrows(NullPointerException.class, () -> wine.addCourse(null));

@@ -85,6 +85,10 @@ public class Wine {
 		this.courses.remove(course);
 	}
 
+	public void clearCourses() {
+		this.courses.clear();
+	}
+
 	@Override
 	public final boolean equals(Object o) {
 		if (this == o)

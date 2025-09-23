@@ -114,7 +114,7 @@ class WineRepositoryIT {
 	}
 
 	@Test
-	void shouldHandleWineWithCourses() {
+	void shouldFineWineByIdAndFetchRelatedCourses() {
 		// Arrange
 		Wine wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
 		wine = wineRepository.save(wine);
@@ -138,6 +138,39 @@ class WineRepositoryIT {
 		// Assert
 		assertThat(retrievedWine.getCourses()).hasSize(2);
 		assertThat(retrievedWine.getCourses()).extracting(Course::getCourseNo).containsExactlyInAnyOrder(1, 2);
+	}
+
+	@Test
+	void shouldFindWineByEventId() {
+		// Arrange
+		Wine wine1 = new Wine("Test Wine 1", WineType.RED, "Merlot", "France");
+		Wine wine2 = new Wine("Test Wine 2", WineType.WHITE, "Chardonnay", "France");
+		wine1 = wineRepository.save(wine1);
+		wine2 = wineRepository.save(wine2);
+
+		Event event = new Event(LocalDate.now(), "Test Event");
+		event = eventRepository.save(event);
+
+		Course course1 = new Course(event, 1, "Cook A");
+		course1.setDish(new Dish("Test Dish 1"));
+		course1.setWine(wine1);
+		Course course2 = new Course(event, 2, "Cook B");
+		course2.setDish(new Dish("Test Dish 2"));
+		course2.setWine(wine2);
+
+		// Act
+		courseRepository.saveAll(List.of(course1, course2));
+		entityManager.flush();
+
+		Page<Wine> winePage = wineRepository.findByEventId(event.getId(),
+				PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "name")));
+
+		// Assert
+		assertThat(winePage.getContent()).hasSize(2);
+		assertThat(winePage.getTotalElements()).isEqualTo(2);
+		assertThat(winePage.getTotalPages()).isEqualTo(1);
+		assertThat(winePage.getContent().get(0).getName()).isEqualTo("Test Wine 1");
+		assertThat(winePage.getContent().get(1).getName()).isEqualTo("Test Wine 2");
 	}
 
 	@Test

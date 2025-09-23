@@ -54,7 +54,12 @@ public class TestWineBuilder {
 		return this;
 	}
 
-	Wine build() {
+	public TestWineBuilder addCourse(Course course) {
+		this.wine.addCourse(course);
+		return this;
+	}
+
+	public Wine build() {
 		return wine;
 	}
 
