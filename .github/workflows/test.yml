@@ -29,16 +29,9 @@ jobs:
       docker:
         image: docker:dind
         options: --privileged
-    env:
-      GCP_CREDENTIALS_PATH: ./secrets/gcp-credentials.json
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup configuration
-        run: |
-          mkdir secrets
-          echo '${{ secrets.GCP_CREDENTIALS }}' >> secrets/gcp-credentials.json
 
       - name: Setup java
         uses: actions/setup-java@v4
