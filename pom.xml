@@ -9,10 +9,10 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>emh</groupId>
-    <artifactId>dd_site</artifactId>
+    <artifactId>dd-site</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <name>dd_site</name>
-    <description>dd_site</description>
+    <name>dd-site</name>
+    <description>dd-site</description>
     <url/>
     <licenses>
         <license/>
