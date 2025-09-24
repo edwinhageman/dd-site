@@ -23,36 +23,36 @@ public class CourseController {
 	private final CourseService courseService;
 
 	@GetMapping("/api/courses")
-	public PagedModel<CourseResponse> list(Pageable pageable) {
+	public PagedModel<CourseResponse> listCourses(Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_EVENT_DATE);
 		var page = courseService.listAll(pageRequest);
 		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/events/{eventId}/courses")
-	public PagedModel<CourseResponse> listByEvent(@PathVariable long eventId, Pageable pageable) {
+	public PagedModel<CourseResponse> listCoursesByEvent(@PathVariable long eventId, Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_COURSE_NO);
 		var page = courseService.listByEvent(eventId, pageRequest);
 		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/courses/{id}")
-	public CourseResponse one(@PathVariable long id) {
+	public CourseResponse getCourseById(@PathVariable long id) {
 		return courseService.findById(id);
 	}
 
 	@PostMapping("/api/events/{eventId}/courses")
-	public CourseResponse create(@PathVariable long eventId, @Valid @RequestBody CourseUpsertRequest request) {
+	public CourseResponse createCourse(@PathVariable long eventId, @Valid @RequestBody CourseUpsertRequest request) {
 		return courseService.create(eventId, request);
 	}
 
 	@PutMapping("/api/courses/{id}")
-	public CourseResponse update(@PathVariable long id, @Valid @RequestBody CourseUpsertRequest request) {
+	public CourseResponse updateCourse(@PathVariable long id, @Valid @RequestBody CourseUpsertRequest request) {
 		return courseService.update(id, request);
 	}
 
 	@DeleteMapping("/api/courses/{id}")
-	public ResponseEntity<Void> delete(@PathVariable long id) {
+	public ResponseEntity<Void> deleteCourse(@PathVariable long id) {
 		courseService.delete(id);
 		return ResponseEntity.noContent().build();
 	}

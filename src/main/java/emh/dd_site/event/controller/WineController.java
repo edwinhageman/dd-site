@@ -23,36 +23,36 @@ public class WineController {
 	private final WineService wineService;
 
 	@GetMapping("/api/wines")
-	public PagedModel<WineResponse> list(Pageable pageable) {
+	public PagedModel<WineResponse> listWines(Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_NAME);
 		var page = wineService.listAll(pageRequest);
 		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/events/{eventId}/wines")
-	public PagedModel<WineResponse> listByEvent(@PathVariable long eventId, Pageable pageable) {
+	public PagedModel<WineResponse> listWinesByEvent(@PathVariable long eventId, Pageable pageable) {
 		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_EVENT_DATE);
 		var page = wineService.listByEvent(eventId, pageRequest);
 		return new PagedModel<>(page);
 	}
 
 	@GetMapping("/api/wines/{id}")
-	public WineResponse one(@PathVariable long id) {
+	public WineResponse getWineById(@PathVariable long id) {
 		return wineService.findById(id);
 	}
 
 	@PostMapping("/api/wines")
-	public WineResponse create(@Valid @RequestBody WineUpsertRequest request) {
+	public WineResponse createWine(@Valid @RequestBody WineUpsertRequest request) {
 		return wineService.create(request);
 	}
 
 	@PutMapping("/api/wines/{id}")
-	public WineResponse update(@PathVariable long id, @Valid @RequestBody WineUpsertRequest request) {
+	public WineResponse updateWine(@PathVariable long id, @Valid @RequestBody WineUpsertRequest request) {
 		return wineService.update(id, request);
 	}
 
 	@DeleteMapping("/api/wines/{id}")
-	public ResponseEntity<Void> delete(@PathVariable long id) {
+	public ResponseEntity<Void> deleteWine(@PathVariable long id) {
 		wineService.delete(id);
 		return ResponseEntity.noContent().build();
 	}

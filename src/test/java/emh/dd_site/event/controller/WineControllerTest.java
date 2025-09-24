@@ -57,7 +57,7 @@ class WineControllerTest {
 
 			given(wineService.listAll(alteredPageRequest)).willReturn(page);
 
-			var response = wineController.list(pageRequest);
+			var response = wineController.listWines(pageRequest);
 
 			assertThat(response.getContent()).containsExactly(testResponse);
 			assertThat(response.getMetadata()).isNotNull();
@@ -81,7 +81,7 @@ class WineControllerTest {
 
 			given(wineService.listByEvent(eventId, alteredPageRequest)).willReturn(page);
 
-			var response = wineController.listByEvent(eventId, pageRequest);
+			var response = wineController.listWinesByEvent(eventId, pageRequest);
 
 			assertThat(response.getContent()).containsExactly(testResponse);
 			assertThat(response.getMetadata()).isNotNull();
@@ -100,7 +100,7 @@ class WineControllerTest {
 		void shouldReturnSingleWine() {
 			given(wineService.findById(1L)).willReturn(testResponse);
 
-			var response = wineController.one(1L);
+			var response = wineController.getWineById(1L);
 
 			assertThat(response).isEqualTo(testResponse);
 			verify(wineService).findById(1L);
@@ -117,7 +117,7 @@ class WineControllerTest {
 		void shouldCreateAndReturnWine() {
 			given(wineService.create(testRequest)).willReturn(testResponse);
 
-			var response = wineController.create(testRequest);
+			var response = wineController.createWine(testRequest);
 
 			assertThat(response).isEqualTo(testResponse);
 			verify(wineService).create(testRequest);
@@ -136,7 +136,7 @@ class WineControllerTest {
 
 			given(wineService.update(id, testRequest)).willReturn(testResponse);
 
-			var response = wineController.update(id, testRequest);
+			var response = wineController.updateWine(id, testRequest);
 
 			assertThat(response).isEqualTo(testResponse);
 			verify(wineService).update(id, testRequest);
@@ -151,7 +151,7 @@ class WineControllerTest {
 		@Test
 		@DisplayName("should delete and return no content")
 		void shouldDeleteAndReturnNoContent() {
-			var response = wineController.delete(1L);
+			var response = wineController.deleteWine(1L);
 
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
 			verify(wineService).delete(1L);
