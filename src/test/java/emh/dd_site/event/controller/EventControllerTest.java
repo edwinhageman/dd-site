@@ -56,7 +56,7 @@ class EventControllerTest {
 			given(eventService.listAll(any(PageRequest.class))).willReturn(page);
 
 			// when
-			var result = eventController.list(inputRequest);
+			var result = eventController.listEvents(inputRequest);
 
 			// then
 			assertThat(result.getContent()).containsExactly(testEventResponse);
@@ -85,7 +85,7 @@ class EventControllerTest {
 			given(eventService.findById(1L)).willReturn(testEventResponse);
 
 			// when
-			EventResponse result = eventController.one(1L);
+			EventResponse result = eventController.getEventById(1L);
 
 			// then
 			assertThat(result).isEqualTo(testEventResponse);
@@ -105,7 +105,7 @@ class EventControllerTest {
 			given(eventService.create(any(EventUpsertRequest.class))).willReturn(testEventResponse);
 
 			// when
-			EventResponse result = eventController.create(createDto);
+			EventResponse result = eventController.createEvent(createDto);
 
 			// then
 			assertThat(result).isEqualTo(testEventResponse);
@@ -125,7 +125,7 @@ class EventControllerTest {
 			given(eventService.update(eq(1L), any(EventUpsertRequest.class))).willReturn(testEventResponse);
 
 			// when
-			EventResponse result = eventController.update(1L, createDto);
+			EventResponse result = eventController.updateEvent(1L, createDto);
 
 			// then
 			assertThat(result).isEqualTo(testEventResponse);
@@ -142,7 +142,7 @@ class EventControllerTest {
 		@DisplayName("should delete event and return no content")
 		void shouldDeleteEventAndReturnNoContent() {
 			// when
-			var response = eventController.delete(1L);
+			var response = eventController.deleteEvent(1L);
 
 			// then
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);

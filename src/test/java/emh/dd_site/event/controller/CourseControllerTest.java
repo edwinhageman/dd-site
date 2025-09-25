@@ -59,7 +59,7 @@ class CourseControllerTest {
 			given(courseService.listAll(any(PageRequest.class))).willReturn(page);
 
 			// when
-			var result = courseController.list(input);
+			var result = courseController.listCourses(input);
 
 			// then
 			assertThat(result.getContent()).containsExactly(testResponse);
@@ -93,7 +93,7 @@ class CourseControllerTest {
 			given(courseService.listByEvent(eq(eventId), any(PageRequest.class))).willReturn(page);
 
 			// when
-			var result = courseController.listByEvent(eventId, input);
+			var result = courseController.listCoursesByEvent(eventId, input);
 
 			// then
 			assertThat(result.getContent()).containsExactly(testResponse);
@@ -119,7 +119,7 @@ class CourseControllerTest {
 			given(courseService.findById(7L)).willReturn(testResponse);
 
 			// when
-			CourseResponse result = courseController.one(7L);
+			CourseResponse result = courseController.getCourseById(7L);
 
 			// then
 			assertThat(result).isEqualTo(testResponse);
@@ -140,7 +140,7 @@ class CourseControllerTest {
 			given(courseService.create(eq(eventId), any(CourseUpsertRequest.class))).willReturn(testResponse);
 
 			// when
-			CourseResponse result = courseController.create(eventId, testRequest);
+			CourseResponse result = courseController.createCourse(eventId, testRequest);
 
 			// then
 			assertThat(result).isEqualTo(testResponse);
@@ -161,7 +161,7 @@ class CourseControllerTest {
 			given(courseService.update(eq(id), any(CourseUpsertRequest.class))).willReturn(testResponse);
 
 			// when
-			CourseResponse result = courseController.update(id, testRequest);
+			CourseResponse result = courseController.updateCourse(id, testRequest);
 
 			// then
 			assertThat(result).isEqualTo(testResponse);
@@ -178,7 +178,7 @@ class CourseControllerTest {
 		@DisplayName("should delete and return 204 No Content")
 		void shouldDeleteAndReturnNoContent() {
 			// when
-			var response = courseController.delete(11L);
+			var response = courseController.deleteCourse(11L);
 
 			// then
 			assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
