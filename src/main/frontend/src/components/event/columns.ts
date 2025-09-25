@@ -1,6 +1,7 @@
 import { h } from 'vue'
 import type { ColumnDef } from '@tanstack/vue-table'
 import type { EventResponse } from '@/generated/api'
+import EventDataTableRowActions from '@/components/event/EventDataTableRowActions.vue'
 
 export const columns: ColumnDef<EventResponse>[] = [
   {
@@ -23,5 +24,16 @@ export const columns: ColumnDef<EventResponse>[] = [
   {
     accessorKey: 'location',
     header: 'Locatie',
+  },
+  {
+    accessorKey: 'id',
+    header: '',
+    cell: ({ row }) => {
+      return h(
+        'div',
+        { class: 'text-right' },
+        h(EventDataTableRowActions, { id: row.original.id! }),
+      )
+    },
   },
 ]

@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Events from '../views/Events.vue'
+import Event from '../views/Event.vue'
 import Wines from '../views/Wines.vue'
 
 const router = createRouter({
@@ -12,6 +13,14 @@ const router = createRouter({
       alias: '/events',
       meta: {
         title: 'Evenementen',
+      },
+    },
+    {
+      path: '/event/:id',
+      name: 'event',
+      component: Event,
+      meta: {
+        title: 'Evenement',
       },
     },
     {

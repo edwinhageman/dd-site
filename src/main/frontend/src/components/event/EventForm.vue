@@ -8,22 +8,22 @@ import { Button } from '@/components/ui/button'
 import { watch } from 'vue'
 import type { PartialString } from '@/lib/types.ts'
 
-export type SchemaType = z.infer<typeof schema>
-export type ErrorType = PartialString<SchemaType>
+export type FormSchema = z.infer<typeof schema>
+export type FieldErrors = PartialString<FormSchema>
 
 const props = defineProps<{
   isPending?: boolean
-  errors?: ErrorType
-  data?: SchemaType
+  errors?: FieldErrors
+  data?: FormSchema
 }>()
 
 const emits = defineEmits<{
-  (e: 'submit', values: SchemaType): void
+  (e: 'submit', values: FormSchema): void
 }>()
 
 const schema = z.object({
   date: z.iso.date(),
-  host: z.string(),
+  host: z.string().trim().min(1),
   location: z.string().optional(),
 })
 
@@ -39,7 +39,6 @@ watch(
       host: data?.host ?? '',
       location: data?.location ?? '',
     })
-    form.handleReset()
   },
   { immediate: true },
 )
@@ -87,7 +86,7 @@ const onSubmit = form.handleSubmit((values) => {
       </FormItem>
     </FormField>
     <div class="text-right pt-2">
-      <Button type="submit">Verzenden</Button>
+      <Button :disabled="isPending" type="submit">Verzenden</Button>
     </div>
   </form>
 </template>

@@ -21,10 +21,8 @@ when changing ports, remember to change the proxy configuration in `vite.config.
 ### TODO
 - add frontend tests
 - zod validation errors i18n
-- basic security
-    - anonymous role
-    - user role (access create/update/delete)
-    - eventually refactor to openid
+    - security
+        - make distinction between reader and writer users
 - event
     - crud
     - crud courses
