@@ -62,7 +62,7 @@ const onSubmit = form.handleSubmit((values) => {
   <form @submit="onSubmit" class="space-y-2">
     <FormField v-slot="{ componentField }" name="courseNo">
       <FormItem>
-        <FormLabel>Gangnummer</FormLabel>
+        <FormLabel>Gang</FormLabel>
         <FormControl>
           <Input v-bind="componentField" type="number" />
         </FormControl>
@@ -71,7 +71,7 @@ const onSubmit = form.handleSubmit((values) => {
     </FormField>
     <FormField v-slot="{ componentField }" name="cook">
       <FormItem>
-        <FormLabel>Kok</FormLabel>
+        <FormLabel>Persoon</FormLabel>
         <FormControl>
           <Input v-bind="componentField" type="text" />
         </FormControl>
@@ -80,7 +80,7 @@ const onSubmit = form.handleSubmit((values) => {
     </FormField>
     <FormField v-slot="{ componentField }" name="dishName">
       <FormItem>
-        <FormLabel>Naam gerecht</FormLabel>
+        <FormLabel>Gerecht</FormLabel>
         <FormControl>
           <Input v-bind="componentField" type="text" />
         </FormControl>
