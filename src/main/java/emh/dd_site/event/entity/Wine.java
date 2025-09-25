@@ -32,6 +32,7 @@ public class Wine {
 	private String name;
 
 	@Column(nullable = false)
+	@Enumerated(EnumType.STRING)
 	@NonNull
 	@Getter
 	@Setter
