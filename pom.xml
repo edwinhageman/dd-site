@@ -190,7 +190,7 @@
                         </goals>
                         <configuration>
                             <inputSpec>${project.basedir}/openapi.json</inputSpec>
-                            <generatorName>typescript-fetch</generatorName>
+                            <generatorName>typescript-axios</generatorName>
                             <output>${project.basedir}/src/main/frontend/src/generated/api</output>
                             <configOptions>
                                 <typescriptThreePlus>true</typescriptThreePlus>
