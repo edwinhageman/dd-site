@@ -19,8 +19,8 @@ when changing ports, remember to change the proxy configuration in `vite.config.
   - DB_PASSWORD
 
 ### TODO
-
 - add frontend tests
+- zod validation errors i18n
 - basic security
     - anonymous role
     - user role (access create/update/delete)
@@ -29,7 +29,8 @@ when changing ports, remember to change the proxy configuration in `vite.config.
     - crud
     - crud courses
 - dish
-    - datatable
+    - course 1 <-> 1 dish to course 1 <-> * dish
+    - data table
     - image upload
     - refactor dish <-> course onetoone relation to manytoone
 - wine
