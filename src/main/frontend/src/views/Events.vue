@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import EventList from "@/components/event/EventList.vue";
+import EventList from '@/components/event/EventList.vue'
 </script>
 
 <template>
@@ -8,6 +8,6 @@ import EventList from "@/components/event/EventList.vue";
       <h1>Events</h1>
     </div>
 
-    <EventList/>
+    <EventList />
   </main>
 </template>

@@ -1,12 +1,8 @@
 <script setup lang="ts">
-import type { LucideIcon } from "lucide-vue-next"
+import type { LucideIcon } from 'lucide-vue-next'
 
-import {
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-} from '@/components/ui/sidebar'
-import {useRoute} from "vue-router";
+import { SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar'
+import { useRoute } from 'vue-router'
 
 defineProps<{
   items: {
@@ -17,14 +13,13 @@ defineProps<{
 }>()
 
 const route = useRoute()
-
 </script>
 
 <template>
   <SidebarMenu>
     <SidebarMenuItem v-for="item in items" :key="item.title">
       <SidebarMenuButton as-child :is-active="item.route === route.name">
-        <router-link :to="{name: item.route}">
+        <router-link :to="{ name: item.route }">
           <component :is="item.icon" />
           <span>{{ item.title }}</span>
         </router-link>
