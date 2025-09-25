@@ -6,7 +6,7 @@ import CreateCourseDialog from '@/components/course/CreateCourseDialog.vue'
 import { Button } from '@/components/ui/button'
 
 defineProps<{
-  event: Required<EventResponse>
+  event: EventResponse
 }>()
 </script>
 

@@ -6,7 +6,7 @@ import UpdateCourseDialog from '@/components/course/UpdateCourseDialog.vue'
 import DeleteCourseDialog from '@/components/course/DeleteCourseDialog.vue'
 
 defineProps<{
-  course: Required<CourseResponse>
+  course: CourseResponse
 }>()
 </script>
 

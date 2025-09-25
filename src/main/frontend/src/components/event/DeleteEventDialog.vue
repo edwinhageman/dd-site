@@ -18,7 +18,7 @@ import { useDeleteEvent } from '@/composables/useDeleteEvent.ts'
 const dialogOpen = ref(false)
 
 const props = defineProps<{
-  event: Required<EventResponse>
+  event: EventResponse
 }>()
 
 const emits = defineEmits(['deleted'])

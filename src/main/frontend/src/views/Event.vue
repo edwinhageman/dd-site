@@ -4,7 +4,6 @@ import { computed, watch } from 'vue'
 import { useGetEventById } from '@/composables/useGetEventById.ts'
 import EventUpdateSection from '@/components/event/EventUpdateSection.vue'
 import EventCourseSection from '@/components/event/EventCourseSection.vue'
-import type { EventResponse } from '@/generated/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -28,10 +27,10 @@ watch(isError, (error) => {
   <div class="flex flex-1 flex-col gap-4 px-4 py-10 bg-white">
     <div class="grid auto-rows-min gap-4 md:grid-cols-2" v-if="event">
       <div>
-        <EventUpdateSection :event="event as Required<EventResponse>" />
+        <EventUpdateSection :event="event" />
       </div>
       <div>
-        <EventCourseSection :event="event as Required<EventResponse>" />
+        <EventCourseSection :event="event" />
       </div>
     </div>
   </div>

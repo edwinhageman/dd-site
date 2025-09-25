@@ -5,7 +5,7 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
+  DialogTrigger,
 } from '@/components/ui/dialog'
 import { computed, ref, watch } from 'vue'
 import type { CourseResponse } from '@/generated/api'
@@ -15,7 +15,7 @@ import { useUpdateCourse } from '@/composables/useUpdateCourse.ts'
 const dialogOpen = ref(false)
 
 const props = defineProps<{
-  course: Required<CourseResponse>
+  course: CourseResponse
 }>()
 
 const { mutate, isPending, isSuccess } = useUpdateCourse()
@@ -30,7 +30,7 @@ const formData = computed(() => {
   return {
     courseNo: props.course.courseNo,
     cook: props.course.cook,
-    dishName: props.course.dish.name as string,
+    dishName: props.course.dish.name,
     dishMainIngredient: props.course.dish.mainIngredient,
   }
 })

@@ -18,7 +18,7 @@ import { useDeleteCourse } from '@/composables/useDeleteCourse.ts'
 const dialogOpen = ref(false)
 
 const props = defineProps<{
-  course: Required<CourseResponse>
+  course: CourseResponse
 }>()
 
 const emits = defineEmits(['deleted'])

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { CourseResponse, EventResponse } from '@/generated/api'
+import type { EventResponse } from '@/generated/api'
 import { useListCoursesByEvent } from '@/composables/useListCoursesByEvent.ts'
 import EventCourse from '@/components/event/EventCourse.vue'
 
 const props = defineProps<{
-  event: Required<EventResponse>
+  event: EventResponse
 }>()
 
 const { data } = useListCoursesByEvent(props.event.id)
@@ -12,10 +12,6 @@ const { data } = useListCoursesByEvent(props.event.id)
 
 <template>
   <div class="space-y-4">
-    <EventCourse
-      v-for="course in data?.content"
-      :key="course.id"
-      :course="course as Required<CourseResponse>"
-    />
+    <EventCourse v-for="course in data?.content" :key="course.id" :course="course" />
   </div>
 </template>

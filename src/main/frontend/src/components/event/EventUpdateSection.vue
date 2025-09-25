@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { useRouter } from 'vue-router'
 
 const props = defineProps<{
-  event: Required<EventResponse> // todo check why the generated types have optional properties when they shouldn't
+  event: EventResponse
 }>()
 
 const router = useRouter()

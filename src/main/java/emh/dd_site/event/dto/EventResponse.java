@@ -1,6 +1,8 @@
 package emh.dd_site.event.dto;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDate;
 
-public record EventResponse(Long id, LocalDate date, String host, String location) {
+public record EventResponse(@NotNull Long id, @NotNull LocalDate date, @NotNull String host, String location) {
 }

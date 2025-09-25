@@ -1,5 +1,8 @@
 package emh.dd_site.event.dto;
 
-public record CourseResponse(Long id, EventResponse event, Integer courseNo, String cook, DishResponse dish) {
+import jakarta.validation.constraints.NotNull;
+
+public record CourseResponse(@NotNull Long id, @NotNull EventResponse event, @NotNull Integer courseNo,
+		@NotNull String cook, @NotNull DishResponse dish) {
 
 }

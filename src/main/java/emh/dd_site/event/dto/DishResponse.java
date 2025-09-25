@@ -1,5 +1,7 @@
 package emh.dd_site.event.dto;
 
-public record DishResponse(Long id, String name, String mainIngredient) {
+import jakarta.validation.constraints.NotNull;
+
+public record DishResponse(@NotNull Long id, @NotNull String name, String mainIngredient) {
 
 }

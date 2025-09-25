@@ -15,7 +15,7 @@ import CourseForm, { type FormSchema } from '@/components/course/CourseForm.vue'
 const dialogOpen = ref(false)
 
 const props = defineProps<{
-  event: Required<EventResponse>
+  event: EventResponse
 }>()
 
 const { mutate, isPending, isSuccess } = useCreateCourse()
