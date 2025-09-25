@@ -8,14 +8,14 @@ import { cn } from '@/lib/utils'
 const props = withDefaults(
   defineProps<
     DropdownMenuItemProps & {
-    class?: HTMLAttributes['class']
-    inset?: boolean
-    variant?: 'default' | 'destructive'
-  }
+      class?: HTMLAttributes['class']
+      inset?: boolean
+      variant?: 'default' | 'destructive'
+    }
   >(),
   {
-    variant: 'default'
-  }
+    variant: 'default',
+  },
 )
 
 const delegatedProps = reactiveOmit(props, 'inset', 'variant', 'class')

@@ -10,7 +10,7 @@ import {
   SIDEBAR_COOKIE_NAME,
   SIDEBAR_KEYBOARD_SHORTCUT,
   SIDEBAR_WIDTH,
-  SIDEBAR_WIDTH_ICON
+  SIDEBAR_WIDTH_ICON,
 } from './utils'
 
 const props = withDefaults(
@@ -21,8 +21,8 @@ const props = withDefaults(
   }>(),
   {
     defaultOpen: !defaultDocument?.cookie.includes(`${SIDEBAR_COOKIE_NAME}=false`),
-    open: undefined
-  }
+    open: undefined,
+  },
 )
 
 const emits = defineEmits<{

@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { Sidebar, SidebarContent, SidebarHeader, type SidebarProps, SidebarRail } from '@/components/ui/sidebar'
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  type SidebarProps,
+  SidebarRail,
+} from '@/components/ui/sidebar'
 
-import { Calendar, Hamburger, Wine } from 'lucide-vue-next'
+import { Calendar, Wine } from 'lucide-vue-next'
 import NavMain from '@/components/layout/NavMain.vue'
 import AppHeader from '@/components/layout/AppHeader.vue'
 
@@ -14,11 +20,11 @@ const data = {
       route: 'events',
       icon: Calendar,
     },
-    {
-      title: 'Dishes',
-      route: 'dishes',
-      icon: Hamburger,
-    },
+    // {
+    //   title: 'Dishes',
+    //   route: 'dishes',
+    //   icon: Hamburger,
+    // },
     {
       title: 'Wines',
       route: 'wines',

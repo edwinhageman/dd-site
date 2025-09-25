@@ -17,7 +17,7 @@ defineOptions({
 })
 
 const props = withDefaults(defineProps<SheetContentProps>(), {
-  side: 'right'
+  side: 'right',
 })
 const emits = defineEmits<DialogContentEmits>()
 

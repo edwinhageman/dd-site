@@ -6,8 +6,8 @@ import { cn } from '@/lib/utils'
 
 const props = defineProps<
   PrimitiveProps & {
-  class?: HTMLAttributes['class']
-}
+    class?: HTMLAttributes['class']
+  }
 >()
 </script>
 

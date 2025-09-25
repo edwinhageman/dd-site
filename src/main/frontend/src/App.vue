@@ -3,7 +3,12 @@ import { RouterView, useRoute } from 'vue-router'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import { Separator } from '@/components/ui/separator'
-import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage } from '@/components/ui/breadcrumb'
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbList,
+  BreadcrumbPage,
+} from '@/components/ui/breadcrumb'
 
 const route = useRoute()
 </script>
@@ -27,11 +32,8 @@ const route = useRoute()
           </Breadcrumb>
         </div>
       </header>
-      <div class="flex flex-1 flex-col gap-4 px-4 py-10">
-        <div class="mx-auto h-full w-full rounded-xl bg-muted/50">
-          <RouterView />
-        </div>
-      </div>
+
+      <RouterView />
     </SidebarInset>
   </SidebarProvider>
 </template>
