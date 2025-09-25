@@ -11,7 +11,7 @@ const router = createRouter({
       component: Events,
       alias: '/events',
       meta: {
-        title: 'Events',
+        title: 'Evenementen',
       },
     },
     {
@@ -19,7 +19,7 @@ const router = createRouter({
       name: 'wines',
       component: Wines,
       meta: {
-        title: 'Wines',
+        title: 'Wijnen',
       },
     },
   ],

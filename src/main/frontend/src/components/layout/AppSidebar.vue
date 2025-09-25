@@ -16,7 +16,7 @@ const props = defineProps<SidebarProps>()
 const data = {
   navMain: [
     {
-      title: 'Events',
+      title: 'Evenementen',
       route: 'events',
       icon: Calendar,
     },
@@ -26,7 +26,7 @@ const data = {
     //   icon: Hamburger,
     // },
     {
-      title: 'Wines',
+      title: 'Wijnen',
       route: 'wines',
       icon: Wine,
     },
