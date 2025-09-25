@@ -17,3 +17,20 @@ when changing ports, remember to change the proxy configuration in `vite.config.
   - DB_URL 
   - DB_USER
   - DB_PASSWORD
+
+### TODO
+
+- add frontend tests
+- basic security
+    - anonymous role
+    - user role (access create/update/delete)
+    - eventually refactor to openid
+- event
+    - crud
+    - crud courses
+- dish
+    - datatable
+    - image upload
+    - refactor dish <-> course onetoone relation to manytoone
+- wine
+    - add maker property
