@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { useRoute, useRouter } from 'vue-router'
 import { computed, watch } from 'vue'
 import { useGetEventById } from '@/composables/useGetEventById.ts'
 import EventUpdateSection from '@/components/event/EventUpdateSection.vue'
+import EventCourseSection from '@/components/event/EventCourseSection.vue'
+import type { EventResponse } from '@/generated/api'
 
 const router = useRouter()
 const route = useRoute()
@@ -13,7 +14,7 @@ const id = computed(() => {
   return Number.isNaN(val) ? undefined : val
 })
 
-const { data, isPending, isError } = useGetEventById(id)
+const { data: event, isError } = useGetEventById(id)
 
 // redirect if event could not be loaded
 watch(isError, (error) => {
@@ -25,22 +26,13 @@ watch(isError, (error) => {
 
 <template>
   <div class="flex flex-1 flex-col gap-4 px-4 py-10 bg-white">
-    <div class="grid auto-rows-min gap-4 md:grid-cols-2">
+    <div class="grid auto-rows-min gap-4 md:grid-cols-2" v-if="event">
       <div>
-        <Card>
-          <CardHeader v-if="isPending">
-            <CardTitle>Evenement wordt geladen</CardTitle>
-          </CardHeader>
-          <CardHeader v-else-if="data">
-            <CardTitle>Evenement {{ data.date }}</CardTitle>
-            <CardDescription>{{ data.host }} | {{ data.location }}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <EventUpdateSection :event="data" v-if="data" />
-          </CardContent>
-        </Card>
+        <EventUpdateSection :event="event as Required<EventResponse>" />
       </div>
-      <div></div>
+      <div>
+        <EventCourseSection :event="event as Required<EventResponse>" />
+      </div>
     </div>
   </div>
 </template>

@@ -102,7 +102,7 @@ class CourseControllerTest {
 			verify(courseService).listByEvent(eq(eventId), argThat(pr -> {
 				Sort.Order order = pr.getSort().getOrderFor("courseNo");
 				return pr.getPageNumber() == 0 && pr.getPageSize() == 5 && order != null
-						&& order.getDirection() == Sort.Direction.DESC;
+						&& order.getDirection() == Sort.Direction.ASC;
 			}));
 		}
 

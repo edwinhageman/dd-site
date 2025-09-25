@@ -18,7 +18,7 @@ public class CourseController {
 
 	private final Sort SORT_BY_EVENT_DATE = Sort.by(Sort.Direction.DESC, "event.date");
 
-	private final Sort SORT_BY_COURSE_NO = Sort.by(Sort.Direction.DESC, "courseNo");
+	private final Sort SORT_BY_COURSE_NO = Sort.by(Sort.Direction.ASC, "courseNo");
 
 	private final CourseService courseService;
 

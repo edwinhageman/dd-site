@@ -88,7 +88,7 @@ public class CourseControllerIT {
 			Pageable pageReq = captor.getValue();
 			assertThat(pageReq.getPageNumber()).isEqualTo(0);
 			assertThat(pageReq.getPageSize()).isEqualTo(5);
-			assertThat(pageReq.getSort()).isEqualTo(Sort.by(Sort.Direction.DESC, "courseNo"));
+			assertThat(pageReq.getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "courseNo"));
 		}
 
 	}
