@@ -28,20 +28,23 @@ Small tool to manage dinner parties and keep track of recipes and wine pairings.
 
 - add frontend tests (frontend)
 - map backend field validation errors to frontend form fields (frontend)
-- zod validation errors i18n (frontend)
 - security
     - make a distinction between reader and writer users (frontend + backend)
   - introduce user entity
   - invite users?
   - oidc?
+- event
+    - datatable search, filter & sorting
 - courses
     - add wine to course (frontend + backend)
 - dish
+    - datatable search, filter & sorting
     - course 1 <-> 1 dish to course 1 <-> * dish (backend)
     - data table (frontend)
     - image upload (frontend + backend)
     - recipes?? (frontend + backend)
 - wine
+    - overview (table / search / filter)
     - add maker property (backend)
   - vivino integration?? (frontend + backend)
 - layout improvements (lots) (frontend)

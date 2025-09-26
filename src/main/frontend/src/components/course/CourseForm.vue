@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { PartialString } from '@/lib/types.ts'
-import { z } from 'zod'
+import * as z from 'zod'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
 import { watch } from 'vue'
