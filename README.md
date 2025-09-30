@@ -42,9 +42,15 @@ Small tool to manage dinner parties and keep track of recipes and wine pairings.
     - course 1 <-> 1 dish to course 1 <-> * dish (backend)
     - data table (frontend)
     - image upload (frontend + backend)
-    - recipes?? (frontend + backend)
+    - dish * <-> * ingredient relationship (frontend + backend)
+    - recipe url (frontend + backend)
+    - recipe text (frontend + backend)
 - wine
     - overview (table / search / filter)
-    - add maker property (backend)
-  - vivino integration?? (frontend + backend)
+    - add properties (backend / frontend)
+      - maker property 
+      - vivino url
+      - cellartracker url
+    - wine * <-> * grape relationship (for blends) 
+  - vivino lookup integration in wine edit form?? (frontend + backend)
 - layout improvements (lots) (frontend)
