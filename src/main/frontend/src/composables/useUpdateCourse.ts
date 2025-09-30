@@ -1,18 +1,18 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import type { CourseUpsertRequest } from '@/generated/api'
-import { courseApi } from '@/api'
+import { getCourseService } from '@/service'
 
 export type UpdateCourseParams = {
   courseId: number
-  request: CourseUpsertRequest
+  payload: CourseUpsertRequest
 }
 
 export function useUpdateCourse() {
   const qc = useQueryClient()
+  const service = getCourseService()
   return useMutation({
-    mutationFn: async ({ courseId, request }: UpdateCourseParams) => {
-      const response = await courseApi.updateCourse(courseId, request)
-      return response.data
+    mutationFn: async ({ courseId, payload }: UpdateCourseParams) => {
+      return service.update(courseId, payload)
     },
     onSuccess: (_data, variables) => {
       qc.invalidateQueries({ queryKey: ['courses'] })

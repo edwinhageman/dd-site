@@ -7,7 +7,7 @@ const props = defineProps<{
   event: EventResponse
 }>()
 
-const { data } = useListCoursesByEvent(props.event.id)
+const { data } = useListCoursesByEvent(props.event.id, { size: Number.MAX_SAFE_INTEGER })
 </script>
 
 <template>

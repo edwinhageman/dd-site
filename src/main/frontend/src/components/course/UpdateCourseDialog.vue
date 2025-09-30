@@ -38,7 +38,7 @@ const formData = computed(() => {
 const handleSubmit = (values: FormSchema) => {
   mutate({
     courseId: props.course.id,
-    request: {
+    payload: {
       courseNo: values.courseNo,
       cook: values.cook,
       dish: {

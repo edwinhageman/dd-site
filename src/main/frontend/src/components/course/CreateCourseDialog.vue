@@ -29,7 +29,7 @@ watch(isSuccess, (isSuccess) => {
 const handleSubmit = (values: FormSchema) => {
   mutate({
     eventId: props.event.id,
-    request: {
+    payload: {
       courseNo: values.courseNo,
       cook: values.cook,
       dish: {
