@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { type Pageable } from '@/generated/api'
-import { eventApi } from '@/api'
+import { createApiControllers } from '@/api'
 import { columns } from './columns'
 import { useQuery } from '@tanstack/vue-query'
 import DataTable from '@/components/datatable/DataTable.vue'
 import { ref } from 'vue'
 
 const pageRequest = ref<Pageable>({})
+const { eventApi } = createApiControllers()
 
 const { data } = useQuery({
   queryKey: ['events', pageRequest],

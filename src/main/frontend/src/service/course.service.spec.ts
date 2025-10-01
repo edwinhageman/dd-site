@@ -1,22 +1,15 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { CourseService } from '@/service'
 import { mockAxiosResponse } from '@/test/test-utils.ts'
-import type { CourseResponse, CourseUpsertRequest, PagedModelCourseResponse } from '@/generated/api'
-import { courseApi } from '@/api'
-
-vi.mock('@/api', () => {
-  const mockApi = {
-    getCourseById: vi.fn(),
-    listCourses: vi.fn(),
-    listCoursesByEvent: vi.fn(),
-    createCourse: vi.fn(),
-    updateCourse: vi.fn(),
-    deleteCourse: vi.fn(),
-  }
-  return { courseApi: mockApi }
-})
+import type {
+  CourseControllerApi,
+  CourseResponse,
+  CourseUpsertRequest,
+  PagedModelCourseResponse,
+} from '@/generated/api'
 
 describe('CourseService tests', () => {
+  let apiMock: CourseControllerApi
   let service: CourseService
   let testCourse1: CourseResponse = {
     id: 1,
@@ -52,17 +45,25 @@ describe('CourseService tests', () => {
   }
 
   beforeEach(() => {
-    vi.clearAllMocks()
-    service = new CourseService()
+    apiMock = {
+      getCourseById: vi.fn(),
+      listCourses: vi.fn(),
+      listCoursesByEvent: vi.fn(),
+      createCourse: vi.fn(),
+      updateCourse: vi.fn(),
+      deleteCourse: vi.fn(),
+    } as unknown as CourseControllerApi
+
+    service = new CourseService(apiMock)
   })
 
   it('findById should call api.getCourseById and return data', async () => {
     const courseId = 1
-    vi.mocked(courseApi.getCourseById).mockResolvedValue(mockAxiosResponse(testCourse1))
+    vi.mocked(apiMock.getCourseById).mockResolvedValue(mockAxiosResponse(testCourse1))
 
     const result = await service.findById(courseId)
 
-    expect(courseApi.getCourseById).toHaveBeenCalledWith(courseId)
+    expect(apiMock.getCourseById).toHaveBeenCalledWith(courseId)
     expect(result).toBe(testCourse1)
   })
 
@@ -77,11 +78,11 @@ describe('CourseService tests', () => {
         totalPages: 1,
       },
     }
-    vi.mocked(courseApi.listCourses).mockResolvedValue(mockAxiosResponse(page))
+    vi.mocked(apiMock.listCourses).mockResolvedValue(mockAxiosResponse(page))
 
     const result = await service.listAll(pageParams)
 
-    expect(courseApi.listCourses).toHaveBeenCalledWith(pageParams)
+    expect(apiMock.listCourses).toHaveBeenCalledWith(pageParams)
     expect(result).toBe(page)
   })
 
@@ -95,11 +96,11 @@ describe('CourseService tests', () => {
         totalPages: 1,
       },
     }
-    vi.mocked(courseApi.listCourses).mockResolvedValue(mockAxiosResponse(page))
+    vi.mocked(apiMock.listCourses).mockResolvedValue(mockAxiosResponse(page))
 
     const result = await service.listAll()
 
-    expect(courseApi.listCourses).toHaveBeenCalledWith({})
+    expect(apiMock.listCourses).toHaveBeenCalledWith({})
     expect(result).toBe(page)
   })
 
@@ -115,11 +116,11 @@ describe('CourseService tests', () => {
         totalPages: 1,
       },
     }
-    vi.mocked(courseApi.listCoursesByEvent).mockResolvedValue(mockAxiosResponse(page))
+    vi.mocked(apiMock.listCoursesByEvent).mockResolvedValue(mockAxiosResponse(page))
 
     const result = await service.listByEvent(eventId, pageParams)
 
-    expect(courseApi.listCoursesByEvent).toHaveBeenCalledWith(eventId, pageParams)
+    expect(apiMock.listCoursesByEvent).toHaveBeenCalledWith(eventId, pageParams)
     expect(result).toBe(page)
   })
 
@@ -134,11 +135,11 @@ describe('CourseService tests', () => {
         totalPages: 1,
       },
     }
-    vi.mocked(courseApi.listCoursesByEvent).mockResolvedValue(mockAxiosResponse(page))
+    vi.mocked(apiMock.listCoursesByEvent).mockResolvedValue(mockAxiosResponse(page))
 
     const result = await service.listByEvent(eventId)
 
-    expect(courseApi.listCoursesByEvent).toHaveBeenCalledWith(eventId, {})
+    expect(apiMock.listCoursesByEvent).toHaveBeenCalledWith(eventId, {})
     expect(result).toBe(page)
   })
 
@@ -152,11 +153,11 @@ describe('CourseService tests', () => {
         mainIngredient: 'Ingredient1',
       },
     }
-    vi.mocked(courseApi.createCourse).mockResolvedValue(mockAxiosResponse(testCourse1))
+    vi.mocked(apiMock.createCourse).mockResolvedValue(mockAxiosResponse(testCourse1))
 
     const result = await service.create(eventId, payload)
 
-    expect(courseApi.createCourse).toHaveBeenCalledWith(eventId, payload)
+    expect(apiMock.createCourse).toHaveBeenCalledWith(eventId, payload)
     expect(result).toBe(testCourse1)
   })
 
@@ -170,25 +171,25 @@ describe('CourseService tests', () => {
         mainIngredient: 'Ingredient1',
       },
     }
-    vi.mocked(courseApi.updateCourse).mockResolvedValue(mockAxiosResponse(testCourse1))
+    vi.mocked(apiMock.updateCourse).mockResolvedValue(mockAxiosResponse(testCourse1))
 
     const result = await service.update(courseId, payload)
 
-    expect(courseApi.updateCourse).toHaveBeenCalledWith(courseId, payload)
+    expect(apiMock.updateCourse).toHaveBeenCalledWith(courseId, payload)
     expect(result).toBe(testCourse1)
   })
 
   it('delete should call api.deleteCourse', async () => {
     const courseId = 1
-    vi.mocked(courseApi.deleteCourse).mockResolvedValue(mockAxiosResponse(undefined))
+    vi.mocked(apiMock.deleteCourse).mockResolvedValue(mockAxiosResponse(undefined))
 
     await service.delete(courseId)
 
-    expect(courseApi.deleteCourse).toHaveBeenCalledWith(courseId)
+    expect(apiMock.deleteCourse).toHaveBeenCalledWith(courseId)
   })
 
   it('propagates api error', async () => {
-    vi.mocked(courseApi.getCourseById).mockRejectedValue(new Error('API error'))
+    vi.mocked(apiMock.getCourseById).mockRejectedValue(new Error('API error'))
     await expect(service.findById(1)).rejects.toThrow('API error')
   })
 })

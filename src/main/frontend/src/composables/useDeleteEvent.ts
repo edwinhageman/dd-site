@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { courseApi } from '@/api'
+import { createApiControllers } from '@/api'
 
 export type DeleteEventParams = {
   eventId: number
@@ -7,9 +7,10 @@ export type DeleteEventParams = {
 
 export function useDeleteEvent() {
   const qc = useQueryClient()
+  const { eventApi } = createApiControllers()
   return useMutation({
     mutationFn: async ({ eventId }: DeleteEventParams) => {
-      const response = await courseApi.deleteCourse(eventId)
+      const response = await eventApi.deleteEvent(eventId)
       return response.data
     },
     onSuccess: (_data, variables) => {

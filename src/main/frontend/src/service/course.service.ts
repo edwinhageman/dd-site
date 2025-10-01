@@ -1,36 +1,32 @@
-import { courseApi } from '@/api'
+import { createApiControllers } from '@/api'
 import type { CourseControllerApi, CourseUpsertRequest, Pageable } from '@/generated/api'
 
 export class CourseService {
-  private api: CourseControllerApi
-
-  constructor() {
-    this.api = courseApi
-  }
+  constructor(private readonly api: CourseControllerApi) {}
 
   async findById(id: number) {
-    const response = await this.api.getCourseById(id)
-    return response.data
+    const { data } = await this.api.getCourseById(id)
+    return data
   }
 
   async listAll(pageParams: Pageable = {}) {
-    const response = await this.api.listCourses(pageParams)
-    return response.data
+    const { data } = await this.api.listCourses(pageParams)
+    return data
   }
 
   async listByEvent(eventId: number, pageParams: Pageable = {}) {
-    const response = await this.api.listCoursesByEvent(eventId, pageParams)
-    return response.data
+    const { data } = await this.api.listCoursesByEvent(eventId, pageParams)
+    return data
   }
 
   async create(eventId: number, payload: CourseUpsertRequest) {
-    const response = await this.api.createCourse(eventId, payload)
-    return response.data
+    const { data } = await this.api.createCourse(eventId, payload)
+    return data
   }
 
   async update(id: number, payload: CourseUpsertRequest) {
-    const response = await this.api.updateCourse(id, payload)
-    return response.data
+    const { data } = await this.api.updateCourse(id, payload)
+    return data
   }
 
   async delete(id: number) {
@@ -41,7 +37,8 @@ export class CourseService {
 let instance: CourseService | null = null
 export function getCourseService() {
   if (!instance) {
-    instance = new CourseService()
+    const { courseApi } = createApiControllers()
+    instance = new CourseService(courseApi)
   }
   return instance
 }
