@@ -1,13 +1,9 @@
-import {
-  Configuration,
-  CourseControllerApi,
-  EventControllerApi,
-  WineControllerApi,
-} from '@/generated/api'
+import { Configuration, CourseControllerApi, EventControllerApi, WineControllerApi } from '@/generated/api'
+import { envBrowser } from '@/env.browser.ts'
 
 // make sure the api calls are passed through the vite development server proxy to prevent CORS issues
 const apiConfig = new Configuration({
-  basePath: import.meta.env.VITE_API_BASE_URL ?? '',
+  basePath: envBrowser.VITE_API_BASE_URL,
 })
 
 export const eventApi = new EventControllerApi(apiConfig)
