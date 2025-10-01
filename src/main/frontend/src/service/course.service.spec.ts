@@ -5,7 +5,7 @@ import type {
   CourseControllerApi,
   CourseResponse,
   CourseUpsertRequest,
-  PagedModelCourseResponse,
+  PagedModelCourseResponse
 } from '@/generated/api'
 
 describe('CourseService tests', () => {
@@ -191,5 +191,14 @@ describe('CourseService tests', () => {
   it('propagates api error', async () => {
     vi.mocked(apiMock.getCourseById).mockRejectedValue(new Error('API error'))
     await expect(service.findById(1)).rejects.toThrow('API error')
+  })
+
+  it('factory method returns singleton', async () => {
+    const { getCourseService } = await import('@/service/course.service')
+
+    const first = getCourseService()
+    const second = getCourseService()
+
+    expect(second).toBe(first)
   })
 })
