@@ -1,7 +1,7 @@
 import { type App, ref } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import { useListCoursesByEvent } from './useListCoursesByEvent'
+import { useListCoursesByEvent } from '@/composables'
 import { withComponentLifecycle } from '@/test/test-utils.ts'
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import { getCourseService } from '@/service'
@@ -19,7 +19,6 @@ vi.mock('@/service', () => {
 })
 
 describe('useListCoursesByEvent tests', () => {
-  let queryClient: QueryClient
   const courseService = getCourseService()
   let testCourse1: CourseResponse = {
     id: 1,
@@ -64,7 +63,7 @@ describe('useListCoursesByEvent tests', () => {
   }
 
   const vueQueryPluginFactory = (app: App) => {
-    queryClient = new QueryClient({
+    const queryClient = new QueryClient({
       defaultOptions: {
         queries: { retry: false }, //disable retries so we can reliably test errors
       },

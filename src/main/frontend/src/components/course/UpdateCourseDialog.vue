@@ -10,7 +10,7 @@ import {
 import { computed, ref, watch } from 'vue'
 import type { CourseResponse } from '@/generated/api'
 import CourseForm, { type FormSchema } from '@/components/course/CourseForm.vue'
-import { useUpdateCourse } from '@/composables/useUpdateCourse.ts'
+import { useUpdateCourse } from '@/composables'
 
 const dialogOpen = ref(false)
 

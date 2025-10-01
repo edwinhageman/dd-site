@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { EventResponse } from '@/generated/api'
-import { useListCoursesByEvent } from '@/composables/useListCoursesByEvent.ts'
+import { useListCoursesByEvent } from '@/composables'
 import EventCourse from '@/components/event/EventCourse.vue'
 
 const props = defineProps<{

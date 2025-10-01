@@ -13,7 +13,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
-import { useDeleteCourse } from '@/composables/useDeleteCourse.ts'
+import { useDeleteCourse } from '@/composables'
 
 const dialogOpen = ref(false)
 

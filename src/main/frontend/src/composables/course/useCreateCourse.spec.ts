@@ -1,15 +1,15 @@
-import type { App } from 'vue'
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import { useUpdateCourse } from './useUpdateCourse'
+import { useCreateCourse } from '@/composables'
 import { withComponentLifecycle } from '@/test/test-utils.ts'
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
 import { getCourseService } from '@/service'
 import type { CourseResponse, CourseUpsertRequest } from '@/generated/api'
+import type { App } from 'vue'
 
 vi.mock('@/service', () => {
   const mockService = {
-    update: vi.fn(),
+    create: vi.fn(),
   }
   const mockGetService = vi.fn(() => mockService)
   return {
@@ -18,7 +18,7 @@ vi.mock('@/service', () => {
   }
 })
 
-describe('useUpdateCourse tests', () => {
+describe('useCreateCourse tests', () => {
   let queryClient: QueryClient
   const courseService = getCourseService()
   const response: CourseResponse = {
@@ -52,50 +52,49 @@ describe('useUpdateCourse tests', () => {
         queries: { retry: false }, //disable retries so we can reliably test errors
       },
     })
-    app.use(VueQueryPlugin, { queryClient })
+    return app.use(VueQueryPlugin, { queryClient })
   }
 
   beforeEach(() => {
     vi.clearAllMocks()
   })
 
-  it('calls courseService.update with courseId and payload and return updated course', async () => {
-    const courseId = 1
+  it('calls courseService.create with eventId and payload and return created course', async () => {
+    const eventId = 1
 
-    vi.mocked(courseService.update).mockResolvedValueOnce(response)
+    vi.mocked(courseService.create).mockResolvedValueOnce(response)
 
-    const { result } = withComponentLifecycle(useUpdateCourse, { plugins: [vueQueryPluginFactory] })
+    const { result } = withComponentLifecycle(useCreateCourse, { plugins: [vueQueryPluginFactory] })
 
-    const mutateResult = await result.mutateAsync({ courseId, payload: payload })
+    const mutateResult = await result.mutateAsync({ eventId, payload })
 
     await flushPromises()
 
-    expect(courseService.update).toHaveBeenCalledTimes(1)
-    expect(courseService.update).toHaveBeenCalledWith(courseId, payload)
+    expect(courseService.create).toHaveBeenCalledTimes(1)
+    expect(courseService.create).toHaveBeenCalledWith(eventId, payload)
     expect(mutateResult).toBe(response)
   })
 
   it('invalidates expected queries on success', async () => {
-    const courseId = 1
+    const eventId = 1
 
-    const { result } = withComponentLifecycle(useUpdateCourse, { plugins: [vueQueryPluginFactory] })
+    const { result } = withComponentLifecycle(useCreateCourse, { plugins: [vueQueryPluginFactory] })
 
     const spy = vi.spyOn(queryClient, 'invalidateQueries')
 
-    await result.mutateAsync({ courseId, payload })
+    await result.mutateAsync({ eventId, payload })
     await flushPromises()
 
     expect(spy).toHaveBeenCalledWith({ queryKey: ['courses'] })
     expect(spy).toHaveBeenCalledWith({ queryKey: ['coursesByEvent'] })
-    expect(spy).toHaveBeenCalledWith({ queryKey: ['course', courseId] })
   })
 
   it('catches and exposes service errors', async () => {
     const error = new Error('service error')
-    vi.mocked(courseService.update).mockRejectedValueOnce(error)
+    vi.mocked(courseService.create).mockRejectedValueOnce(error)
 
-    const { result } = withComponentLifecycle(useUpdateCourse, { plugins: [VueQueryPlugin] })
-    result.mutate({ courseId: 1, payload })
+    const { result } = withComponentLifecycle(useCreateCourse, { plugins: [VueQueryPlugin] })
+    result.mutate({ eventId: 1, payload })
 
     await flushPromises()
 

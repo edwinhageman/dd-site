@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { EventResponse } from '@/generated/api'
-import { useUpdateEvent } from '@/composables/useUpdateEvent.ts'
+import { useUpdateEvent } from '@/composables'
 import EventForm, { type FormSchema } from '@/components/event/EventForm.vue'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import DeleteEventDialog from '@/components/event/DeleteEventDialog.vue'
@@ -15,8 +15,8 @@ const router = useRouter()
 
 const { mutate, isPending } = useUpdateEvent()
 
-const handleSubmit = (values: FormSchema) => {
-  mutate({ id: props.event.id, request: values })
+const handleSubmit = (payload: FormSchema) => {
+  mutate({ eventId: props.event.id, payload })
 }
 
 const handleDelete = () => {

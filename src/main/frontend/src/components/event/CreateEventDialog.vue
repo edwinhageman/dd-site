@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { ref, watch } from 'vue'
 import EventForm, { type FormSchema } from '@/components/event/EventForm.vue'
-import { useCreateEvent } from '@/composables/useCreateEvent.ts'
+import { useCreateEvent } from '@/composables'
 import { Button } from '@/components/ui/button'
 
 const dialogOpen = ref(false)
@@ -23,7 +23,7 @@ watch(isSuccess, (isSuccess) => {
 })
 
 function handleSubmit(values: FormSchema) {
-  mutate({ request: values })
+  mutate({ payload: values })
 }
 </script>
 

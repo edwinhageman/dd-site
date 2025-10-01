@@ -5,7 +5,7 @@ import type {
   CourseControllerApi,
   CourseResponse,
   CourseUpsertRequest,
-  PagedModelCourseResponse
+  PagedModelCourseResponse,
 } from '@/generated/api'
 
 describe('CourseService tests', () => {
@@ -161,7 +161,7 @@ describe('CourseService tests', () => {
     expect(result).toBe(testCourse1)
   })
 
-  it('update should call api.createCourse and return created course', async () => {
+  it('update should call api.updateCourse and return updated course', async () => {
     const courseId = 1
     const payload: CourseUpsertRequest = {
       courseNo: 1,

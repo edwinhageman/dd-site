@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/dialog'
 import { ref, watch } from 'vue'
 import type { EventResponse } from '@/generated/api'
-import { useCreateCourse } from '@/composables/useCreateCourse.ts'
+import { useCreateCourse } from '@/composables'
 import CourseForm, { type FormSchema } from '@/components/course/CourseForm.vue'
 
 const dialogOpen = ref(false)

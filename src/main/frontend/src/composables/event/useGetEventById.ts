@@ -1,6 +1,6 @@
 import { computed, type Ref, unref } from 'vue'
 import { useQuery } from '@tanstack/vue-query'
-import { createApiControllers } from '@/api'
+import { getEventService } from '@/service'
 
 export function useGetEventById(id: number | Ref<number | null | undefined>) {
   const normalizedId = computed(() => {
@@ -9,13 +9,12 @@ export function useGetEventById(id: number | Ref<number | null | undefined>) {
   })
 
   const enabled = computed(() => normalizedId.value !== undefined)
-  const { eventApi } = createApiControllers()
+  const service = getEventService()
 
   return useQuery({
     queryKey: ['event', normalizedId],
     queryFn: async () => {
-      const response = await eventApi.getEventById(normalizedId.value!)
-      return response.data
+      return service.findById(normalizedId.value!)
     },
     enabled,
   })

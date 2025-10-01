@@ -1,17 +1,16 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
-import { createApiControllers } from '@/api'
+import { getEventService } from '@/service'
 import type { EventUpsertRequest } from '@/generated/api'
 
 export type CreateEventParams = {
-  request: EventUpsertRequest
+  payload: EventUpsertRequest
 }
 export function useCreateEvent() {
   const qc = useQueryClient()
-  const { eventApi } = createApiControllers()
+  const service = getEventService()
   return useMutation({
-    mutationFn: async ({ request }: CreateEventParams) => {
-      const response = await eventApi.createEvent(request)
-      return response.data
+    mutationFn: async ({ payload }: CreateEventParams) => {
+      return service.create(payload)
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['events'] })

@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises } from '@vue/test-utils'
-import { useDeleteCourse } from './useDeleteCourse'
+import { useDeleteEvent } from '@/composables'
 import { withComponentLifecycle } from '@/test/test-utils.ts'
 import { QueryClient, VueQueryPlugin } from '@tanstack/vue-query'
-import { getCourseService } from '@/service'
+import { getEventService } from '@/service'
 import type { App } from 'vue'
 
 vi.mock('@/service', () => {
@@ -12,14 +12,14 @@ vi.mock('@/service', () => {
   }
   const mockGetService = vi.fn(() => mockService)
   return {
-    courseService: mockService,
-    getCourseService: mockGetService,
+    eventService: mockService,
+    getEventService: mockGetService,
   }
 })
 
-describe('useDeleteCourse tests', () => {
+describe('useDeleteEvent tests', () => {
   let queryClient: QueryClient
-  const courseService = getCourseService()
+  const eventService = getEventService()
 
   const vueQueryPluginFactory = (app: App) => {
     queryClient = new QueryClient({
@@ -34,40 +34,39 @@ describe('useDeleteCourse tests', () => {
     vi.clearAllMocks()
   })
 
-  it('calls courseService.delete with courseId', async () => {
-    const courseId = 42
+  it('calls eventService.delete with eventId', async () => {
+    const eventId = 42
 
-    const { result } = withComponentLifecycle(useDeleteCourse, { plugins: [vueQueryPluginFactory] })
+    const { result } = withComponentLifecycle(useDeleteEvent, { plugins: [vueQueryPluginFactory] })
 
-    await result.mutateAsync({ courseId })
+    await result.mutateAsync({ eventId })
 
     await flushPromises()
 
-    expect(courseService.delete).toHaveBeenCalledTimes(1)
-    expect(courseService.delete).toHaveBeenCalledWith(courseId)
+    expect(eventService.delete).toHaveBeenCalledTimes(1)
+    expect(eventService.delete).toHaveBeenCalledWith(eventId)
   })
 
   it('invalidates expected queries on success', async () => {
-    const courseId = 7
+    const eventId = 7
 
-    const { result } = withComponentLifecycle(useDeleteCourse, { plugins: [vueQueryPluginFactory] })
+    const { result } = withComponentLifecycle(useDeleteEvent, { plugins: [vueQueryPluginFactory] })
 
     const spy = vi.spyOn(queryClient, 'invalidateQueries')
 
-    await result.mutateAsync({ courseId })
+    await result.mutateAsync({ eventId })
     await flushPromises()
 
-    expect(spy).toHaveBeenCalledWith({ queryKey: ['courses'] })
-    expect(spy).toHaveBeenCalledWith({ queryKey: ['coursesByEvent'] })
-    expect(spy).toHaveBeenCalledWith({ queryKey: ['course', courseId] })
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['events'] })
+    expect(spy).toHaveBeenCalledWith({ queryKey: ['event', eventId] })
   })
 
   it('catches and exposes service errors', async () => {
     const error = new Error('service error')
-    vi.mocked(courseService.delete).mockRejectedValueOnce(error)
+    vi.mocked(eventService.delete).mockRejectedValueOnce(error)
 
-    const { result } = withComponentLifecycle(useDeleteCourse, { plugins: [VueQueryPlugin] })
-    result.mutate({ courseId: 1 })
+    const { result } = withComponentLifecycle(useDeleteEvent, { plugins: [VueQueryPlugin] })
+    result.mutate({ eventId: 1 })
 
     await flushPromises()
 
