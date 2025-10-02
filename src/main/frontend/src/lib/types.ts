@@ -1,3 +1,3 @@
-export type PartialString<T> = {
-  [key in keyof T]?: string
+export type FormFieldErrors<T> = {
+  [key in keyof T]?: string[]
 }

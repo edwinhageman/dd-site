@@ -18,7 +18,7 @@ const props = defineProps<{
   course: CourseResponse
 }>()
 
-const { mutate, isPending, isSuccess } = useUpdateCourse()
+const { mutate, isPending, isSuccess, error } = useUpdateCourse()
 
 watch(isSuccess, (isSuccess) => {
   if (isSuccess) {
@@ -63,7 +63,12 @@ const handleSubmit = (values: FormSchema) => {
         >
       </DialogHeader>
       <div class="grid gap-4 py-4">
-        <CourseForm :is-pending="isPending" :data="formData" @submit="handleSubmit" />
+        <CourseForm
+          :is-pending="isPending"
+          :data="formData"
+          :errors="error?.payload?.fieldErrors"
+          @submit="handleSubmit"
+        />
       </div>
     </DialogContent>
   </Dialog>

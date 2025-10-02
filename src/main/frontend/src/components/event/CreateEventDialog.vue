@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button'
 
 const dialogOpen = ref(false)
 
-const { mutate, isPending, isSuccess } = useCreateEvent()
+const { mutate, isPending, isSuccess, error } = useCreateEvent()
 
 watch(isSuccess, (isSuccess) => {
   if (isSuccess) {
@@ -40,7 +40,11 @@ function handleSubmit(values: FormSchema) {
         <DialogDescription> </DialogDescription>
       </DialogHeader>
       <div class="grid gap-4 py-4">
-        <EventForm :is-pending="isPending" @submit="handleSubmit" />
+        <EventForm
+          :is-pending="isPending"
+          :errors="error?.payload?.fieldErrors"
+          @submit="handleSubmit"
+        />
       </div>
     </DialogContent>
   </Dialog>

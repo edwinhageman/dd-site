@@ -28,7 +28,6 @@ Small tool to manage dinner parties and keep track of recipes and wine pairings.
 
 - layout improvements (switch ui lib) (frontend)
 - add frontend component tests (frontend) (after layout improvements)
-- map backend field validation errors to frontend form fields (frontend)
 - security
     - make a distinction between reader and writer users (frontend + backend)
   - introduce user entity

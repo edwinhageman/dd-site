@@ -13,7 +13,7 @@ const props = defineProps<{
 
 const router = useRouter()
 
-const { mutate, isPending } = useUpdateEvent()
+const { mutate, isPending, error } = useUpdateEvent()
 
 const handleSubmit = (payload: FormSchema) => {
   mutate({ eventId: props.event.id, payload })
@@ -39,7 +39,16 @@ const handleDelete = () => {
       </DeleteEventDialog>
     </CardHeader>
     <CardContent>
-      <EventForm :is-pending="isPending" :data="event" @submit="handleSubmit" />
+      <div class="py-4">
+        <div>error</div>
+        {{ error?.payload }}
+      </div>
+      <EventForm
+        :is-pending="isPending"
+        :data="event"
+        :errors="error?.payload?.fieldErrors"
+        @submit="handleSubmit"
+      />
     </CardContent>
   </Card>
 </template>

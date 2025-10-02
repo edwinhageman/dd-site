@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { getEventService } from '@/service'
-import type { EventUpsertRequest } from '@/generated/api'
+import type { EventResponse, EventUpsertRequest } from '@/generated/api'
+import { ApiError } from '@/api'
 
 export type UpdateEventParams = {
   eventId: number
@@ -10,7 +11,7 @@ export type UpdateEventParams = {
 export function useUpdateEvent() {
   const qc = useQueryClient()
   const service = getEventService()
-  return useMutation({
+  return useMutation<EventResponse, ApiError, UpdateEventParams>({
     mutationFn: async ({ eventId, payload }: UpdateEventParams) => {
       return service.update(eventId, payload)
     },

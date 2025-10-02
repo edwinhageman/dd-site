@@ -18,7 +18,7 @@ const props = defineProps<{
   event: EventResponse
 }>()
 
-const { mutate, isPending, isSuccess } = useCreateCourse()
+const { mutate, isPending, isSuccess, error } = useCreateCourse()
 
 watch(isSuccess, (isSuccess) => {
   if (isSuccess) {
@@ -52,7 +52,11 @@ const handleSubmit = (values: FormSchema) => {
         <DialogDescription>Evenement {{ event.date }} - {{ event.host }}</DialogDescription>
       </DialogHeader>
       <div class="grid gap-4 py-4">
-        <CourseForm :is-pending="isPending" @submit="handleSubmit" />
+        <CourseForm
+          :is-pending="isPending"
+          :errors="error?.payload?.fieldErrors"
+          @submit="handleSubmit"
+        />
       </div>
     </DialogContent>
   </Dialog>

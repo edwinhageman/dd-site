@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { PartialString } from '@/lib/types.ts'
+import type { FormFieldErrors } from '@/lib/types.ts'
 import * as z from 'zod'
 import { useForm } from 'vee-validate'
 import { toTypedSchema } from '@vee-validate/zod'
@@ -9,11 +9,10 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Button } from '@/components/ui/button'
 
 export type FormSchema = z.infer<typeof schema>
-export type FieldErrors = PartialString<FormSchema>
 
 const props = defineProps<{
   isPending: boolean
-  errors?: FieldErrors
+  errors?: FormFieldErrors<FormSchema>
   data?: FormSchema
 }>()
 
@@ -23,7 +22,8 @@ const emits = defineEmits<{
 
 const schema = z.object({
   courseNo: z.coerce.number().positive(),
-  cook: z.string().trim().min(1),
+  // cook: z.string().trim().min(1),
+  cook: z.string().trim(),
   dishName: z.string().trim().min(1),
   dishMainIngredient: z.string().optional(),
 })

@@ -6,14 +6,13 @@ import { FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { watch } from 'vue'
-import type { PartialString } from '@/lib/types.ts'
+import type { FormFieldErrors } from '@/lib/types.ts'
 
 export type FormSchema = z.infer<typeof schema>
-export type FieldErrors = PartialString<FormSchema>
 
 const props = defineProps<{
   isPending?: boolean
-  errors?: FieldErrors
+  errors?: FormFieldErrors<FormSchema>
   data?: FormSchema
 }>()
 
@@ -23,7 +22,8 @@ const emits = defineEmits<{
 
 const schema = z.object({
   date: z.iso.date(),
-  host: z.string().trim().min(1),
+  // host: z.string().trim().min(1),
+  host: z.string().trim(),
   location: z.string().optional(),
 })
 
