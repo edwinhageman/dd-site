@@ -1,4 +1,4 @@
-package emh.dd_site.event;
+package emh.dd_site.wine;
 
 public enum WineType {
 

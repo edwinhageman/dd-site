@@ -1,6 +1,8 @@
-package emh.dd_site.event.dto;
+package emh.dd_site.wine.dto;
 
-import emh.dd_site.event.entity.Wine;
+import emh.dd_site.event.dto.CourseMapper;
+import emh.dd_site.event.dto.CourseResponse;
+import emh.dd_site.wine.entity.Wine;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;

@@ -1,6 +1,7 @@
 package emh.dd_site.event.entity;
 
-import emh.dd_site.event.WineType;
+import emh.dd_site.wine.WineType;
+import emh.dd_site.wine.entity.Wine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

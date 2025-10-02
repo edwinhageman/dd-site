@@ -1,6 +1,6 @@
-package emh.dd_site.event.repository;
+package emh.dd_site.wine.repository;
 
-import emh.dd_site.event.entity.Wine;
+import emh.dd_site.wine.entity.Wine;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

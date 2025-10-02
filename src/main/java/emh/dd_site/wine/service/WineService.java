@@ -1,11 +1,11 @@
-package emh.dd_site.event.service;
+package emh.dd_site.wine.service;
 
-import emh.dd_site.event.dto.WineMapper;
-import emh.dd_site.event.dto.WineResponse;
-import emh.dd_site.event.dto.WineUpsertRequest;
-import emh.dd_site.event.entity.Wine;
-import emh.dd_site.event.exception.WineNotFoundException;
-import emh.dd_site.event.repository.WineRepository;
+import emh.dd_site.wine.dto.WineMapper;
+import emh.dd_site.wine.dto.WineResponse;
+import emh.dd_site.wine.dto.WineUpsertRequest;
+import emh.dd_site.wine.entity.Wine;
+import emh.dd_site.wine.exception.WineNotFoundException;
+import emh.dd_site.wine.repository.WineRepository;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;

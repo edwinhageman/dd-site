@@ -1,8 +1,8 @@
-package emh.dd_site.event.controller;
+package emh.dd_site.wine.controller;
 
-import emh.dd_site.event.dto.WineResponse;
-import emh.dd_site.event.dto.WineUpsertRequest;
-import emh.dd_site.event.service.WineService;
+import emh.dd_site.wine.dto.WineResponse;
+import emh.dd_site.wine.dto.WineUpsertRequest;
+import emh.dd_site.wine.service.WineService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;

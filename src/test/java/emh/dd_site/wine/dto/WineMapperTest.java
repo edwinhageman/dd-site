@@ -1,7 +1,14 @@
-package emh.dd_site.event.dto;
+package emh.dd_site.wine.dto;
 
-import emh.dd_site.event.WineType;
-import emh.dd_site.event.entity.*;
+import emh.dd_site.event.dto.CourseMapper;
+import emh.dd_site.event.dto.DishMapper;
+import emh.dd_site.event.dto.EventMapper;
+import emh.dd_site.event.entity.Course;
+import emh.dd_site.event.entity.TestCourseBuilder;
+import emh.dd_site.event.entity.TestEventBuilder;
+import emh.dd_site.wine.WineType;
+import emh.dd_site.wine.entity.TestWineBuilder;
+import emh.dd_site.wine.entity.Wine;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.PersistenceUnitUtil;
 import org.junit.jupiter.api.BeforeEach;

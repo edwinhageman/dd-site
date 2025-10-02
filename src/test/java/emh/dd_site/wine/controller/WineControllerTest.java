@@ -1,9 +1,9 @@
-package emh.dd_site.event.controller;
+package emh.dd_site.wine.controller;
 
-import emh.dd_site.event.WineType;
-import emh.dd_site.event.dto.WineResponse;
-import emh.dd_site.event.dto.WineUpsertRequest;
-import emh.dd_site.event.service.WineService;
+import emh.dd_site.wine.WineType;
+import emh.dd_site.wine.dto.WineResponse;
+import emh.dd_site.wine.dto.WineUpsertRequest;
+import emh.dd_site.wine.service.WineService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

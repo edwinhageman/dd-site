@@ -1,6 +1,7 @@
-package emh.dd_site.event.entity;
+package emh.dd_site.wine.entity;
 
-import emh.dd_site.event.WineType;
+import emh.dd_site.event.entity.Course;
+import emh.dd_site.wine.WineType;
 
 import java.time.Year;
 

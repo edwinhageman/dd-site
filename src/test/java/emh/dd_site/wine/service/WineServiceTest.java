@@ -1,12 +1,12 @@
-package emh.dd_site.event.service;
+package emh.dd_site.wine.service;
 
-import emh.dd_site.event.WineType;
-import emh.dd_site.event.dto.WineMapper;
-import emh.dd_site.event.dto.WineResponse;
-import emh.dd_site.event.dto.WineUpsertRequest;
-import emh.dd_site.event.entity.Wine;
-import emh.dd_site.event.exception.WineNotFoundException;
-import emh.dd_site.event.repository.WineRepository;
+import emh.dd_site.wine.WineType;
+import emh.dd_site.wine.dto.WineMapper;
+import emh.dd_site.wine.dto.WineResponse;
+import emh.dd_site.wine.dto.WineUpsertRequest;
+import emh.dd_site.wine.entity.Wine;
+import emh.dd_site.wine.exception.WineNotFoundException;
+import emh.dd_site.wine.repository.WineRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;

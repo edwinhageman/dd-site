@@ -1,5 +1,6 @@
 package emh.dd_site.event.entity;
 
+import emh.dd_site.wine.entity.Wine;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;

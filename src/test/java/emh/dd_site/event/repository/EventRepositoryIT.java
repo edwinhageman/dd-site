@@ -1,11 +1,12 @@
 package emh.dd_site.event.repository;
 
 import emh.dd_site.TestcontainersConfig;
-import emh.dd_site.event.WineType;
 import emh.dd_site.event.entity.Course;
 import emh.dd_site.event.entity.Dish;
 import emh.dd_site.event.entity.Event;
-import emh.dd_site.event.entity.Wine;
+import emh.dd_site.wine.WineType;
+import emh.dd_site.wine.entity.Wine;
+import emh.dd_site.wine.repository.WineRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

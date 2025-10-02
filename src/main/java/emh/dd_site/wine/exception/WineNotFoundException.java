@@ -1,4 +1,4 @@
-package emh.dd_site.event.exception;
+package emh.dd_site.wine.exception;
 
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.server.ResponseStatusException;

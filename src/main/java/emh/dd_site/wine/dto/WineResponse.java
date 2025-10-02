@@ -1,6 +1,7 @@
-package emh.dd_site.event.dto;
+package emh.dd_site.wine.dto;
 
-import emh.dd_site.event.WineType;
+import emh.dd_site.event.dto.CourseResponse;
+import emh.dd_site.wine.WineType;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Year;
