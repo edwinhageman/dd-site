@@ -1,6 +1,5 @@
 package emh.dd_site.wine.controller;
 
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.dto.WineResponse;
 import emh.dd_site.wine.dto.WineUpsertRequest;
 import emh.dd_site.wine.service.WineService;
@@ -38,10 +37,10 @@ class WineControllerTest {
 
 	@BeforeEach
 	void setUp() {
-		testResponse = new WineResponse(1L, "Wine Name", WineType.RED, "Grape Name", "Country", "Region", Year.of(2025),
-				Collections.emptyList());
-		testRequest = new WineUpsertRequest("Wine Name", WineType.RED, "Grape Name", "Country", "Region",
+		testResponse = new WineResponse(1L, "Wine Name", "Winery name", "Country", "Region", "Appellation",
 				Year.of(2025));
+		testRequest = new WineUpsertRequest("Wine Name", "Winery name", "Country", "Region", "Appellation",
+				Year.of(2025), Collections.emptyList(), Collections.emptyList());
 	}
 
 	@Nested

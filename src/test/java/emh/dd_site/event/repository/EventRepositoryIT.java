@@ -4,7 +4,6 @@ import emh.dd_site.TestcontainersConfig;
 import emh.dd_site.event.entity.Course;
 import emh.dd_site.event.entity.Dish;
 import emh.dd_site.event.entity.Event;
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.entity.Wine;
 import emh.dd_site.wine.repository.WineRepository;
 import org.junit.jupiter.api.Test;
@@ -133,8 +132,8 @@ class EventRepositoryIT {
 		Event event = new Event(LocalDate.now(), "Test Host");
 		event = eventRepository.save(event);
 
-		Wine wine1 = new Wine("Wine 1", WineType.RED, "Merlot", "France");
-		Wine wine2 = new Wine("Wine 2", WineType.WHITE, "Chardonnay", "France");
+		Wine wine1 = new Wine("Wine 1");
+		Wine wine2 = new Wine("Wine 2");
 		wineRepository.saveAll(List.of(wine1, wine2));
 
 		Course course1 = new Course(event, 1, "Cook A");

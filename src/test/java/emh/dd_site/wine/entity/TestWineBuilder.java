@@ -1,8 +1,8 @@
 package emh.dd_site.wine.entity;
 
 import emh.dd_site.event.entity.Course;
-import emh.dd_site.wine.WineType;
 
+import java.math.BigDecimal;
 import java.time.Year;
 
 import static emh.dd_site.RecursionUtils.setPrivateField;
@@ -11,13 +11,13 @@ public class TestWineBuilder {
 
 	private final Wine wine;
 
-	private TestWineBuilder(String name, WineType type, String grape, String country) {
-		this.wine = new Wine(name, type, grape, country);
+	private TestWineBuilder(String name) {
+		this.wine = new Wine(name);
 		setPrivateField(wine, "id", 1L);
 	}
 
-	public static TestWineBuilder aWine() {
-		return new TestWineBuilder("Test Wine", WineType.WHITE, "Test Grape", "Test Country");
+	public static TestWineBuilder builder() {
+		return new TestWineBuilder("Test Wine");
 	}
 
 	public TestWineBuilder withId(Long id) {
@@ -30,13 +30,8 @@ public class TestWineBuilder {
 		return this;
 	}
 
-	public TestWineBuilder withType(WineType type) {
-		this.wine.setType(type);
-		return this;
-	}
-
-	public TestWineBuilder withGrape(String grape) {
-		this.wine.setGrape(grape);
+	public TestWineBuilder withWinery(String winery) {
+		this.wine.setName(winery);
 		return this;
 	}
 
@@ -50,8 +45,23 @@ public class TestWineBuilder {
 		return this;
 	}
 
-	public TestWineBuilder withYear(Year year) {
-		this.wine.setYear(year);
+	public TestWineBuilder withAppellation(String appellation) {
+		this.wine.setRegion(appellation);
+		return this;
+	}
+
+	public TestWineBuilder withVintage(Year vintage) {
+		this.wine.setVintage(vintage);
+		return this;
+	}
+
+	public TestWineBuilder addStyle(WineStyle style) {
+		this.wine.addStyle(style);
+		return this;
+	}
+
+	public TestWineBuilder addGrape(Grape grape, BigDecimal percentage) {
+		this.wine.addGrape(grape, percentage);
 		return this;
 	}
 

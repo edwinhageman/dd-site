@@ -1,5 +1,10 @@
-import { Configuration, CourseControllerApi, EventControllerApi, WineControllerApi } from '@/generated/api'
-import { envBrowser } from '@/env.browser.ts'
+import {
+  Configuration,
+  CourseControllerApi,
+  EventControllerApi,
+  WineControllerApi,
+} from '@/generated/api'
+import { envBrowser } from '../env.browser.ts'
 import axios from 'axios'
 
 export interface ApiControllers {

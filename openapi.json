@@ -553,6 +553,18 @@
   },
   "components": {
     "schemas": {
+      "GrapeComposition": {
+        "type": "object",
+        "properties": {
+          "grapeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number"
+          }
+        }
+      },
       "WineUpsertRequest": {
         "type": "object",
         "properties": {
@@ -560,38 +572,177 @@
             "type": "string",
             "minLength": 1
           },
-          "type": {
-            "type": "string",
-            "enum": [
-              "WHITE",
-              "RED",
-              "ROSE",
-              "SPARKLING",
-              "DESSERT",
-              "FORTIFIED",
-              "UNKNOWN"
-            ]
-          },
-          "grape": {
-            "type": "string",
-            "minLength": 1
+          "winery": {
+            "type": "string"
           },
           "country": {
-            "type": "string",
-            "minLength": 1
+            "type": "string"
           },
           "region": {
             "type": "string"
           },
-          "year": {
+          "appellation": {
+            "type": "string"
+          },
+          "vintage": {
+            "type": "string"
+          },
+          "styles": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "grapes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrapeComposition"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "WineResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "winery": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "appellation": {
+            "type": "string"
+          },
+          "vintage": {
+            "type": "string"
+          },
+          "styles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WineStyleResponse"
+            }
+          },
+          "grapeComposition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrapeComposition"
+            }
+          }
+        },
+        "required": [
+          "grapeComposition",
+          "id",
+          "name",
+          "styles"
+        ]
+      },
+      "WineStyleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
             "type": "string"
           }
         },
         "required": [
-          "country",
-          "grape",
-          "name",
-          "type"
+          "id",
+          "name"
+        ]
+      },
+      "EventUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "host": {
+            "type": "string",
+            "minLength": 1
+          },
+          "location": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "host"
+        ]
+      },
+      "EventResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "host": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "host",
+          "id"
+        ]
+      },
+      "CourseUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "courseNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cook": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dish": {
+            "$ref": "#/components/schemas/DishUpsertRequest"
+          }
+        },
+        "required": [
+          "cook",
+          "courseNo"
+        ]
+      },
+      "DishUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mainIngredient": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
         ]
       },
       "CourseResponse": {
@@ -639,134 +790,6 @@
         },
         "required": [
           "id",
-          "name"
-        ]
-      },
-      "EventResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "host": {
-            "type": "string"
-          },
-          "location": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "date",
-          "host",
-          "id"
-        ]
-      },
-      "WineResponse": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "name": {
-            "type": "string"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "WHITE",
-              "RED",
-              "ROSE",
-              "SPARKLING",
-              "DESSERT",
-              "FORTIFIED",
-              "UNKNOWN"
-            ]
-          },
-          "grape": {
-            "type": "string"
-          },
-          "country": {
-            "type": "string"
-          },
-          "region": {
-            "type": "string"
-          },
-          "year": {
-            "type": "string"
-          },
-          "courses": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/CourseResponse"
-            }
-          }
-        },
-        "required": [
-          "country",
-          "grape",
-          "id",
-          "name",
-          "type"
-        ]
-      },
-      "EventUpsertRequest": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "format": "date"
-          },
-          "host": {
-            "type": "string",
-            "minLength": 1
-          },
-          "location": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "date",
-          "host"
-        ]
-      },
-      "CourseUpsertRequest": {
-        "type": "object",
-        "properties": {
-          "courseNo": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cook": {
-            "type": "string",
-            "minLength": 1
-          },
-          "dish": {
-            "$ref": "#/components/schemas/DishUpsertRequest"
-          }
-        },
-        "required": [
-          "cook",
-          "courseNo"
-        ]
-      },
-      "DishUpsertRequest": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "minLength": 1
-          },
-          "mainIngredient": {
-            "type": "string"
-          }
-        },
-        "required": [
           "name"
         ]
       },

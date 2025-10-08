@@ -1,8 +1,9 @@
 package emh.dd_site.wine.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import emh.dd_site.wine.WineType;
+import emh.dd_site.wine.dto.GrapeResponse;
 import emh.dd_site.wine.dto.WineResponse;
+import emh.dd_site.wine.dto.WineStyleResponse;
 import emh.dd_site.wine.dto.WineUpsertRequest;
 import emh.dd_site.wine.exception.WineNotFoundException;
 import emh.dd_site.wine.service.WineService;
@@ -20,6 +21,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.math.BigDecimal;
 import java.time.Year;
 import java.util.Collections;
 import java.util.List;
@@ -45,17 +47,25 @@ public class WineControllerIT {
 	@MockitoBean
 	private WineService wineService;
 
-	private final WineResponse testResponse = new WineResponse(1L, "Test Wine", WineType.RED, "Test Grape",
-			"Test Country", "Test Region", Year.of(2020), Collections.emptyList());
+	private final GrapeResponse grape1 = new GrapeResponse(1, "grape 1");
 
-	private final WineResponse testResponse2 = new WineResponse(2L, "Test Wine 2", WineType.ROSE, "Test Grape 2",
-			"Test Country 2", "Test Region 2", Year.of(2022), Collections.emptyList());
+	private final GrapeResponse grape2 = new GrapeResponse(2, "grape 2");
 
-	private final WineResponse upsertResponse = new WineResponse(1L, "Upsert Wine", WineType.WHITE, "Upsert Grape",
-			"Upsert Country", "Upsert Region", Year.of(2023), Collections.emptyList());
+	private final WineResponse testResponse = new WineResponse(1L, "Test Wine", "Test Winery", "Test Country",
+			"Test Region", "Test Appellation", Year.of(2020),
+			List.of(new WineStyleResponse(1, "style1"), new WineStyleResponse(2, "style2")),
+			List.of(new WineResponse.GrapeComposition(grape1, BigDecimal.ONE),
+					new WineResponse.GrapeComposition(grape2, BigDecimal.ZERO)));
 
-	private final WineUpsertRequest testRequest = new WineUpsertRequest("Upsert Wine", WineType.WHITE, "Upsert Grape",
-			"Upsert Country", "Upsert Region", Year.of(2023));
+	private final WineResponse testResponse2 = new WineResponse(2L, "Test Wine 2", "Test Winery 2", "Test Country 2",
+			"Test Region 2", "Test Appellation 2", Year.of(2022));
+
+	private final WineResponse upsertResponse = new WineResponse(1L, "Upsert Wine", "Upsert Winery", "Upsert Country",
+			"Upsert Region", "Upsert Appellation", Year.of(2023));
+
+	private final WineUpsertRequest testRequest = new WineUpsertRequest("Upsert Wine", "Upsert Winery",
+			"Upsert Country", "Upsert Region", "Upsert Appellation", Year.of(2023), Collections.emptyList(),
+			Collections.emptyList());
 
 	@Nested
 	@DisplayName("GET /api/wines")
@@ -120,12 +130,19 @@ public class WineControllerIT {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(1))
 				.andExpect(jsonPath("$.name").value("Test Wine"))
-				.andExpect(jsonPath("$.type").value("RED"))
-				.andExpect(jsonPath("$.grape").value("Test Grape"))
+				.andExpect(jsonPath("$.winery").value("Test Winery"))
 				.andExpect(jsonPath("$.country").value("Test Country"))
 				.andExpect(jsonPath("$.region").value("Test Region"))
-				.andExpect(jsonPath("$.year").value(2020))
-				.andExpect(jsonPath("$.courses").isEmpty());
+				.andExpect(jsonPath("$.appellation").value("Test Appellation"))
+				.andExpect(jsonPath("$.vintage").value(2020))
+				.andExpect(jsonPath("$.styles", hasSize(2)))
+				.andExpect(jsonPath("$.styles[0].id").value(1))
+				.andExpect(jsonPath("$.styles[0].name").value("style1"))
+				.andExpect(jsonPath("$.styles[1].id").value(2))
+				.andExpect(jsonPath("$.grapeComposition", hasSize(2)))
+				.andExpect(jsonPath("$.grapeComposition[0].grape.id").value(1))
+				.andExpect(jsonPath("$.grapeComposition[0].grape.name").value("grape 1"))
+				.andExpect(jsonPath("$.grapeComposition[1].grape.id").value(2));
 		}
 
 		@Test
@@ -155,12 +172,13 @@ public class WineControllerIT {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(1))
 				.andExpect(jsonPath("$.name").value("Upsert Wine"))
-				.andExpect(jsonPath("$.type").value("WHITE"))
-				.andExpect(jsonPath("$.grape").value("Upsert Grape"))
+				.andExpect(jsonPath("$.winery").value("Upsert Winery"))
 				.andExpect(jsonPath("$.country").value("Upsert Country"))
 				.andExpect(jsonPath("$.region").value("Upsert Region"))
-				.andExpect(jsonPath("$.year").value(2023))
-				.andExpect(jsonPath("$.courses").isEmpty());
+				.andExpect(jsonPath("$.appellation").value("Upsert Appellation"))
+				.andExpect(jsonPath("$.vintage").value(2023))
+				.andExpect(jsonPath("$.styles").isEmpty())
+				.andExpect(jsonPath("$.grapeComposition").isEmpty());
 		}
 
 		@Test
@@ -192,12 +210,13 @@ public class WineControllerIT {
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(1))
 				.andExpect(jsonPath("$.name").value("Upsert Wine"))
-				.andExpect(jsonPath("$.type").value("WHITE"))
-				.andExpect(jsonPath("$.grape").value("Upsert Grape"))
+				.andExpect(jsonPath("$.winery").value("Upsert Winery"))
 				.andExpect(jsonPath("$.country").value("Upsert Country"))
 				.andExpect(jsonPath("$.region").value("Upsert Region"))
-				.andExpect(jsonPath("$.year").value(2023))
-				.andExpect(jsonPath("$.courses").isEmpty());
+				.andExpect(jsonPath("$.appellation").value("Upsert Appellation"))
+				.andExpect(jsonPath("$.vintage").value(2023))
+				.andExpect(jsonPath("$.styles").isEmpty())
+				.andExpect(jsonPath("$.grapeComposition").isEmpty());
 		}
 
 		@Test

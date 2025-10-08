@@ -1,6 +1,5 @@
 package emh.dd_site.event.entity;
 
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.entity.Wine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -93,7 +92,7 @@ class EventTests {
 		void setUp() {
 			course = new Course(event, 1, "Test Cook");
 			course.setDish(new Dish("Test Dish"));
-			course.setWine(new Wine("Test Wine", WineType.RED, "Merlot", "France"));
+			course.setWine(new Wine("Test Wine"));
 		}
 
 		@Test

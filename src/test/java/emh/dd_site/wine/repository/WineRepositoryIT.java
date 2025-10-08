@@ -6,18 +6,22 @@ import emh.dd_site.event.entity.Dish;
 import emh.dd_site.event.entity.Event;
 import emh.dd_site.event.repository.CourseRepository;
 import emh.dd_site.event.repository.EventRepository;
-import emh.dd_site.wine.WineType;
+import emh.dd_site.wine.entity.Grape;
 import emh.dd_site.wine.entity.Wine;
+import emh.dd_site.wine.entity.WineGrapeComposition;
+import emh.dd_site.wine.entity.WineStyle;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
@@ -38,206 +42,244 @@ class WineRepositoryIT {
 	private WineRepository wineRepository;
 
 	@Autowired
+	private WineStyleRepository wineStyleRepository;
+
+	@Autowired
+	private GrapeRepository grapeRepository;
+
+	@Autowired
 	private EventRepository eventRepository;
 
 	@Autowired
 	private CourseRepository courseRepository;
 
+	private WineStyle style1, style2;
+
+	private Grape grape1, grape2;
+
+	private Wine wine1, wine2, wine3;
+
+	@BeforeEach
+	void setUp() {
+		style1 = new WineStyle("Style 1");
+		style2 = new WineStyle("Style 2");
+
+		wineStyleRepository.saveAll(List.of(style1, style2));
+
+		grape1 = new Grape("Grape 1");
+		grape2 = new Grape("Grape 2");
+
+		grapeRepository.saveAll(List.of(grape1, grape2));
+
+		wine1 = new Wine("Wine name 1");
+		wine1.setWinery("Winery name 1");
+		wine1.setCountry("Country 1");
+		wine1.setRegion("Region 1");
+		wine1.setAppellation("Appellation 1");
+		wine1.setVintage(Year.of(2015));
+		wine1.addStyle(style1);
+		wine1.addGrape(grape1, BigDecimal.valueOf(1));
+
+		wine2 = new Wine("Wine name 2");
+		wine2.setWinery("Winery name 2");
+		wine2.setCountry("Country 2");
+		wine2.setRegion("Region 2");
+		wine2.setAppellation("Appellation 2");
+		wine2.setVintage(Year.of(2016));
+		wine2.addStyle(style2);
+		wine2.addGrape(grape2, null);
+
+		wine3 = new Wine("Wine name 3");
+		wine3.setWinery("Winery name 3");
+		wine3.setCountry("Country 3");
+		wine3.setRegion("Region 3");
+		wine3.setAppellation("Appellation 3");
+		wine3.setVintage(Year.of(2017));
+		wine3.addStyle(style1);
+		wine3.addStyle(style2);
+		wine3.addGrape(grape1, BigDecimal.valueOf(.4));
+		wine3.addGrape(grape2, BigDecimal.valueOf(.6));
+
+		wineRepository.saveAll(List.of(wine1, wine2, wine3));
+	}
+
 	@Test
+	@DisplayName("Should save and retrieve wine styles")
 	void shouldSaveAndRetrieveWine() {
-		// Arrange
-		Wine wine = new Wine("Château Margaux", WineType.RED, "Cabernet Sauvignon", "France");
-		wine.setRegion("Bordeaux");
-		wine.setYear(Year.of(2015));
+		var result = wineRepository.findById(wine1.getId());
 
-		// Act
-		Wine savedWine = wineRepository.save(wine);
-
-		// Assert
-		Optional<Wine> retrievedWine = wineRepository.findById(savedWine.getId());
-		assertTrue(retrievedWine.isPresent());
-		assertEquals(wine.getName(), retrievedWine.get().getName());
-		assertEquals(wine.getType(), retrievedWine.get().getType());
-		assertEquals(wine.getGrape(), retrievedWine.get().getGrape());
-		assertEquals(wine.getCountry(), retrievedWine.get().getCountry());
-		assertEquals(wine.getRegion(), retrievedWine.get().getRegion());
-		assertEquals(wine.getYear(), retrievedWine.get().getYear());
+		assertTrue(result.isPresent());
+		assertEquals(wine1.getName(), result.get().getName());
+		assertEquals(wine1.getWinery(), result.get().getWinery());
+		assertEquals(wine1.getCountry(), result.get().getCountry());
+		assertEquals(wine1.getRegion(), result.get().getRegion());
+		assertEquals(wine1.getAppellation(), result.get().getAppellation());
+		assertEquals(wine1.getVintage(), result.get().getVintage());
 	}
 
 	@Test
+	@DisplayName("Should update wine")
 	void shouldUpdateWine() {
-		// Arrange
-		Wine wine = new Wine("Original Wine", WineType.RED, "Merlot", "France");
-		Wine savedWine = wineRepository.save(wine);
+		wine1.setName("Updated Wine name");
+		wine1.setWinery("Updated Winery name");
+		wine1.setCountry("Updated Country");
+		wine1.setRegion("Updated Region");
+		wine1.setAppellation("Updated Appellation");
+		wine1.setVintage(Year.of(2016));
 
-		// Act
-		savedWine.setName("Updated Wine");
-		savedWine.setType(WineType.WHITE);
-		savedWine.setGrape("Chardonnay");
-		Wine updatedWine = wineRepository.save(savedWine);
+		Wine updatedWine = wineRepository.save(wine1);
 
-		// Assert
-		assertEquals("Updated Wine", updatedWine.getName());
-		assertEquals(WineType.WHITE, updatedWine.getType());
-		assertEquals("Chardonnay", updatedWine.getGrape());
+		assertEquals("Updated Wine name", updatedWine.getName());
+		assertEquals("Updated Winery name", updatedWine.getWinery());
+		assertEquals("Updated Country", updatedWine.getCountry());
+		assertEquals("Updated Region", updatedWine.getRegion());
+		assertEquals("Updated Appellation", updatedWine.getAppellation());
+		assertEquals(Year.of(2016), updatedWine.getVintage());
 	}
 
 	@Test
+	@DisplayName("Should delete wine")
 	void shouldDeleteWine() {
-		// Arrange
-		Wine wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
-		Wine savedWine = wineRepository.save(wine);
+		wineRepository.deleteById(wine1.getId());
 
-		// Act
-		wineRepository.deleteById(savedWine.getId());
-
-		// Assert
-		Optional<Wine> deletedWine = wineRepository.findById(savedWine.getId());
+		Optional<Wine> deletedWine = wineRepository.findById(wine1.getId());
 		assertFalse(deletedWine.isPresent());
 	}
 
 	@Test
+	@DisplayName("Should paginate and sort wines")
 	void shouldPaginateAndSortWines() {
-		// Arrange
-		Wine wine1 = new Wine("Wine A", WineType.RED, "Merlot", "France");
-		Wine wine2 = new Wine("Wine B", WineType.WHITE, "Chardonnay", "Italy");
-		Wine wine3 = new Wine("Wine C", WineType.ROSE, "Grenache", "Spain");
-		wineRepository.saveAll(List.of(wine1, wine2, wine3));
+		var result = wineRepository.findAll(PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "name")));
 
-		// Act
-		Page<Wine> winePage = wineRepository.findAll(PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "name")));
-
-		// Assert
-		assertThat(winePage.getContent()).hasSize(2);
-		assertThat(winePage.getTotalElements()).isEqualTo(3);
-		assertThat(winePage.getTotalPages()).isEqualTo(2);
-		assertThat(winePage.getContent().get(0).getName()).isEqualTo("Wine A");
-		assertThat(winePage.getContent().get(1).getName()).isEqualTo("Wine B");
+		assertThat(result.getContent()).hasSize(2);
+		assertThat(result.getTotalElements()).isEqualTo(3);
+		assertThat(result.getTotalPages()).isEqualTo(2);
+		assertThat(result.getContent().get(0).getName()).isEqualTo("Wine name 1");
+		assertThat(result.getContent().get(1).getName()).isEqualTo("Wine name 2");
 	}
 
 	@Test
-	void shouldFineWineByIdAndFetchRelatedCourses() {
-		// Arrange
-		Wine wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
-		wine = wineRepository.save(wine);
+	@DisplayName("findWithStylesAndGrapesById should return wine with related styles and grapes")
+	void findWithStylesAndGrapesById_shouldReturnWineWithStylesAndGrapes() {
+		var result = wineRepository.findWithStylesAndGrapesById(wine3.getId()).orElseThrow();
 
-		Event event = new Event(LocalDate.now(), "Test Event");
-		event = eventRepository.save(event);
-
-		Course course1 = new Course(event, 1, "Cook A");
-		course1.setDish(new Dish("Test Dish 1"));
-		course1.setWine(wine);
-		Course course2 = new Course(event, 2, "Cook B");
-		course2.setDish(new Dish("Test Dish 2"));
-		course2.setWine(wine);
-
-		// Act
-		courseRepository.saveAll(List.of(course1, course2));
-		entityManager.flush();
-
-		Wine retrievedWine = wineRepository.findByIdWithCourses(wine.getId()).orElseThrow();
-
-		// Assert
-		assertThat(retrievedWine.getCourses()).hasSize(2);
-		assertThat(retrievedWine.getCourses()).extracting(Course::getCourseNo).containsExactlyInAnyOrder(1, 2);
+		assertThat(result.getStyles()).hasSize(2);
+		assertThat(result.getStyles()).extracting(WineStyle::getName).containsExactlyInAnyOrder("Style 1", "Style 2");
+		assertThat(result.getGrapeComposition()).hasSize(2);
+		assertThat(result.getGrapeComposition()).extracting(w -> w.getGrape().getName())
+			.containsExactlyInAnyOrder("Grape 1", "Grape 2");
 	}
 
 	@Test
-	void shouldFindWineByEventId() {
-		// Arrange
-		Wine wine1 = new Wine("Test Wine 1", WineType.RED, "Merlot", "France");
-		Wine wine2 = new Wine("Test Wine 2", WineType.WHITE, "Chardonnay", "France");
-		wine1 = wineRepository.save(wine1);
-		wine2 = wineRepository.save(wine2);
+	@DisplayName("findAllIds should return page with ids")
+	void findAllIds_shouldReturnPageWithIds() {
+		var pageRequest = PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "id"));
+		var result = wineRepository.findAllIds(pageRequest);
 
-		Event event = new Event(LocalDate.now(), "Test Event");
+		assertThat(result.getContent()).hasSize(2);
+		assertThat(result.getTotalElements()).isEqualTo(3);
+		assertThat(result.getTotalPages()).isEqualTo(2);
+		assertThat(result.getContent()).containsOnly(wine3.getId(), wine2.getId());
+	}
+
+	@Test
+	@DisplayName("findIdsByCourseEventId should return page with ids")
+	void findIdsByCourseEventId_shouldReturnPageWithIds() {
+		var event = new Event(LocalDate.now(), "Test Event");
 		event = eventRepository.save(event);
 
-		Course course1 = new Course(event, 1, "Cook A");
+		var course1 = new Course(event, 1, "Cook A");
 		course1.setDish(new Dish("Test Dish 1"));
 		course1.setWine(wine1);
-		Course course2 = new Course(event, 2, "Cook B");
+		var course2 = new Course(event, 2, "Cook B");
 		course2.setDish(new Dish("Test Dish 2"));
 		course2.setWine(wine2);
 
-		// Act
 		courseRepository.saveAll(List.of(course1, course2));
 		entityManager.flush();
 
-		Page<Wine> winePage = wineRepository.findByEventId(event.getId(),
-				PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "name")));
+		var pageRequest = PageRequest.of(0, 2, Sort.by(Sort.Direction.ASC, "id"));
+		var result = wineRepository.findAllIds(pageRequest);
 
-		// Assert
-		assertThat(winePage.getContent()).hasSize(2);
-		assertThat(winePage.getTotalElements()).isEqualTo(2);
-		assertThat(winePage.getTotalPages()).isEqualTo(1);
-		assertThat(winePage.getContent().get(0).getName()).isEqualTo("Test Wine 1");
-		assertThat(winePage.getContent().get(1).getName()).isEqualTo("Test Wine 2");
+		assertThat(result.getContent()).hasSize(2);
+		assertThat(result.getTotalElements()).isEqualTo(3);
+		assertThat(result.getTotalPages()).isEqualTo(2);
+		assertThat(result.getContent()).containsOnly(wine1.getId(), wine2.getId());
 	}
 
 	@Test
-	void shouldHandleWineCourseRelationshipManagement() {
-		// Arrange
-		Wine wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
-		wineRepository.save(wine);
+	@DisplayName("findAllWithStylesAndGrapesByIdIn should return wines with related styles and grapes")
+	void findAllWithStylesAndGrapesByIdId_shouldReturnWinesWithStylesAndGrapes() {
+		var result = wineRepository
+			.findAllWithStylesAndGrapesByIdIn(List.of(wine1.getId(), wine2.getId(), wine3.getId()));
 
-		Event event = new Event(LocalDate.now(), "Test Event");
-		eventRepository.save(event);
+		assertThat(result).hasSize(3);
+		assertThat(result.get(0)).satisfies(wine -> {
+			assertThat(wine.getName()).isEqualTo("Wine name 1");
+			assertThat(wine.getStyles()).extracting(WineStyle::getName).containsExactlyInAnyOrder("Style 1");
+			assertThat(wine.getGrapeComposition()).extracting(w -> w.getGrape().getName())
+				.containsExactlyInAnyOrder("Grape 1");
+		});
+		assertThat(result.get(1)).satisfies(wine -> {
+			assertThat(wine.getName()).isEqualTo("Wine name 2");
+			assertThat(wine.getStyles()).extracting(WineStyle::getName).containsExactlyInAnyOrder("Style 2");
+			assertThat(wine.getGrapeComposition()).extracting(w -> w.getGrape().getName())
+				.containsExactlyInAnyOrder("Grape 2");
+		});
+		assertThat(result.get(2)).satisfies(wine -> {
+			assertThat(wine.getName()).isEqualTo("Wine name 3");
+			assertThat(wine.getStyles()).hasSize(2);
+			assertThat(wine.getGrapeComposition()).hasSize(2);
+		});
+	}
 
-		Course course = new Course(event, 1, "Test Cook");
-		course.setDish(new Dish("Test Dish"));
-		course.setWine(wine);
-		courseRepository.save(course);
+	@Test
+	void shouldHandleWineStyleRelationshipManagement() {
+		var result = wineRepository.findWithStylesAndGrapesById(wine1.getId()).orElseThrow();
 
-		// Act & Assert
-		// Test adding course
-		wine.addCourse(course);
-		wineRepository.save(wine);
+		assertThat(result.getStyles()).hasSize(1);
+		assertThat(result.getStyles()).contains(style1);
+
+		wine1.removeStyle(style1);
+		wineRepository.save(wine1);
 		entityManager.flush();
 		entityManager.clear();
 
-		Wine retrievedWine = wineRepository.findByIdWithCourses(wine.getId()).orElseThrow();
-		assertThat(retrievedWine.getCourses()).hasSize(1);
-		assertTrue(retrievedWine.getCourses().contains(course));
+		result = wineRepository.findById(wine1.getId()).orElseThrow();
+		assertThat(result.getStyles()).isEmpty();
+	}
 
-		// Test removing course
-		wine.removeCourse(course);
-		wineRepository.save(wine);
+	@Test
+	void shouldHandleGrapeCompositionRelationshipManagement() {
+		var result = wineRepository.findWithStylesAndGrapesById(wine1.getId()).orElseThrow();
+
+		assertThat(result.getGrapeComposition()).hasSize(1);
+		assertThat(result.getGrapeComposition()).contains(new WineGrapeComposition(wine1, grape1, null));
+
+		wine1.removeGrape(grape1);
+		wineRepository.save(wine1);
 		entityManager.flush();
 		entityManager.clear();
 
-		retrievedWine = wineRepository.findById(wine.getId()).orElseThrow();
-		assertThat(retrievedWine.getCourses()).isEmpty();
+		result = wineRepository.findById(wine1.getId()).orElseThrow();
+		assertThat(result.getGrapeComposition()).isEmpty();
 	}
 
 	@Test
 	void shouldHandleOptionalFields() {
-		// Arrange
-		Wine wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
-		// Don't set optional fields (region and year)
+		var wine = new Wine("Test Wine");
+		// Don't set optional fields
 
-		// Act
-		Wine savedWine = wineRepository.save(wine);
-		Wine retrievedWine = wineRepository.findById(savedWine.getId()).orElseThrow();
+		wineRepository.save(wine);
+		var result = wineRepository.findById(wine.getId()).orElseThrow();
 
-		// Assert
-		assertNull(retrievedWine.getRegion());
-		assertNull(retrievedWine.getYear());
-		assertNotNull(retrievedWine.getId());
-		assertEquals("Test Wine", retrievedWine.getName());
-	}
-
-	@Test
-	void shouldHandleAllWineTypes() {
-		// Arrange & Act
-		Wine redWine = wineRepository.save(new Wine("Red Wine", WineType.RED, "Merlot", "France"));
-		Wine whiteWine = wineRepository.save(new Wine("White Wine", WineType.WHITE, "Chardonnay", "Italy"));
-		Wine roseWine = wineRepository.save(new Wine("Rose Wine", WineType.ROSE, "Grenache", "Spain"));
-
-		// Assert
-		List<Wine> wines = wineRepository.findAll();
-		assertThat(wines).extracting(Wine::getType)
-			.containsExactlyInAnyOrder(WineType.RED, WineType.WHITE, WineType.ROSE);
+		assertNull(result.getWinery());
+		assertNull(result.getCountry());
+		assertNull(result.getRegion());
+		assertNull(result.getAppellation());
+		assertNull(result.getVintage());
+		assertNotNull(result.getId());
+		assertEquals("Test Wine", result.getName());
 	}
 
 }

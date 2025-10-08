@@ -11,7 +11,7 @@ public class TestDishBuilder {
 		setPrivateField(dish, "id", 1L);
 	}
 
-	public static TestDishBuilder aDish() {
+	public static TestDishBuilder builder() {
 		return new TestDishBuilder("Test Dish");
 	}
 

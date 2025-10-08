@@ -1,6 +1,5 @@
 package emh.dd_site.event.entity;
 
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.entity.Wine;
 
 import java.time.LocalDate;
@@ -18,9 +17,9 @@ public class TestCourseBuilder {
 		setPrivateField(course, "id", 1L);
 	}
 
-	public static TestCourseBuilder aCourse() {
+	public static TestCourseBuilder builder() {
 		return new TestCourseBuilder(new Event(LocalDate.of(2025, 1, 1), "Host name"), 1, "Test Cook",
-				new Dish("Dish name"), new Wine("Wine name", WineType.RED, "Merlot", "France"));
+				new Dish("Dish name"), new Wine("Wine name"));
 	}
 
 	public TestCourseBuilder withId(Long id) {

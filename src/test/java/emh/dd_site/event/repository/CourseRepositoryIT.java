@@ -4,7 +4,6 @@ import emh.dd_site.TestcontainersConfig;
 import emh.dd_site.event.entity.Course;
 import emh.dd_site.event.entity.Dish;
 import emh.dd_site.event.entity.Event;
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.entity.Wine;
 import emh.dd_site.wine.repository.WineRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -55,7 +54,7 @@ class CourseRepositoryIT {
 		testDish = new Dish("Test Dish");
 
 		// Create test wine
-		testWine = new Wine("Test Wine", WineType.WHITE, "Sauvignon Blanc", "France");
+		testWine = new Wine("Test Wine");
 		wineRepository.save(testWine);
 	}
 

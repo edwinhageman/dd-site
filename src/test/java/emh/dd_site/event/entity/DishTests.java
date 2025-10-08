@@ -1,7 +1,6 @@
 
 package emh.dd_site.event.entity;
 
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.entity.Wine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +20,7 @@ class DishTests {
 
 	@BeforeEach
 	void setUp() {
-		dish = TestDishBuilder.aDish().withName(testName).build();
+		dish = TestDishBuilder.builder().withName(testName).build();
 	}
 
 	@Nested
@@ -82,7 +81,7 @@ class DishTests {
 		@BeforeEach
 		void setUp() {
 			event = new Event(LocalDate.now(), "Test Host");
-			wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
+			wine = new Wine("Test Wine");
 			dish = new Dish("Test Dish");
 			course = new Course(event, 1, "Test Cook");
 			course.setDish(new Dish("Initial dish"));
@@ -115,8 +114,8 @@ class DishTests {
 		@Test
 		@DisplayName("Dishes with null IDs should not be equal")
 		void dishesWithNullIdsShouldNotBeEqual() {
-			Dish dish1 = TestDishBuilder.aDish().withId(null).build();
-			Dish dish2 = TestDishBuilder.aDish().withId(null).build();
+			Dish dish1 = TestDishBuilder.builder().withId(null).build();
+			Dish dish2 = TestDishBuilder.builder().withId(null).build();
 			assertNotEquals(dish1, dish2);
 		}
 
@@ -135,16 +134,16 @@ class DishTests {
 		@Test
 		@DisplayName("Dishes with same non-null ID should be equal")
 		void dishesWithSameNonNullIdShouldBeEqual() {
-			Dish dish1 = TestDishBuilder.aDish().withId(1L).build();
-			Dish dish2 = TestDishBuilder.aDish().withId(1L).build();
+			Dish dish1 = TestDishBuilder.builder().withId(1L).build();
+			Dish dish2 = TestDishBuilder.builder().withId(1L).build();
 			assertEquals(dish1, dish2);
 		}
 
 		@Test
 		@DisplayName("Dishes with different IDs should not be equal")
 		void dishesWithDifferentIdsShouldNotBeEqual() {
-			Dish dish1 = TestDishBuilder.aDish().withId(1L).build();
-			Dish dish2 = TestDishBuilder.aDish().withId(2L).build();
+			Dish dish1 = TestDishBuilder.builder().withId(1L).build();
+			Dish dish2 = TestDishBuilder.builder().withId(2L).build();
 			assertNotEquals(dish1, dish2);
 		}
 
@@ -153,7 +152,7 @@ class DishTests {
 	@Test
 	@DisplayName("Should generate meaningful toString output")
 	void shouldGenerateMeaningfulToString() {
-		Dish testDish = TestDishBuilder.aDish().withName(testName).withMainIngredient("Chicken").build();
+		Dish testDish = TestDishBuilder.builder().withName(testName).withMainIngredient("Chicken").build();
 
 		String toString = testDish.toString();
 		assertNotNull(toString);

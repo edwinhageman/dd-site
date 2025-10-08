@@ -1,6 +1,5 @@
 package emh.dd_site.event.entity;
 
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.entity.TestWineBuilder;
 import emh.dd_site.wine.entity.Wine;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,8 +30,8 @@ class CourseTests {
 	void setUp() {
 		event = new Event(LocalDate.now(), "Test Host");
 		dish = new Dish("Test Dish");
-		wine = new Wine("Test Wine", WineType.RED, "Merlot", "France");
-		course = TestCourseBuilder.aCourse()
+		wine = new Wine("Test Wine");
+		course = TestCourseBuilder.builder()
 			.withEvent(event)
 			.withCourseNo(testCourseNo)
 			.withCook(testCook)
@@ -107,7 +106,7 @@ class CourseTests {
 		@Test
 		@DisplayName("Should set and get dish")
 		void shouldSetAndGetDish() {
-			Dish newDish = TestDishBuilder.aDish().withName("New Dish").build();
+			Dish newDish = TestDishBuilder.builder().withName("New Dish").build();
 			course.setDish(newDish);
 			assertEquals(newDish, course.getDish());
 		}
@@ -115,7 +114,7 @@ class CourseTests {
 		@Test
 		@DisplayName("Should set and get wine")
 		void shouldSetAndGetWine() {
-			Wine newWine = TestWineBuilder.aWine().withName("New Wine").build();
+			Wine newWine = TestWineBuilder.builder().withName("New Wine").build();
 			course.setWine(newWine);
 			assertEquals(newWine, course.getWine());
 		}
@@ -138,7 +137,7 @@ class CourseTests {
 		@Test
 		@DisplayName("Should set wine and maintain bidirectional relationship")
 		void shouldSetWineAndMaintainBidirectionalRelationship() {
-			Wine newWine = new Wine("New Wine", WineType.WHITE, "Chardonnay", "France");
+			Wine newWine = new Wine("New Wine");
 			course.setWine(newWine);
 			assertEquals(newWine, course.getWine());
 			assertTrue(newWine.getCourses().contains(course));
@@ -147,7 +146,7 @@ class CourseTests {
 		@Test
 		@DisplayName("Should properly handle wine replacement")
 		void shouldProperlyHandleWineReplacement() {
-			Wine newWine = new Wine("New Wine", WineType.WHITE, "Chardonnay", "France");
+			Wine newWine = new Wine("New Wine");
 			Wine oldWine = course.getWine();
 
 			course.setWine(newWine);
@@ -166,13 +165,13 @@ class CourseTests {
 		@Test
 		@DisplayName("Courses with null IDs should not be equal")
 		void coursesWithNullIdsShouldNotBeEqual() {
-			Course course1 = TestCourseBuilder.aCourse()
+			Course course1 = TestCourseBuilder.builder()
 				.withId(null)
 				.withEvent(event)
 				.withDish(dish)
 				.withWine(wine)
 				.build();
-			Course course2 = TestCourseBuilder.aCourse()
+			Course course2 = TestCourseBuilder.builder()
 				.withId(null)
 				.withEvent(event)
 				.withDish(dish)
@@ -196,13 +195,13 @@ class CourseTests {
 		@Test
 		@DisplayName("Courses with same non-null ID should be equal")
 		void coursesWithSameNonNullIdShouldBeEqual() {
-			Course course1 = TestCourseBuilder.aCourse()
+			Course course1 = TestCourseBuilder.builder()
 				.withId(1L)
 				.withEvent(event)
 				.withDish(dish)
 				.withWine(wine)
 				.build();
-			Course course2 = TestCourseBuilder.aCourse()
+			Course course2 = TestCourseBuilder.builder()
 				.withId(1L)
 				.withEvent(event)
 				.withDish(dish)
@@ -214,13 +213,13 @@ class CourseTests {
 		@Test
 		@DisplayName("Courses with different IDs should not be equal")
 		void coursesWithDifferentIdsShouldNotBeEqual() {
-			Course course1 = TestCourseBuilder.aCourse()
+			Course course1 = TestCourseBuilder.builder()
 				.withId(1L)
 				.withEvent(event)
 				.withDish(dish)
 				.withWine(wine)
 				.build();
-			Course course2 = TestCourseBuilder.aCourse()
+			Course course2 = TestCourseBuilder.builder()
 				.withId(2L)
 				.withEvent(event)
 				.withDish(dish)

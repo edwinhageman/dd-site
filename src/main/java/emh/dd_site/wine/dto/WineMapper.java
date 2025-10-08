@@ -1,14 +1,19 @@
 package emh.dd_site.wine.dto;
 
-import emh.dd_site.event.dto.CourseMapper;
-import emh.dd_site.event.dto.CourseResponse;
+import emh.dd_site.wine.entity.Grape;
 import emh.dd_site.wine.entity.Wine;
+import emh.dd_site.wine.entity.WineGrapeComposition;
+import emh.dd_site.wine.entity.WineStyle;
+import emh.dd_site.wine.repository.GrapeRepository;
+import emh.dd_site.wine.repository.WineStyleRepository;
 import jakarta.persistence.EntityManagerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
@@ -16,31 +21,42 @@ public class WineMapper {
 
 	private final EntityManagerFactory emf;
 
-	private final CourseMapper courseMapper;
+	private final WineStyleRepository wineStyleRepository;
+
+	private final GrapeRepository grapeRepository;
 
 	public WineResponse toWineResponse(Wine entity) {
 		if (entity == null) {
 			return null;
 		}
 
-		List<CourseResponse> courses = Collections.emptyList();
-
 		var util = emf.getPersistenceUnitUtil();
-		if (util.isLoaded(entity.getCourses())) {
-			courses = entity.getCourses().stream().map(courseMapper::toCourseResponse).toList();
+
+		List<WineStyleResponse> styles = Collections.emptyList();
+		if (util.isLoaded(entity, "styles")) {
+			styles = entity.getStyles().stream().map(this::toWineStyleResponse).toList();
 		}
 
-		return new WineResponse(entity.getId(), entity.getName(), entity.getType(), entity.getGrape(),
-				entity.getCountry(), entity.getRegion(), entity.getYear(), courses);
+		List<WineResponse.GrapeComposition> grapes = Collections.emptyList();
+		if (util.isLoaded(entity, "grapeComposition")) {
+			grapes = entity.getGrapeComposition().stream().map(this::toWineGrapeCompositionResponse).toList();
+		}
+
+		return new WineResponse(entity.getId(), entity.getName(), entity.getWinery(), entity.getCountry(),
+				entity.getRegion(), entity.getAppellation(), entity.getVintage(), styles, grapes);
 	}
 
 	public Wine fromWineUpsertRequest(WineUpsertRequest request) {
 		if (request == null) {
 			return null;
 		}
-		var wine = new Wine(request.name(), request.type(), request.grape(), request.country());
-		wine.setRegion(request.region());
-		wine.setYear(request.year());
+
+		var wine = new Wine(request.name());
+
+		mapWinePropertiesFromRequest(wine, request);
+		mapStylesFromRequest(wine, request);
+		mapGrapesFromRequest(wine, request);
+
 		return wine;
 	}
 
@@ -51,13 +67,93 @@ public class WineMapper {
 		if (request == null) {
 			return wine;
 		}
+
+		mapWinePropertiesFromRequest(wine, request);
+		mapStylesFromRequest(wine, request);
+		mapGrapesFromRequest(wine, request);
+
+		return wine;
+	}
+
+	public WineStyleResponse toWineStyleResponse(WineStyle entity) {
+		if (entity == null) {
+			return null;
+		}
+		return new WineStyleResponse(entity.getId(), entity.getName());
+	}
+
+	public GrapeResponse toGrapeResponse(Grape entity) {
+		if (entity == null) {
+			return null;
+		}
+		return new GrapeResponse(entity.getId(), entity.getName());
+	}
+
+	public WineResponse.GrapeComposition toWineGrapeCompositionResponse(WineGrapeComposition entity) {
+		if (entity == null) {
+			return null;
+		}
+		return new WineResponse.GrapeComposition(toGrapeResponse(entity.getGrape()), entity.getPercentage());
+	}
+
+	private void mapWinePropertiesFromRequest(Wine wine, WineUpsertRequest request) {
 		wine.setName(request.name());
-		wine.setType(request.type());
-		wine.setGrape(request.grape());
+		wine.setWinery(request.winery());
 		wine.setCountry(request.country());
 		wine.setRegion(request.region());
-		wine.setYear(request.year());
-		return wine;
+		wine.setAppellation(request.appellation());
+		wine.setVintage(request.vintage());
+	}
+
+	private void mapStylesFromRequest(Wine wine, WineUpsertRequest request) {
+		// when we don't receive a new style configuration, leave the current styles as is
+		if (request.styles() == null) {
+			return;
+		}
+
+		// reset and reinitialize the wine styles
+
+		wine.clearStyles();
+
+		if (!request.styles().isEmpty()) {
+			var styles = getWineStylesById(request.styles());
+			styles.forEach(wine::addStyle);
+		}
+	}
+
+	private void mapGrapesFromRequest(Wine wine, WineUpsertRequest request) {
+		// when we don't receive a grape composition, leave the current composition as is
+		if (request.grapes() == null) {
+			return;
+		}
+
+		// reset and reinitialize the wine's grape composition
+
+		wine.clearGrapeComposition();
+
+		if (request.grapes().isEmpty()) {
+			return;
+		}
+
+		var lookupTable = request.grapes()
+			.stream()
+			.collect(Collectors.toMap(WineUpsertRequest.GrapeComposition::grapeId,
+					WineUpsertRequest.GrapeComposition::percentage));
+
+		var grapes = getGrapesById(lookupTable.keySet());
+
+		grapes.forEach(grape -> {
+			var blendPercentage = lookupTable.get(grape.getId());
+			wine.addGrape(grape, blendPercentage);
+		});
+	}
+
+	private List<WineStyle> getWineStylesById(Collection<Integer> ids) {
+		return wineStyleRepository.findAllById(ids);
+	}
+
+	private List<Grape> getGrapesById(Collection<Integer> ids) {
+		return grapeRepository.findAllById(ids);
 	}
 
 }

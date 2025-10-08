@@ -21,7 +21,7 @@ class DishMapperTest {
 
 	@BeforeEach
 	void setUp() {
-		testDish = TestDishBuilder.aDish()
+		testDish = TestDishBuilder.builder()
 			.withId(1L)
 			.withName("Original Dish")
 			.withMainIngredient("Original Main Ingredient")

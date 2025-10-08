@@ -12,6 +12,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class WineService {
@@ -21,12 +24,20 @@ public class WineService {
 	private final WineMapper wineMapper;
 
 	public Page<WineResponse> listAll(Pageable pageable) {
-		var entities = wineRepository.findAll(pageable);
+		var page = wineRepository.findAllIds(pageable);
+		if (page.isEmpty()) {
+			return Page.empty(pageable);
+		}
+		var entities = mapToPageWithEntities(page);
 		return entities.map(wineMapper::toWineResponse);
 	}
 
 	public Page<WineResponse> listByEvent(long eventId, Pageable pageable) {
-		var entities = wineRepository.findByEventId(eventId, pageable);
+		var page = wineRepository.findIdsByCourseEventId(eventId, pageable);
+		if (page.isEmpty()) {
+			return Page.empty(pageable);
+		}
+		var entities = mapToPageWithEntities(page);
 		return entities.map(wineMapper::toWineResponse);
 	}
 
@@ -54,6 +65,13 @@ public class WineService {
 
 	private Wine getById(long id) {
 		return wineRepository.findById(id).orElseThrow(() -> new WineNotFoundException(id));
+	}
+
+	private Page<Wine> mapToPageWithEntities(Page<Long> page) {
+		var entityLookupTable = wineRepository.findAllWithStylesAndGrapesByIdIn(page.getContent())
+			.stream()
+			.collect(Collectors.toMap(Wine::getId, Function.identity()));
+		return page.map(entityLookupTable::get);
 	}
 
 }

@@ -1,18 +1,26 @@
 package emh.dd_site.wine.entity;
 
 import emh.dd_site.event.entity.Course;
-import emh.dd_site.wine.WineType;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.proxy.HibernateProxy;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.Year;
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Objects;
+import java.util.Set;
+
+import static jakarta.persistence.CascadeType.*;
 
 @Entity
+@NamedEntityGraph(name = "Wine.withStylesAndGrapes",
+		attributeNodes = { @NamedAttributeNode("styles"),
+				@NamedAttributeNode(value = "grapeComposition", subgraph = "WineGrapeComposition.withGrape") },
+		subgraphs = { @NamedSubgraph(name = "WineGrapeComposition.withGrape",
+				attributeNodes = @NamedAttributeNode("grape")) })
 @Table(name = "wine")
 @RequiredArgsConstructor
 @ToString(onlyExplicitlyIncluded = true)
@@ -32,23 +40,11 @@ public class Wine {
 	@ToString.Include
 	private String name;
 
-	@Column(nullable = false)
-	@Enumerated(EnumType.STRING)
-	@NonNull
 	@Getter
 	@Setter
 	@ToString.Include
-	private WineType type;
+	private String winery;
 
-	@Column(nullable = false)
-	@NonNull
-	@Getter
-	@Setter
-	@ToString.Include
-	private String grape;
-
-	@Column(nullable = false)
-	@NonNull
 	@Getter
 	@Setter
 	@ToString.Include
@@ -62,16 +58,70 @@ public class Wine {
 	@Getter
 	@Setter
 	@ToString.Include
-	private Year year;
+	private String appellation;
+
+	@Getter
+	@Setter
+	@ToString.Include
+	private Year vintage;
+
+	@ManyToMany
+	@JoinTable(name = "wine_styles", joinColumns = @JoinColumn(name = "wine_id"),
+			inverseJoinColumns = @JoinColumn(name = "wine_style_id"))
+	private final Set<WineStyle> styles = new HashSet<>();
+
+	@OneToMany(mappedBy = "wine", orphanRemoval = true, cascade = { PERSIST, MERGE, REMOVE })
+	private final Set<WineGrapeComposition> grapeComposition = new HashSet<>();
 
 	@OneToMany(mappedBy = "wine", orphanRemoval = true)
-	private final List<Course> courses = new ArrayList<>();
+	private final Set<Course> courses = new HashSet<>();
 
 	protected Wine() {
 	}
 
-	public List<Course> getCourses() {
-		return Collections.unmodifiableList(this.courses);
+	public Set<WineStyle> getStyles() {
+		return Collections.unmodifiableSet(styles);
+	}
+
+	public void addStyle(@NonNull WineStyle style) {
+		this.styles.add(style);
+	}
+
+	public void removeStyle(@NonNull WineStyle style) {
+		this.styles.remove(style);
+	}
+
+	public void clearStyles() {
+		this.styles.clear();
+	}
+
+	public Set<WineGrapeComposition> getGrapeComposition() {
+		return Collections.unmodifiableSet(grapeComposition);
+	}
+
+	public void addGrape(@NonNull Grape grape, BigDecimal percentage) {
+		if (percentage != null) {
+			// make sure the percentage value matches the db column definition
+			if (percentage.compareTo(BigDecimal.ZERO) < 0 || percentage.compareTo(BigDecimal.ONE) > 0) {
+				throw new IllegalArgumentException("Blend percentage must be between 0 and 1");
+			}
+			percentage = percentage.setScale(3, RoundingMode.HALF_UP);
+		}
+		var composition = new WineGrapeComposition(this, grape, percentage);
+		this.grapeComposition.add(composition);
+	}
+
+	public void removeGrape(@NonNull Grape grape) {
+		var composition = new WineGrapeComposition(this, grape, BigDecimal.ZERO);
+		this.grapeComposition.remove(composition);
+	}
+
+	public void clearGrapeComposition() {
+		this.grapeComposition.clear();
+	}
+
+	public Set<Course> getCourses() {
+		return Collections.unmodifiableSet(this.courses);
 	}
 
 	public void addCourse(@NonNull Course course) {

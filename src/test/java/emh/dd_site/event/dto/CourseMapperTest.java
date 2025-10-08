@@ -24,13 +24,13 @@ class CourseMapperTest {
 	void setUp() {
 		testEvent = TestEventBuilder.anEvent().withId(1L).withHost("Test Host").withLocation("Test Location").build();
 
-		var testDish = TestDishBuilder.aDish()
+		var testDish = TestDishBuilder.builder()
 			.withId(10L)
 			.withName("Original Dish")
 			.withMainIngredient("Original Main Ingredient")
 			.build();
 
-		testCourse = TestCourseBuilder.aCourse()
+		testCourse = TestCourseBuilder.builder()
 			.withId(1L)
 			.withEvent(testEvent)
 			.withCourseNo(1)

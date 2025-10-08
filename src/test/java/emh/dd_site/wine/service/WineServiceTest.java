@@ -1,9 +1,9 @@
 package emh.dd_site.wine.service;
 
-import emh.dd_site.wine.WineType;
 import emh.dd_site.wine.dto.WineMapper;
 import emh.dd_site.wine.dto.WineResponse;
 import emh.dd_site.wine.dto.WineUpsertRequest;
+import emh.dd_site.wine.entity.TestWineBuilder;
 import emh.dd_site.wine.entity.Wine;
 import emh.dd_site.wine.exception.WineNotFoundException;
 import emh.dd_site.wine.repository.WineRepository;
@@ -46,10 +46,10 @@ class WineServiceTest {
 	@BeforeEach
 	void setUp() {
 		pageable = PageRequest.of(0, 10, Sort.by("wineNo").ascending());
-		response1 = new WineResponse(1L, "Wine 1", WineType.RED, "Grape 1", "Country 1", "Region 1", Year.of(2023),
-				Collections.emptyList());
-		response2 = new WineResponse(2L, "Wine 2", WineType.RED, "Grape 2", "Country 2", "Region 2", Year.of(2023),
-				Collections.emptyList());
+		response1 = new WineResponse(1L, "Wine 1", "Winery 1", "Country 1", "Region 1", "Appellation 1", Year.of(2023),
+				Collections.emptyList(), Collections.emptyList());
+		response2 = new WineResponse(2L, "Wine 2", "Winery 2", "Country 2", "Region 2", "Appellation 2", Year.of(2023),
+				Collections.emptyList(), Collections.emptyList());
 	}
 
 	@Nested
@@ -59,11 +59,13 @@ class WineServiceTest {
 		@Test
 		@DisplayName("should return paged list of mapped DTOs")
 		void shouldReturnMappedDtoList_whenWinesAvailable() {
-			Wine wine1 = mock(Wine.class);
-			Wine wine2 = mock(Wine.class);
-			Page<Wine> winePage = new PageImpl<>(List.of(wine1, wine2), pageable, 2);
+			Wine wine1 = TestWineBuilder.builder().withId(1L).withName("Wine 1").build();
+			Wine wine2 = TestWineBuilder.builder().withId(2L).withName("Wine 2").build();
+			Page<Long> idPage = new PageImpl<>(List.of(1L, 2L), pageable, 2);
 
-			given(wineRepository.findAll(pageable)).willReturn(winePage);
+			given(wineRepository.findAllIds(pageable)).willReturn(idPage);
+			given(wineRepository.findAllWithStylesAndGrapesByIdIn(idPage.getContent()))
+				.willReturn(List.of(wine1, wine2));
 			given(wineMapper.toWineResponse(wine1)).willReturn(response1);
 			given(wineMapper.toWineResponse(wine2)).willReturn(response2);
 
@@ -76,9 +78,9 @@ class WineServiceTest {
 		@Test
 		@DisplayName("should return empty page when no wines available")
 		void shouldReturnEmptyPage_whenNoWinesAvailable() {
-			Page<Wine> winePage = new PageImpl<>(List.of(), pageable, 0);
+			Page<Long> idPage = new PageImpl<>(List.of(), pageable, 0);
 
-			given(wineRepository.findAll(pageable)).willReturn(winePage);
+			given(wineRepository.findAllIds(pageable)).willReturn(idPage);
 
 			Page<WineResponse> result = wineService.listAll(pageable);
 
@@ -86,6 +88,8 @@ class WineServiceTest {
 			assertThat(result.getContent()).isEmpty();
 			assertThat(result.getNumber()).isEqualTo(0);
 			assertThat(result.getSize()).isEqualTo(10);
+
+			verifyNoMoreInteractions(wineRepository);
 			verifyNoInteractions(wineMapper);
 		}
 
@@ -99,10 +103,12 @@ class WineServiceTest {
 		@DisplayName("should return paged list of mapped DTOs")
 		void shouldReturnMappedPage_whenWinesAvailableForEvent() {
 			long eventId = 42L;
-			Wine wine = mock(Wine.class);
+			Wine wine = TestWineBuilder.builder().withId(1L).withName("Wine 1").build();
+			Page<Long> idPage = new PageImpl<>(List.of(1L), pageable, 1);
 			Page<Wine> winePage = new PageImpl<>(List.of(wine), pageable, 1);
 
-			given(wineRepository.findByEventId(eventId, pageable)).willReturn(winePage);
+			given(wineRepository.findIdsByCourseEventId(eventId, pageable)).willReturn(idPage);
+			given(wineRepository.findAllWithStylesAndGrapesByIdIn(idPage.getContent())).willReturn(List.of(wine));
 			given(wineMapper.toWineResponse(wine)).willReturn(response1);
 
 			Page<WineResponse> result = wineService.listByEvent(eventId, pageable);
@@ -115,9 +121,9 @@ class WineServiceTest {
 		@DisplayName("should return empty page when no wines available for event")
 		void shouldReturnEmptyPage_whenNoWinesAvailableForEvent() {
 			long eventId = 42L;
-			Page<Wine> winePage = new PageImpl<>(List.of(), pageable, 0);
+			Page<Long> idPage = new PageImpl<>(List.of(), pageable, 0);
 
-			given(wineRepository.findByEventId(eventId, pageable)).willReturn(winePage);
+			given(wineRepository.findIdsByCourseEventId(eventId, pageable)).willReturn(idPage);
 
 			var result = wineService.listByEvent(eventId, pageable);
 
@@ -127,6 +133,7 @@ class WineServiceTest {
 			assertThat(result.getSize()).isEqualTo(10);
 
 			verifyNoInteractions(wineMapper);
+			verifyNoMoreInteractions(wineRepository);
 		}
 
 	}
@@ -171,13 +178,17 @@ class WineServiceTest {
 		@Test
 		@DisplayName("should create and return mapped DTO")
 		void shouldCreateAndReturnMappedDto() {
-			var wine = new Wine("Wine Name", WineType.RED, "Grape", "Country");
+			var wine = new Wine("Wine Name");
+			wine.setWinery("Winery");
+			wine.setCountry("Country");
 			wine.setRegion("Region");
-			wine.setYear(Year.of(2023));
+			wine.setAppellation("Appellation");
+			wine.setVintage(Year.of(2023));
 
-			var request = new WineUpsertRequest("Wine Name", WineType.RED, "Grape", "Country", "Region", Year.of(2023));
-			var response = new WineResponse(1L, "Wine Name", WineType.RED, "Grape", "Country", "Region", Year.of(2023),
-					Collections.emptyList());
+			var request = new WineUpsertRequest("Wine Name", "Winery Name", "Country", "Region", "Appellation",
+					Year.of(2023), Collections.emptyList(), Collections.emptyList());
+			var response = new WineResponse(1L, "Wine Name", "Winery Name", "Country", "Region", "Appellation",
+					Year.of(2023), Collections.emptyList(), Collections.emptyList());
 
 			given(wineMapper.fromWineUpsertRequest(request)).willReturn(wine);
 			given(wineRepository.save(wine)).willReturn(wine);
@@ -204,14 +215,17 @@ class WineServiceTest {
 		@DisplayName("should update and return mapped DTO when wine exists")
 		void shouldUpdateAndReturnMappedDto_whenWineExists() {
 			long id = 12345L;
-			var wine = new Wine("Wine Name", WineType.RED, "Grape", "Country");
+			var wine = new Wine("Wine Name");
+			wine.setWinery("Winery");
+			wine.setCountry("Country");
 			wine.setRegion("Region");
-			wine.setYear(Year.of(2023));
+			wine.setAppellation("Appellation");
+			wine.setVintage(Year.of(2023));
 
-			var request = new WineUpsertRequest("Updated Name", WineType.WHITE, "Updated Grape", "Updated Country",
-					"Updated Region", Year.of(2024));
-			var response = new WineResponse(1L, "Updated Name", WineType.WHITE, "Updated Grape", "Updated Country",
-					"Updated Region", Year.of(2024), Collections.emptyList());
+			var request = new WineUpsertRequest("Updated Name", "Updated Winery", "Updated Country", "Updated Region",
+					"Updated Appellation", Year.of(2024), Collections.emptyList(), Collections.emptyList());
+			var response = new WineResponse(1L, "Updated Name", "Updated Winery", "Updated Country", "Updated Region",
+					"Updated Appellation", Year.of(2024), Collections.emptyList(), Collections.emptyList());
 
 			given(wineRepository.findById(id)).willReturn(Optional.of(wine));
 			given(wineMapper.mergeWithWineUpsertRequest(wine, request)).willReturn(wine);
@@ -226,7 +240,7 @@ class WineServiceTest {
 		@Test
 		@DisplayName("should throw NullPointException when upsertRequest is null")
 		void shouldThrowNullPointeException_whenUpsertRequestIsNull() {
-			assertThatThrownBy(() -> wineService.create(null)).isInstanceOf(NullPointerException.class);
+			assertThatThrownBy(() -> wineService.update(1, null)).isInstanceOf(NullPointerException.class);
 		}
 
 		@Test
@@ -234,8 +248,8 @@ class WineServiceTest {
 		void shouldThrowNotFoundException_whenWineDoesNotExist() {
 			var id = 404L;
 
-			var request = new WineUpsertRequest("Updated Name", WineType.WHITE, "Updated Grape", "Updated Country",
-					"Updated Region", Year.of(2024));
+			var request = new WineUpsertRequest("Updated Name", "Updated Winery", "Updated Country", "Updated Region",
+					"Updated Appellation", Year.of(2024), Collections.emptyList(), Collections.emptyList());
 
 			given(wineRepository.findById(id)).willReturn(Optional.empty());
 

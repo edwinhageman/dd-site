@@ -1,6 +1,5 @@
 package emh.dd_site.wine.dto;
 
-import emh.dd_site.wine.WineType;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import jakarta.validation.ValidatorFactory;
@@ -13,6 +12,7 @@ import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import java.time.Year;
+import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -21,8 +21,8 @@ class WineUpsertRequestValidatorTest {
 
 	private Validator validator;
 
-	private WineUpsertRequest validRequest = new WineUpsertRequest("name", WineType.UNKNOWN, "grape", "country",
-			"region", Year.of(2000));
+	private final WineUpsertRequest validRequest = new WineUpsertRequest("name", "winery", "country", "region",
+			"appellation", Year.of(2000), Collections.emptyList(), Collections.emptyList());
 
 	@BeforeEach
 	void setUp() {
@@ -45,7 +45,8 @@ class WineUpsertRequestValidatorTest {
 		@Test
 		@DisplayName("should reject null name")
 		void shouldRejectNullName() {
-			var request = new WineUpsertRequest(null, WineType.UNKNOWN, "grape", "country", "region", Year.of(2000));
+			var request = new WineUpsertRequest(null, "winery", "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
@@ -58,7 +59,8 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should reject empty name")
 		void shouldRejectEmptyName() {
 
-			var request = new WineUpsertRequest("", WineType.UNKNOWN, "grape", "country", "region", Year.of(2000));
+			var request = new WineUpsertRequest("", "winery", "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
@@ -71,7 +73,8 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should reject whitespace-only name")
 		void shouldRejectWhitespaceOnlyName() {
 
-			var request = new WineUpsertRequest("  ", WineType.UNKNOWN, "grape", "country", "region", Year.of(2000));
+			var request = new WineUpsertRequest("  ", "winery", "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
@@ -83,77 +86,18 @@ class WineUpsertRequestValidatorTest {
 	}
 
 	@Nested
-	@DisplayName("type validation")
-	class TypeValidation {
+	@DisplayName("winery validation")
+	class WineryValidation {
 
-		@Test
-		@DisplayName("should accept valid type")
-		void shouldAcceptValidType() {
-			var violations = validator.validate(validRequest);
+		@ParameterizedTest
+		@ValueSource(strings = { "winery", "", "   " })
+		@NullSource
+		@DisplayName("should accept valid winery")
+		void shouldAcceptValidWinery(String value) {
+			var request = new WineUpsertRequest("name", value, "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
-		}
-
-		@Test
-		@DisplayName("should reject null type")
-		void shouldRejectNullType() {
-			var request = new WineUpsertRequest("name", null, "grape", "country", "region", Year.of(2000));
-			var violations = validator.validate(request);
-
-			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
-				assertThat(violation.getPropertyPath().toString()).isEqualTo("type");
-				assertThat(violation.getMessage()).isEqualTo("must not be null");
-			});
-		}
-
-	}
-
-	@Nested
-	@DisplayName("grape validation")
-	class GrapeValidation {
-
-		@Test
-		@DisplayName("should accept valid grape")
-		void shouldAcceptValidGrape() {
-			var violations = validator.validate(validRequest);
-			assertThat(violations).isEmpty();
-		}
-
-		@Test
-		@DisplayName("should reject null grape")
-		void shouldRejectNullGrape() {
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, null, "country", "region", Year.of(2000));
-			var violations = validator.validate(request);
-
-			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
-				assertThat(violation.getPropertyPath().toString()).isEqualTo("grape");
-				assertThat(violation.getMessage()).isEqualTo("must not be blank");
-			});
-		}
-
-		@Test
-		@DisplayName("should reject empty grape")
-		void shouldRejectEmptyGrape() {
-
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "", "country", "region", Year.of(2000));
-			var violations = validator.validate(request);
-
-			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
-				assertThat(violation.getPropertyPath().toString()).isEqualTo("grape");
-				assertThat(violation.getMessage()).isEqualTo("must not be blank");
-			});
-		}
-
-		@Test
-		@DisplayName("should reject whitespace-only grape")
-		void shouldRejectWhitespaceOnlyGrape() {
-
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "  ", "country", "region", Year.of(2000));
-			var violations = validator.validate(request);
-
-			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
-				assertThat(violation.getPropertyPath().toString()).isEqualTo("grape");
-				assertThat(violation.getMessage()).isEqualTo("must not be blank");
-			});
 		}
 
 	}
@@ -162,49 +106,15 @@ class WineUpsertRequestValidatorTest {
 	@DisplayName("country validation")
 	class CountryValidation {
 
-		@Test
+		@ParameterizedTest
+		@ValueSource(strings = { "country", "", "   " })
+		@NullSource
 		@DisplayName("should accept valid country")
-		void shouldAcceptValidCountry() {
-			var violations = validator.validate(validRequest);
+		void shouldAcceptValidCountry(String value) {
+			var request = new WineUpsertRequest("name", "winery", value, "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
-		}
-
-		@Test
-		@DisplayName("should reject null country")
-		void shouldRejectNullCountry() {
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "grape", null, "region", Year.of(2000));
-			var violations = validator.validate(request);
-
-			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
-				assertThat(violation.getPropertyPath().toString()).isEqualTo("country");
-				assertThat(violation.getMessage()).isEqualTo("must not be blank");
-			});
-		}
-
-		@Test
-		@DisplayName("should reject empty country")
-		void shouldRejectEmptyCountry() {
-
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "grape", "", "region", Year.of(2000));
-			var violations = validator.validate(request);
-
-			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
-				assertThat(violation.getPropertyPath().toString()).isEqualTo("country");
-				assertThat(violation.getMessage()).isEqualTo("must not be blank");
-			});
-		}
-
-		@Test
-		@DisplayName("should reject whitespace-only country")
-		void shouldRejectWhitespaceOnlyCountry() {
-
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "grape", "  ", "region", Year.of(2000));
-			var violations = validator.validate(request);
-
-			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
-				assertThat(violation.getPropertyPath().toString()).isEqualTo("country");
-				assertThat(violation.getMessage()).isEqualTo("must not be blank");
-			});
 		}
 
 	}
@@ -218,7 +128,8 @@ class WineUpsertRequestValidatorTest {
 		@NullSource
 		@DisplayName("should accept valid region")
 		void shouldAcceptValidRegion(String value) {
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "grape", "country", value, Year.of(2000));
+			var request = new WineUpsertRequest("name", "winery", "country", value, "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -226,13 +137,31 @@ class WineUpsertRequestValidatorTest {
 	}
 
 	@Nested
-	@DisplayName("year validation")
-	class YearValidation {
+	@DisplayName("appellation validation")
+	class AppellationValidation {
+
+		@ParameterizedTest
+		@ValueSource(strings = { "appellation", "", "   " })
+		@NullSource
+		@DisplayName("should accept valid appellation")
+		void shouldAcceptValidAppellation(String value) {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", value, Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
+			assertThat(violations).isEmpty();
+		}
+
+	}
+
+	@Nested
+	@DisplayName("vintage validation")
+	class VintageValidation {
 
 		@Test
-		@DisplayName("should accept valid year")
+		@DisplayName("should accept valid vintage")
 		void shouldAcceptValidYear() {
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "grape", "country", "country", Year.of(2000));
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -240,11 +169,59 @@ class WineUpsertRequestValidatorTest {
 		@Test
 		@DisplayName("should accept null year")
 		void shouldAcceptNullYear() {
-			var request = new WineUpsertRequest("name", WineType.UNKNOWN, "grape", "country", "country", null);
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", null,
+					Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
 
 	}
 
+	@Nested
+	@DisplayName("styles validation")
+	class StylesValidation {
+
+		@Test
+		@DisplayName("should accept valid styles")
+		void shouldAcceptValidStyles() {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
+			assertThat(violations).isEmpty();
+		}
+
+		@Test
+		@DisplayName("should accept null styles")
+		void shouldAcceptNullStyles() {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					null, Collections.emptyList());
+			var violations = validator.validate(request);
+			assertThat(violations).isEmpty();
+		}
+
+	}
+
+	@Nested
+	@DisplayName("grapes validation")
+	class GrapesValidation {
+
+		@Test
+		@DisplayName("should accept valid grapes")
+		void shouldAcceptValidGrapes() {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
+			assertThat(violations).isEmpty();
+		}
+
+		@Test
+		@DisplayName("should accept null grapes")
+		void shouldAcceptNullGrapes() {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					Collections.emptyList(), null);
+			var violations = validator.validate(request);
+			assertThat(violations).isEmpty();
+		}
+
+	}
 }
