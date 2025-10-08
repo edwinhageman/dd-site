@@ -147,7 +147,7 @@ public class WineControllerIT {
 
 		@Test
 		@DisplayName("should return 404 when wine not found")
-		void shouldReturn4040WhenCourseNotFound() throws Exception {
+		void shouldReturn4040WhenStyleNotFound() throws Exception {
 			given(wineService.findById(404L)).willThrow(new WineNotFoundException(404L));
 
 			mockMvc.perform(get("/api/wines/{id}", 404L))
@@ -233,7 +233,7 @@ public class WineControllerIT {
 
 		@Test
 		@DisplayName("should return 404 when wine not found")
-		void shouldReturn404WhenCourseNotFound() throws Exception {
+		void shouldReturn404WhenStyleNotFound() throws Exception {
 			given(wineService.update(404L, testRequest)).willThrow(new WineNotFoundException(404L));
 
 			mockMvc

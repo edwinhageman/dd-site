@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 
 import java.time.Year;
@@ -26,7 +27,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(org.mockito.junit.jupiter.MockitoExtension.class)
+@ExtendWith(MockitoExtension.class)
 @DisplayName("WineService Unit Tests")
 class WineServiceTest {
 
@@ -59,9 +60,9 @@ class WineServiceTest {
 		@Test
 		@DisplayName("should return paged list of mapped DTOs")
 		void shouldReturnMappedDtoList_whenWinesAvailable() {
-			Wine wine1 = TestWineBuilder.builder().withId(1L).withName("Wine 1").build();
-			Wine wine2 = TestWineBuilder.builder().withId(2L).withName("Wine 2").build();
-			Page<Long> idPage = new PageImpl<>(List.of(1L, 2L), pageable, 2);
+			var wine1 = TestWineBuilder.builder().withId(1L).withName("Wine 1").build();
+			var wine2 = TestWineBuilder.builder().withId(2L).withName("Wine 2").build();
+			var idPage = new PageImpl<>(List.of(1L, 2L), pageable, 2);
 
 			given(wineRepository.findAllIds(pageable)).willReturn(idPage);
 			given(wineRepository.findAllWithStylesAndGrapesByIdIn(idPage.getContent()))
