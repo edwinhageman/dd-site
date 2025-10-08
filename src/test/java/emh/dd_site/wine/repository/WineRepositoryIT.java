@@ -10,9 +10,12 @@ import emh.dd_site.wine.entity.Grape;
 import emh.dd_site.wine.entity.Wine;
 import emh.dd_site.wine.entity.WineGrapeComposition;
 import emh.dd_site.wine.entity.WineStyle;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
@@ -25,7 +28,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Year;
 import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -104,7 +106,7 @@ class WineRepositoryIT {
 	}
 
 	@Test
-	@DisplayName("Should save and retrieve wine styles")
+	@DisplayName("Should save and retrieve wines")
 	void shouldSaveAndRetrieveWine() {
 		var result = wineRepository.findById(wine1.getId());
 
@@ -127,7 +129,7 @@ class WineRepositoryIT {
 		wine1.setAppellation("Updated Appellation");
 		wine1.setVintage(Year.of(2016));
 
-		Wine updatedWine = wineRepository.save(wine1);
+		var updatedWine = wineRepository.save(wine1);
 
 		assertEquals("Updated Wine name", updatedWine.getName());
 		assertEquals("Updated Winery name", updatedWine.getWinery());
@@ -142,7 +144,7 @@ class WineRepositoryIT {
 	void shouldDeleteWine() {
 		wineRepository.deleteById(wine1.getId());
 
-		Optional<Wine> deletedWine = wineRepository.findById(wine1.getId());
+		var deletedWine = wineRepository.findById(wine1.getId());
 		assertFalse(deletedWine.isPresent());
 	}
 
@@ -263,6 +265,49 @@ class WineRepositoryIT {
 
 		result = wineRepository.findById(wine1.getId()).orElseThrow();
 		assertThat(result.getGrapeComposition()).isEmpty();
+	}
+
+	/**
+	 * Make sure the db primary key constraint is triggered when inserting an already
+	 * existing grape to the wine composition. Should never happen because we already (or
+	 * should) check for duplicates in business logic.
+	 */
+	@Test
+	void shouldEnforceDbCompositePrimaryKeyConstraint_whenGrapeIsAlreadyAddedToComposition_withNativeInsert() {
+		assertThrows(ConstraintViolationException.class, () -> {
+			entityManager.getEntityManager()
+				.createNativeQuery("""
+						insert into wine_grape_composition (wine_id, grape_id, percentage)
+						values (:wineId, :grapeId, :percentage)
+						""")
+				.setParameter("wineId", wine1.getId())
+				.setParameter("grapeId", grape1.getId())
+				.setParameter("percentage", null)
+				.executeUpdate();
+			entityManager.flush();
+		});
+	}
+
+	/**
+	 * Make sure the db check constraint is triggered when inserting out-of-bounds
+	 * percentage values. Should never happen because we already (or should) check bounds
+	 * in business logic.
+	 */
+	@ParameterizedTest
+	@ValueSource(doubles = { -1.0, 1.01 })
+	void shouldEnforceDbCheckConstraint_whenGrapeCompositionPercentageIsOutOfBounds_withNativeInsert(double val) {
+		assertThrows(ConstraintViolationException.class, () -> {
+			entityManager.getEntityManager()
+				.createNativeQuery("""
+						insert into wine_grape_composition (wine_id, grape_id, percentage)
+						values (:wineId, :grapeId, :percentage)
+						""")
+				.setParameter("wineId", wine1.getId())
+				.setParameter("grapeId", grape2.getId())
+				.setParameter("percentage", BigDecimal.valueOf(val))
+				.executeUpdate();
+			entityManager.flush();
+		});
 	}
 
 	@Test
