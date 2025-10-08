@@ -10,6 +10,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -39,6 +40,10 @@ class WineMapperTest {
 	@Mock
 	private GrapeRepository grapeRepository;
 
+	@Mock
+	private WineStyleMapper wineStyleMapper;
+
+	@InjectMocks
 	private WineMapper mapper;
 
 	private WineStyle testStyle1, testStyle2;
@@ -53,8 +58,6 @@ class WineMapperTest {
 
 	@BeforeEach
 	void setUp() {
-		mapper = new WineMapper(emf, wineStyleRepository, grapeRepository);
-
 		testWine = TestWineBuilder.builder()
 			.withId(1L)
 			.withName("Wine Name")
@@ -99,6 +102,9 @@ class WineMapperTest {
 			given(emf.getPersistenceUnitUtil()).willReturn(persistenceUtil);
 			given(persistenceUtil.isLoaded(testWine, "styles")).willReturn(true);
 			given(persistenceUtil.isLoaded(testWine, "grapeComposition")).willReturn(true);
+
+			given(wineStyleMapper.toWineStyleResponse(testStyle1)).willReturn(new WineStyleResponse(1, "Style 1"));
+			given(wineStyleMapper.toWineStyleResponse(testStyle2)).willReturn(new WineStyleResponse(2, "Style 2"));
 
 			var result = mapper.toWineResponse(testWine);
 
@@ -171,29 +177,6 @@ class WineMapperTest {
 
 			assertThat(result).isNotNull();
 			assertThat(result.grapeComposition()).isEmpty();
-		}
-
-	}
-
-	@Nested
-	@DisplayName("to WineStyleResponse mapping tests")
-	class ToWineStyleResponseTests {
-
-		@Test
-		@DisplayName("should return null when entity is null")
-		void shouldReturnNullWhenEntityIsNull() {
-			assertThat(mapper.toWineStyleResponse(null)).isNull();
-		}
-
-		@Test
-		@DisplayName("should map all fields correctly")
-		void shouldMapAllFieldsCorrectly() {
-			var result = mapper.toWineStyleResponse(testStyle1);
-
-			assertThat(result).isNotNull().satisfies(styleDto -> {
-				assertThat(styleDto.id()).isEqualTo(testStyle1.getId());
-				assertThat(styleDto.name()).isEqualTo(testStyle1.getName());
-			});
 		}
 
 	}

@@ -25,6 +25,8 @@ public class WineMapper {
 
 	private final GrapeRepository grapeRepository;
 
+	private final WineStyleMapper wineStyleMapper;
+
 	public WineResponse toWineResponse(Wine entity) {
 		if (entity == null) {
 			return null;
@@ -34,7 +36,7 @@ public class WineMapper {
 
 		List<WineStyleResponse> styles = Collections.emptyList();
 		if (util.isLoaded(entity, "styles")) {
-			styles = entity.getStyles().stream().map(this::toWineStyleResponse).toList();
+			styles = entity.getStyles().stream().map(wineStyleMapper::toWineStyleResponse).toList();
 		}
 
 		List<WineResponse.GrapeComposition> grapes = Collections.emptyList();
@@ -73,13 +75,6 @@ public class WineMapper {
 		mapGrapesFromRequest(wine, request);
 
 		return wine;
-	}
-
-	public WineStyleResponse toWineStyleResponse(WineStyle entity) {
-		if (entity == null) {
-			return null;
-		}
-		return new WineStyleResponse(entity.getId(), entity.getName());
 	}
 
 	public GrapeResponse toGrapeResponse(Grape entity) {
