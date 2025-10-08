@@ -18,11 +18,12 @@ Small tool to manage dinner parties and keep track of recipes and wine pairings.
 - when changing ports, remember to change the proxy configuration in `vite.config.ts`.
 
 ### Production config
+
 - run api with spring profile `prod`
 - provide the following environment variables
-  - DB_URL 
-  - DB_USER
-  - DB_PASSWORD
+    - DB_URL
+    - DB_USER
+    - DB_PASSWORD
 
 ### TODO
 
@@ -47,9 +48,4 @@ Small tool to manage dinner parties and keep track of recipes and wine pairings.
     - recipe text (frontend + backend)
 - wine
     - overview (table / search / filter)
-    - add properties (backend / frontend)
-      - maker property 
-      - vivino url
-      - cellartracker url
-    - wine * <-> * grape relationship (for blends) 
   - vivino lookup integration in wine edit form?? (frontend + backend)

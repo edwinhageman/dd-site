@@ -22,7 +22,7 @@ class WineUpsertRequestValidatorTest {
 	private Validator validator;
 
 	private final WineUpsertRequest validRequest = new WineUpsertRequest("name", "winery", "country", "region",
-			"appellation", Year.of(2000), Collections.emptyList(), Collections.emptyList());
+			"appellation", Year.of(2000), "https://vivino.com", Collections.emptyList(), Collections.emptyList());
 
 	@BeforeEach
 	void setUp() {
@@ -46,7 +46,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should reject null name")
 		void shouldRejectNullName() {
 			var request = new WineUpsertRequest(null, "winery", "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
@@ -60,7 +60,7 @@ class WineUpsertRequestValidatorTest {
 		void shouldRejectEmptyName() {
 
 			var request = new WineUpsertRequest("", "winery", "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
@@ -74,7 +74,7 @@ class WineUpsertRequestValidatorTest {
 		void shouldRejectWhitespaceOnlyName() {
 
 			var request = new WineUpsertRequest("  ", "winery", "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 
 			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
@@ -95,7 +95,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept valid winery")
 		void shouldAcceptValidWinery(String value) {
 			var request = new WineUpsertRequest("name", value, "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -112,7 +112,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept valid country")
 		void shouldAcceptValidCountry(String value) {
 			var request = new WineUpsertRequest("name", "winery", value, "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -129,7 +129,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept valid region")
 		void shouldAcceptValidRegion(String value) {
 			var request = new WineUpsertRequest("name", "winery", "country", value, "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -146,7 +146,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept valid appellation")
 		void shouldAcceptValidAppellation(String value) {
 			var request = new WineUpsertRequest("name", "winery", "country", "region", value, Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -161,7 +161,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept valid vintage")
 		void shouldAcceptValidYear() {
 			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -170,9 +170,46 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept null year")
 		void shouldAcceptNullYear() {
 			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", null,
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
+		}
+
+	}
+
+	@Nested
+	@DisplayName("vivino url validation")
+	class VivinoUrlValidation {
+
+		@Test
+		@DisplayName("should accept valid url")
+		void shouldAcceptValidVivinoUrl() {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
+			assertThat(violations).isEmpty();
+		}
+
+		@Test
+		@DisplayName("should accept null url")
+		void shouldAcceptNullYear() {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					null, Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
+			assertThat(violations).isEmpty();
+		}
+
+		@Test
+		@DisplayName("should reject invalid url")
+		void shouldRejectNullName() {
+			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
+					"https://www.vivinoo.com", Collections.emptyList(), Collections.emptyList());
+			var violations = validator.validate(request);
+
+			assertThat(violations).hasSize(1).element(0).satisfies(violation -> {
+				assertThat(violation.getPropertyPath().toString()).isEqualTo("vivinoUrl");
+				assertThat(violation.getMessage()).isEqualTo("must be a valid URL");
+			});
 		}
 
 	}
@@ -185,7 +222,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept valid styles")
 		void shouldAcceptValidStyles() {
 			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -194,7 +231,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept null styles")
 		void shouldAcceptNullStyles() {
 			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
-					null, Collections.emptyList());
+					"https://vivino.com", null, Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -209,7 +246,7 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept valid grapes")
 		void shouldAcceptValidGrapes() {
 			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), Collections.emptyList());
+					"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
@@ -218,10 +255,11 @@ class WineUpsertRequestValidatorTest {
 		@DisplayName("should accept null grapes")
 		void shouldAcceptNullGrapes() {
 			var request = new WineUpsertRequest("name", "winery", "country", "region", "appellation", Year.of(2000),
-					Collections.emptyList(), null);
+					"https://vivino.com", Collections.emptyList(), null);
 			var violations = validator.validate(request);
 			assertThat(violations).isEmpty();
 		}
 
 	}
+
 }

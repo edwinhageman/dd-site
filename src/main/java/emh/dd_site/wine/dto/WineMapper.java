@@ -47,7 +47,8 @@ public class WineMapper {
 		}
 
 		return new WineResponse(entity.getId(), entity.getName(), entity.getWinery(), entity.getCountry(),
-				entity.getRegion(), entity.getAppellation(), entity.getVintage(), styles, grapes);
+				entity.getRegion(), entity.getAppellation(), entity.getVintage(), entity.getVivinoUrl(), styles,
+				grapes);
 	}
 
 	public Wine fromWineUpsertRequest(WineUpsertRequest request) {
@@ -94,6 +95,7 @@ public class WineMapper {
 		wine.setRegion(request.region());
 		wine.setAppellation(request.appellation());
 		wine.setVintage(request.vintage());
+		wine.setVivinoUrl(request.vivinoUrl());
 	}
 
 	private void mapStylesFromRequest(Wine wine, WineUpsertRequest request) {

@@ -33,6 +33,8 @@ class WineTests {
 
 	private final Year testVintage = Year.of(2020);
 
+	private final String testVivinoUrl = "https://vivino.com";
+
 	@BeforeEach
 	void setUp() {
 		wine = new Wine(testName);
@@ -41,6 +43,7 @@ class WineTests {
 		wine.setRegion(testRegion);
 		wine.setAppellation(testAppellation);
 		wine.setVintage(testVintage);
+		wine.setVivinoUrl(testVivinoUrl);
 	}
 
 	@Nested
@@ -68,6 +71,14 @@ class WineTests {
 	@Nested
 	@DisplayName("Property Tests")
 	class PropertyTests {
+
+		@Test
+		@DisplayName("Should set and get name")
+		void shouldSetAndGetName() {
+			String newName = "Name";
+			wine.setName(newName);
+			assertEquals(newName, wine.getName());
+		}
 
 		@Test
 		@DisplayName("Should set and get optional winery")
@@ -110,11 +121,11 @@ class WineTests {
 		}
 
 		@Test
-		@DisplayName("Should set and get name")
-		void shouldSetAndGetName() {
-			String newName = "Name";
-			wine.setName(newName);
-			assertEquals(newName, wine.getName());
+		@DisplayName("Should set and get vivinoUrl")
+		void shouldSetAndGetVivinoUrl() {
+			String newUrl = "https://vivino.com/1";
+			wine.setVivinoUrl(newUrl);
+			assertEquals(newUrl, wine.getVivinoUrl());
 		}
 
 	}

@@ -48,9 +48,9 @@ class WineServiceTest {
 	void setUp() {
 		pageable = PageRequest.of(0, 10, Sort.by("wineNo").ascending());
 		response1 = new WineResponse(1L, "Wine 1", "Winery 1", "Country 1", "Region 1", "Appellation 1", Year.of(2023),
-				Collections.emptyList(), Collections.emptyList());
+				"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 		response2 = new WineResponse(2L, "Wine 2", "Winery 2", "Country 2", "Region 2", "Appellation 2", Year.of(2023),
-				Collections.emptyList(), Collections.emptyList());
+				"https://vivino.com", Collections.emptyList(), Collections.emptyList());
 	}
 
 	@Nested
@@ -187,9 +187,9 @@ class WineServiceTest {
 			wine.setVintage(Year.of(2023));
 
 			var request = new WineUpsertRequest("Wine Name", "Winery Name", "Country", "Region", "Appellation",
-					Year.of(2023), Collections.emptyList(), Collections.emptyList());
+					Year.of(2023), "https://vivino.com", Collections.emptyList(), Collections.emptyList());
 			var response = new WineResponse(1L, "Wine Name", "Winery Name", "Country", "Region", "Appellation",
-					Year.of(2023), Collections.emptyList(), Collections.emptyList());
+					Year.of(2023), "https://vivino.com", Collections.emptyList(), Collections.emptyList());
 
 			given(wineMapper.fromWineUpsertRequest(request)).willReturn(wine);
 			given(wineRepository.save(wine)).willReturn(wine);
@@ -224,9 +224,11 @@ class WineServiceTest {
 			wine.setVintage(Year.of(2023));
 
 			var request = new WineUpsertRequest("Updated Name", "Updated Winery", "Updated Country", "Updated Region",
-					"Updated Appellation", Year.of(2024), Collections.emptyList(), Collections.emptyList());
+					"Updated Appellation", Year.of(2024), "https://vivino.com", Collections.emptyList(),
+					Collections.emptyList());
 			var response = new WineResponse(1L, "Updated Name", "Updated Winery", "Updated Country", "Updated Region",
-					"Updated Appellation", Year.of(2024), Collections.emptyList(), Collections.emptyList());
+					"Updated Appellation", Year.of(2024), "https://vivino.com", Collections.emptyList(),
+					Collections.emptyList());
 
 			given(wineRepository.findById(id)).willReturn(Optional.of(wine));
 			given(wineMapper.mergeWithWineUpsertRequest(wine, request)).willReturn(wine);
@@ -250,7 +252,8 @@ class WineServiceTest {
 			var id = 404L;
 
 			var request = new WineUpsertRequest("Updated Name", "Updated Winery", "Updated Country", "Updated Region",
-					"Updated Appellation", Year.of(2024), Collections.emptyList(), Collections.emptyList());
+					"Updated Appellation", Year.of(2024), "https://vivino.com", Collections.emptyList(),
+					Collections.emptyList());
 
 			given(wineRepository.findById(id)).willReturn(Optional.empty());
 

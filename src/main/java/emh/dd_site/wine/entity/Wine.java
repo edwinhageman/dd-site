@@ -65,6 +65,12 @@ public class Wine {
 	@ToString.Include
 	private Year vintage;
 
+	@Column(name = "vivino_url")
+	@Getter
+	@Setter
+	@ToString.Include
+	private String vivinoUrl;
+
 	@ManyToMany
 	@JoinTable(name = "wine_styles", joinColumns = @JoinColumn(name = "wine_id"),
 			inverseJoinColumns = @JoinColumn(name = "wine_style_id"))

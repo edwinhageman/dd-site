@@ -69,6 +69,7 @@ class WineMapperTest {
 			.withRegion("Region Name")
 			.withAppellation("Appellation Name")
 			.withVintage(Year.of(2000))
+			.withVivinoUrl("https://vivino.com")
 			.build();
 
 		testStyle1 = TestWineStyleBuilder.builder().withId(1).withName("Style 1").build();
@@ -86,7 +87,7 @@ class WineMapperTest {
 		testWine.addGrape(testGrape2, null);
 
 		testRequest = new WineUpsertRequest("Upsert Dish Name", "Upsert Winery", "Upsert Country", "Upsert Region",
-				"Upsert Appellation", Year.of(1900), null, null);
+				"Upsert Appellation", Year.of(1900), "https://vivino.com/upsert", null, null);
 	}
 
 	@Nested
@@ -122,6 +123,7 @@ class WineMapperTest {
 				assertThat(wineDto.region()).isEqualTo(testWine.getRegion());
 				assertThat(wineDto.appellation()).isEqualTo(testWine.getAppellation());
 				assertThat(wineDto.vintage()).isEqualTo(testWine.getVintage());
+				assertThat(wineDto.vivinoUrl()).isEqualTo(testWine.getVivinoUrl());
 				assertThat(wineDto.styles()).isNotNull().hasSize(2);
 				assertThat(wineDto.styles().get(0).id()).isEqualTo(testStyle1.getId());
 				assertThat(wineDto.styles().get(1).id()).isEqualTo(testStyle2.getId());
@@ -238,6 +240,7 @@ class WineMapperTest {
 				assertThat(wine.getRegion()).isEqualTo(testRequest.region());
 				assertThat(wine.getAppellation()).isEqualTo(testRequest.appellation());
 				assertThat(wine.getVintage()).isEqualTo(testRequest.vintage());
+				assertThat(wine.getVivinoUrl()).isEqualTo(testRequest.vivinoUrl());
 			});
 		}
 
@@ -245,7 +248,7 @@ class WineMapperTest {
 		@DisplayName("should fetch and map styles from repository")
 		void shouldFetchAndMapStylesFromRepository() {
 			var styleIds = List.of(testStyle1.getId(), testStyle2.getId());
-			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, styleIds, null);
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, styleIds, null);
 
 			given(wineStyleRepository.findAllById(styleIds)).willReturn(List.of(testStyle1, testStyle2));
 
@@ -268,7 +271,8 @@ class WineMapperTest {
 							BigDecimal.valueOf(.6)),
 					new WineUpsertRequest.GrapeComposition(testGrapeComposition2.getGrape().getId(),
 							BigDecimal.valueOf(.4)));
-			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, grapeCompositions);
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null,
+					grapeCompositions);
 
 			given(grapeRepository.findAllById(grapeIds)).willReturn(List.of(testGrape1, testGrape2));
 
@@ -286,7 +290,7 @@ class WineMapperTest {
 		@Test
 		@DisplayName("should handle null values")
 		void shouldHandleNullValues() {
-			testRequest = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null);
+			testRequest = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null, null);
 
 			var result = mapper.fromWineUpsertRequest(testRequest);
 
@@ -298,6 +302,7 @@ class WineMapperTest {
 				assertThat(wine.getRegion()).isNull();
 				assertThat(wine.getAppellation()).isNull();
 				assertThat(wine.getVintage()).isNull();
+				assertThat(wine.getVivinoUrl()).isNull();
 				assertThat(wine.getStyles()).isEmpty();
 				assertThat(wine.getGrapeComposition()).isEmpty();
 			});
@@ -334,14 +339,15 @@ class WineMapperTest {
 				assertThat(wine.getRegion()).isEqualTo(testRequest.region());
 				assertThat(wine.getAppellation()).isEqualTo(testRequest.appellation());
 				assertThat(wine.getVintage()).isEqualTo(testRequest.vintage());
+				assertThat(wine.getVivinoUrl()).isEqualTo(testRequest.vivinoUrl());
 			});
 		}
 
 		@Test
 		@DisplayName("should clear styles and grape composition when request contains empty collections")
 		void shouldMapStylesAsEmptyWhenRequestStyleIsNullOrEmpty() {
-			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, Collections.emptyList(),
-					Collections.emptyList());
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null,
+					Collections.emptyList(), Collections.emptyList());
 
 			assertThat(mapper.mergeWithWineUpsertRequest(testWine, request).getStyles()).isEmpty();
 			assertThat(mapper.mergeWithWineUpsertRequest(testWine, request).getStyles()).isEmpty();
@@ -355,7 +361,7 @@ class WineMapperTest {
 
 			var styleIds = List.of(testStyle1.getId(), testStyle2.getId(), 999);
 
-			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, styleIds, null);
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, styleIds, null);
 
 			// won't return grape with id 999
 			given(wineStyleRepository.findAllById(styleIds)).willReturn(List.of(style11, style12));
@@ -383,7 +389,8 @@ class WineMapperTest {
 					new WineUpsertRequest.GrapeComposition(grape12.getId(), BigDecimal.valueOf(.4)),
 					new WineUpsertRequest.GrapeComposition(999, BigDecimal.valueOf(1)));
 
-			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, grapeCompositions);
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null,
+					grapeCompositions);
 
 			// won't return grape with id 999
 			given(grapeRepository.findAllById(Set.of(11, 12, 999))).willReturn(List.of(grape11, grape12));
@@ -402,7 +409,7 @@ class WineMapperTest {
 		@Test
 		@DisplayName("should handle null values")
 		void shouldHandleNullValues() {
-			testRequest = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null);
+			testRequest = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null, null);
 
 			var result = mapper.mergeWithWineUpsertRequest(testWine, testRequest);
 
@@ -414,6 +421,7 @@ class WineMapperTest {
 				assertThat(wine.getRegion()).isNull();
 				assertThat(wine.getAppellation()).isNull();
 				assertThat(wine.getVintage()).isNull();
+				assertThat(wine.getVivinoUrl()).isNull();
 				assertThat(wine.getStyles()).isEqualTo(wine.getStyles());
 				assertThat(wine.getGrapeComposition()).isEqualTo(wine.getGrapeComposition());
 			});

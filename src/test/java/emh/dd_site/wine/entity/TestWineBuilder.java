@@ -55,6 +55,11 @@ public class TestWineBuilder {
 		return this;
 	}
 
+	public TestWineBuilder withVivinoUrl(String vivinoUrl) {
+		this.wine.setVivinoUrl(vivinoUrl);
+		return this;
+	}
+
 	public TestWineBuilder addStyle(WineStyle style) {
 		this.wine.addStyle(style);
 		return this;

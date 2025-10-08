@@ -52,20 +52,20 @@ public class WineControllerIT {
 	private final GrapeResponse grape2 = new GrapeResponse(2, "grape 2");
 
 	private final WineResponse testResponse = new WineResponse(1L, "Test Wine", "Test Winery", "Test Country",
-			"Test Region", "Test Appellation", Year.of(2020),
+			"Test Region", "Test Appellation", Year.of(2020), "https://vivino.com",
 			List.of(new WineStyleResponse(1, "style1"), new WineStyleResponse(2, "style2")),
 			List.of(new WineResponse.GrapeComposition(grape1, BigDecimal.ONE),
 					new WineResponse.GrapeComposition(grape2, BigDecimal.ZERO)));
 
 	private final WineResponse testResponse2 = new WineResponse(2L, "Test Wine 2", "Test Winery 2", "Test Country 2",
-			"Test Region 2", "Test Appellation 2", Year.of(2022));
+			"Test Region 2", "Test Appellation 2", Year.of(2022), "https://vivino.com");
 
 	private final WineResponse upsertResponse = new WineResponse(1L, "Upsert Wine", "Upsert Winery", "Upsert Country",
-			"Upsert Region", "Upsert Appellation", Year.of(2023));
+			"Upsert Region", "Upsert Appellation", Year.of(2023), "https://vivino.com");
 
 	private final WineUpsertRequest testRequest = new WineUpsertRequest("Upsert Wine", "Upsert Winery",
-			"Upsert Country", "Upsert Region", "Upsert Appellation", Year.of(2023), Collections.emptyList(),
-			Collections.emptyList());
+			"Upsert Country", "Upsert Region", "Upsert Appellation", Year.of(2023), "https://vivino.com",
+			Collections.emptyList(), Collections.emptyList());
 
 	@Nested
 	@DisplayName("GET /api/wines")

@@ -38,9 +38,9 @@ class WineControllerTest {
 	@BeforeEach
 	void setUp() {
 		testResponse = new WineResponse(1L, "Wine Name", "Winery name", "Country", "Region", "Appellation",
-				Year.of(2025));
+				Year.of(2025), "https://vivino.com");
 		testRequest = new WineUpsertRequest("Wine Name", "Winery name", "Country", "Region", "Appellation",
-				Year.of(2025), Collections.emptyList(), Collections.emptyList());
+				Year.of(2025), "https://vivino.com", Collections.emptyList(), Collections.emptyList());
 	}
 
 	@Nested
