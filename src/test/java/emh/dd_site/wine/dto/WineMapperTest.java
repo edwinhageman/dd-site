@@ -43,6 +43,9 @@ class WineMapperTest {
 	@Mock
 	private WineStyleMapper wineStyleMapper;
 
+	@Mock
+	private GrapeMapper grapeMapper;
+
 	@InjectMocks
 	private WineMapper mapper;
 
@@ -105,6 +108,9 @@ class WineMapperTest {
 
 			given(wineStyleMapper.toWineStyleResponse(testStyle1)).willReturn(new WineStyleResponse(1, "Style 1"));
 			given(wineStyleMapper.toWineStyleResponse(testStyle2)).willReturn(new WineStyleResponse(2, "Style 2"));
+
+			given(grapeMapper.toGrapeResponse(testGrape1)).willReturn(new GrapeResponse(1, "Grape 1"));
+			given(grapeMapper.toGrapeResponse(testGrape2)).willReturn(new GrapeResponse(2, "Grape 2"));
 
 			var result = mapper.toWineResponse(testWine);
 
@@ -182,29 +188,6 @@ class WineMapperTest {
 	}
 
 	@Nested
-	@DisplayName("to GrapeResponse mapping tests")
-	class ToGrapeResponseTests {
-
-		@Test
-		@DisplayName("should return null when entity is null")
-		void shouldReturnNullWhenEntityIsNull() {
-			assertThat(mapper.toGrapeResponse(null)).isNull();
-		}
-
-		@Test
-		@DisplayName("should map all fields correctly")
-		void shouldMapAllFieldsCorrectly() {
-			var result = mapper.toGrapeResponse(testGrape1);
-
-			assertThat(result).isNotNull().satisfies(grapeDto -> {
-				assertThat(grapeDto.id()).isEqualTo(testGrape1.getId());
-				assertThat(grapeDto.name()).isEqualTo(testGrape1.getName());
-			});
-		}
-
-	}
-
-	@Nested
 	@DisplayName("to WineGrapeCompositionResponse mapping tests")
 	class ToWineGrapeCompositionResponseTests {
 
@@ -217,6 +200,8 @@ class WineMapperTest {
 		@Test
 		@DisplayName("should map all fields correctly")
 		void shouldMapAllFieldsCorrectly() {
+			given(grapeMapper.toGrapeResponse(testGrape1)).willReturn(new GrapeResponse(1, "Grape 1"));
+
 			var result = mapper.toWineGrapeCompositionResponse(testGrapeComposition1);
 
 			assertThat(result).isNotNull().satisfies(compositionDto -> {
@@ -326,7 +311,7 @@ class WineMapperTest {
 
 		@Test
 		@DisplayName("should return null when wine is null")
-		void shouldReturnWineWhenEventIsNull() {
+		void shouldReturnNullWhenWineIsNull() {
 			assertThat(mapper.mergeWithWineUpsertRequest(null, testRequest)).isNull();
 		}
 

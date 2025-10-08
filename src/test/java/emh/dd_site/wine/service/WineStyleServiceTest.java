@@ -54,7 +54,7 @@ public class WineStyleServiceTest {
 		pageable = PageRequest.of(0, 10, Sort.by("name").ascending());
 		request = new WineStyleUpsertRequest("Upsert Style 1");
 		response1 = new WineStyleResponse(1, "Style 1");
-		response2 = new WineStyleResponse(2, "Wine 2");
+		response2 = new WineStyleResponse(2, "Style 2");
 	}
 
 	@Nested

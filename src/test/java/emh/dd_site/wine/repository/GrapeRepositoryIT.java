@@ -1,7 +1,7 @@
 package emh.dd_site.wine.repository;
 
 import emh.dd_site.TestcontainersConfig;
-import emh.dd_site.wine.entity.WineStyle;
+import emh.dd_site.wine.entity.Grape;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,77 +21,77 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @DataJpaTest
 @Testcontainers
 @Import(TestcontainersConfig.class)
-public class WineStyleRepositoryIT {
+public class GrapeRepositoryIT {
 
 	@Autowired
-	private WineStyleRepository wineStyleRepository;
+	private GrapeRepository grapeRepository;
 
-	private WineStyle style1, style2, style3;
+	private Grape grape1, grape2, grape3;
 
 	@BeforeEach
 	void setUp() {
-		style1 = new WineStyle("Style 1");
-		style2 = new WineStyle("Style 2");
-		style3 = new WineStyle("Style 3");
+		grape1 = new Grape("Grape 1");
+		grape2 = new Grape("Grape 2");
+		grape3 = new Grape("Grape 3");
 
-		wineStyleRepository.saveAll(List.of(style1, style2, style3));
+		grapeRepository.saveAll(List.of(grape1, grape2, grape3));
 	}
 
 	@Test
-	@DisplayName("Should save and retrieve wine style")
+	@DisplayName("Should save and retrieve grape")
 	void shouldSaveAndRetrieve() {
-		var result = wineStyleRepository.findById(style1.getId());
+		var result = grapeRepository.findById(grape1.getId());
 
-		assertThat(result).hasValueSatisfying(style -> assertThat(style.getName()).isEqualTo(style1.getName()));
+		assertThat(result).hasValueSatisfying(grape -> assertThat(grape.getName()).isEqualTo(grape1.getName()));
 	}
 
 	@Test
-	@DisplayName("Should update wine style")
+	@DisplayName("Should update grape")
 	void shouldUpdate() {
-		style1.setName("Updated name");
+		grape1.setName("Updated name");
 
-		var updated = wineStyleRepository.save(style1);
+		var updated = grapeRepository.save(grape1);
 
 		assertThat(updated.getName()).isEqualTo("Updated name");
 	}
 
 	@Test
-	@DisplayName("Should delete style")
+	@DisplayName("Should delete grape")
 	void shouldDelete() {
-		wineStyleRepository.deleteById(style1.getId());
+		grapeRepository.deleteById(grape1.getId());
 
-		var shouldNotExist = wineStyleRepository.findById(style1.getId());
+		var shouldNotExist = grapeRepository.findById(grape1.getId());
 		assertThat(shouldNotExist).isEmpty();
 	}
 
 	@Test
-	@DisplayName("Should list all styles")
+	@DisplayName("Should list all grapes")
 	void shouldListAllStyles() {
-		var result = wineStyleRepository.findAll();
+		var result = grapeRepository.findAll();
 
 		assertThat(result).hasSize(3);
-		assertThat(result).containsExactly(style1, style2, style3);
+		assertThat(result).containsExactly(grape1, grape2, grape3);
 	}
 
 	@Test
-	@DisplayName("Should paginate and sort styles")
+	@DisplayName("Should paginate and sort grapes")
 	void shouldPaginateAndSortStyles() {
-		var result = wineStyleRepository.findAll(PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "name")));
+		var result = grapeRepository.findAll(PageRequest.of(0, 2, Sort.by(Sort.Direction.DESC, "name")));
 
 		assertThat(result.getContent()).hasSize(2);
 		assertThat(result.getTotalElements()).isEqualTo(3);
 		assertThat(result.getTotalPages()).isEqualTo(2);
-		assertThat(result.getContent().get(0).getName()).isEqualTo(style3.getName());
-		assertThat(result.getContent().get(1).getName()).isEqualTo(style2.getName());
+		assertThat(result.getContent().get(0).getName()).isEqualTo(grape3.getName());
+		assertThat(result.getContent().get(1).getName()).isEqualTo(grape2.getName());
 	}
 
 	@Test
-	@DisplayName("When persisting style with existing name should throw DataIntegrityViolationException")
+	@DisplayName("When persisting grape with existing name should throw DataIntegrityViolationException")
 	void whenPersistingStyleWithExistingName_shouldThrowDataIntegrityViolationException() {
-		wineStyleRepository.save(new WineStyle("Duplicate name"));
+		grapeRepository.save(new Grape("Duplicate name"));
 		assertThrows(DataIntegrityViolationException.class,
 				// constraint should be case-insensitive
-				() -> wineStyleRepository.save(new WineStyle("Duplicate Name")));
+				() -> grapeRepository.save(new Grape("Duplicate Name")));
 	}
 
 }

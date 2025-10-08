@@ -42,9 +42,9 @@ public class WineStyleMapperTest {
 		void shouldMapAllFieldsCorrectly() {
 			var result = mapper.toWineStyleResponse(testStyle);
 
-			assertThat(result).isNotNull().satisfies(styleDto -> {
-				assertThat(styleDto.id()).isEqualTo(testStyle.getId());
-				assertThat(styleDto.name()).isEqualTo(testStyle.getName());
+			assertThat(result).isNotNull().satisfies(style -> {
+				assertThat(style.id()).isEqualTo(testStyle.getId());
+				assertThat(style.name()).isEqualTo(testStyle.getName());
 			});
 		}
 
@@ -65,9 +65,9 @@ public class WineStyleMapperTest {
 		void shouldMapAllFieldsCorrectly() {
 			var result = mapper.fromWineStyleUpsertRequest(testRequest);
 
-			assertThat(result).isNotNull().satisfies(wine -> {
-				assertThat(wine.getId()).isNull();
-				assertThat(wine.getName()).isEqualTo(testRequest.name());
+			assertThat(result).isNotNull().satisfies(style -> {
+				assertThat(style.getId()).isNull();
+				assertThat(style.getName()).isEqualTo(testRequest.name());
 			});
 		}
 
@@ -78,14 +78,14 @@ public class WineStyleMapperTest {
 	class MergeWithWineStyleUpsertRequestTests {
 
 		@Test
-		@DisplayName("should return null when wine is null")
-		void shouldReturnWineWhenEventIsNull() {
+		@DisplayName("should return null when style is null")
+		void shouldReturnNullWhenWineStyleIsNull() {
 			assertThat(mapper.mergeWithWineStyleUpsertRequest(null, testRequest)).isNull();
 		}
 
 		@Test
-		@DisplayName("should return wine when request is null")
-		void shouldReturnWineWhenRequestIsNull() {
+		@DisplayName("should return style when request is null")
+		void shouldReturnWineStyleWhenRequestIsNull() {
 			assertThat(mapper.mergeWithWineStyleUpsertRequest(testStyle, null)).isEqualTo(testStyle);
 		}
 
@@ -94,9 +94,9 @@ public class WineStyleMapperTest {
 		void shouldMapAllFieldsCorrectly() {
 			var result = mapper.mergeWithWineStyleUpsertRequest(testStyle, testRequest);
 
-			assertThat(result).isNotNull().satisfies(wine -> {
-				assertThat(wine.getId()).isEqualTo(testStyle.getId());
-				assertThat(wine.getName()).isEqualTo(testRequest.name());
+			assertThat(result).isNotNull().satisfies(style -> {
+				assertThat(style.getId()).isEqualTo(testStyle.getId());
+				assertThat(style.getName()).isEqualTo(testRequest.name());
 			});
 		}
 

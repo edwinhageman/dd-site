@@ -27,6 +27,8 @@ public class WineMapper {
 
 	private final WineStyleMapper wineStyleMapper;
 
+	private final GrapeMapper grapeMapper;
+
 	public WineResponse toWineResponse(Wine entity) {
 		if (entity == null) {
 			return null;
@@ -77,18 +79,12 @@ public class WineMapper {
 		return wine;
 	}
 
-	public GrapeResponse toGrapeResponse(Grape entity) {
-		if (entity == null) {
-			return null;
-		}
-		return new GrapeResponse(entity.getId(), entity.getName());
-	}
-
 	public WineResponse.GrapeComposition toWineGrapeCompositionResponse(WineGrapeComposition entity) {
 		if (entity == null) {
 			return null;
 		}
-		return new WineResponse.GrapeComposition(toGrapeResponse(entity.getGrape()), entity.getPercentage());
+		return new WineResponse.GrapeComposition(grapeMapper.toGrapeResponse(entity.getGrape()),
+				entity.getPercentage());
 	}
 
 	private void mapWinePropertiesFromRequest(Wine wine, WineUpsertRequest request) {

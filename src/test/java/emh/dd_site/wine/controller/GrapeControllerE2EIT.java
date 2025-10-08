@@ -2,9 +2,9 @@ package emh.dd_site.wine.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import emh.dd_site.TestcontainersConfig;
-import emh.dd_site.wine.dto.WineStyleUpsertRequest;
-import emh.dd_site.wine.entity.WineStyle;
-import emh.dd_site.wine.repository.WineStyleRepository;
+import emh.dd_site.wine.dto.GrapeUpsertRequest;
+import emh.dd_site.wine.entity.Grape;
+import emh.dd_site.wine.repository.GrapeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
@@ -27,8 +27,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @Testcontainers
 @Import(TestcontainersConfig.class)
-@DisplayName("WineStyleController E2E Tests")
-public class WineStyleControllerE2EIT {
+@DisplayName("GrapeController E2E Tests")
+public class GrapeControllerE2EIT {
 
 	@Autowired
 	MockMvc mockMvc;
@@ -37,41 +37,41 @@ public class WineStyleControllerE2EIT {
 	ObjectMapper objectMapper;
 
 	@Autowired
-	WineStyleRepository wineStyleRepository;
+	GrapeRepository grapeRepository;
 
 	@BeforeEach
 	void cleanDb() {
-		wineStyleRepository.deleteAll();
+		grapeRepository.deleteAll();
 	}
 
-	private WineStyle persistWineStyle(String name) {
-		var style = new WineStyle(name);
-		return wineStyleRepository.save(style);
+	private Grape persistGrape(String name) {
+		var grape = new Grape(name);
+		return grapeRepository.save(grape);
 	}
 
 	@Nested
-	@DisplayName("GET /api/wines/styles")
+	@DisplayName("GET /api/wines/grapes")
 	class ListAll {
 
 		@Test
-		@DisplayName("when styles available then returns page sorted by name")
-		void whenStylesAvailable_thenReturnsPageSortedByName() throws Exception {
-			var s1 = persistWineStyle("Style X");
-			var s2 = persistWineStyle("Style A");
+		@DisplayName("when grapes available then returns page sorted by name")
+		void whenGrapesAvailable_thenReturnsPageSortedByName() throws Exception {
+			var s1 = persistGrape("Grape X");
+			var s2 = persistGrape("Grape A");
 
-			mockMvc.perform(get("/api/wines/styles").param("page", "0").param("size", "10"))
+			mockMvc.perform(get("/api/wines/grapes").param("page", "0").param("size", "10"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.content", hasSize(2)))
 				.andExpect(jsonPath("$.content[0].id").value(s2.getId()))
-				.andExpect(jsonPath("$.content[0].name").value("Style A"))
+				.andExpect(jsonPath("$.content[0].name").value("Grape A"))
 				.andExpect(jsonPath("$.content[1].id").value(s1.getId()))
-				.andExpect(jsonPath("$.content[1].name").value("Style X"));
+				.andExpect(jsonPath("$.content[1].name").value("Grape X"));
 		}
 
 		@Test
-		@DisplayName("when no styles available then returns empty page")
-		void whenNoStylesAvailable_thenReturnsEmptyPage() throws Exception {
-			mockMvc.perform(get("/api/wines/styles").param("page", "0").param("size", "10"))
+		@DisplayName("when no grapes available then returns empty page")
+		void whenNoGrapesAvailable_thenReturnsEmptyPage() throws Exception {
+			mockMvc.perform(get("/api/wines/grapes").param("page", "0").param("size", "10"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.content", hasSize(0)));
 		}
@@ -79,49 +79,49 @@ public class WineStyleControllerE2EIT {
 	}
 
 	@Nested
-	@DisplayName("GET /api/wines/styles/{id}")
+	@DisplayName("GET /api/wines/grapes/{id}")
 	class GetOne {
 
 		@Test
-		@DisplayName("when style available then returns style")
-		void whenStyleAvailable_theReturnsStyle() throws Exception {
-			var s = persistWineStyle("Style1");
+		@DisplayName("when grape available then returns grape")
+		void whenGrapeAvailable_theReturnsGrape() throws Exception {
+			var s = persistGrape("Grape1");
 
-			mockMvc.perform(get("/api/wines/styles/{id}", s.getId()))
+			mockMvc.perform(get("/api/wines/grapes/{id}", s.getId()))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(s.getId()))
-				.andExpect(jsonPath("$.name").value("Style1"));
+				.andExpect(jsonPath("$.name").value("Grape1"));
 		}
 
 		@Test
-		@DisplayName("when style not available returns 404 json problem response")
-		void whenStyleNotAvailable_thenReturns404() throws Exception {
-			mockMvc.perform(get("/api/wines/styles/{id}", 404))
+		@DisplayName("when grape not available returns 404 json problem response")
+		void whenGrapeNotAvailable_thenReturns404() throws Exception {
+			mockMvc.perform(get("/api/wines/grapes/{id}", 404))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Not Found"))
 				.andExpect(jsonPath("$.status").value(404))
-				.andExpect(jsonPath("$.detail").value("Could not find wine style 404"))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles/404"));
+				.andExpect(jsonPath("$.detail").value("Could not find grape 404"))
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/404"));
 		}
 
 	}
 
 	@Nested
-	@DisplayName("POST /api/wines/styles")
+	@DisplayName("POST /api/wines/grapes")
 	class Create {
 
 		@Test
 		@DisplayName("creates with valid body")
 		void creates() throws Exception {
-			var req = new WineStyleUpsertRequest("Created Style");
+			var req = new GrapeUpsertRequest("Created Grape");
 
 			mockMvc
-				.perform(post("/api/wines/styles").contentType(MediaType.APPLICATION_JSON)
+				.perform(post("/api/wines/grapes").contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").isNumber())
-				.andExpect(jsonPath("$.name").value("Created Style"));
+				.andExpect(jsonPath("$.name").value("Created Grape"));
 		}
 
 		@Test
@@ -129,47 +129,47 @@ public class WineStyleControllerE2EIT {
 		void badRequestOnInvalidBody() throws Exception {
 			String invalidJson = "{\"name\":\"\"}";
 
-			mockMvc.perform(post("/api/wines/styles").contentType(MediaType.APPLICATION_JSON).content(invalidJson))
+			mockMvc.perform(post("/api/wines/grapes").contentType(MediaType.APPLICATION_JSON).content(invalidJson))
 				.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Invalid request body"))
 				.andExpect(jsonPath("$.status").value(400))
 				.andExpect(jsonPath("$.detail").value("Invalid request content."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles"));
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes"));
 		}
 
 		@Test
 		@DisplayName("400 on existing name")
 		void badRequestOnExistingName() throws Exception {
-			var w = persistWineStyle("Existing Style");
-			var req = new WineStyleUpsertRequest("Existing Style");
+			var w = persistGrape("Existing Grape");
+			var req = new GrapeUpsertRequest("Existing Grape");
 
 			mockMvc
-				.perform(post("/api/wines/styles").contentType(MediaType.APPLICATION_JSON)
+				.perform(post("/api/wines/grapes").contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Constraint violation"))
 				.andExpect(jsonPath("$.status").value(409))
 				.andExpect(jsonPath("$.detail").value("Data integrity violation."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles"));
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes"));
 		}
 
 	}
 
 	@Nested
-	@DisplayName("PUT /api/wines/styles/{id}")
+	@DisplayName("PUT /api/wines/grapes/{id}")
 	class Update {
 
 		@Test
 		@DisplayName("updates with valid body")
 		void updates() throws Exception {
-			var w = persistWineStyle("Old Name");
-			var req = new WineStyleUpsertRequest("New Name");
+			var w = persistGrape("Old Name");
+			var req = new GrapeUpsertRequest("New Name");
 
 			mockMvc
-				.perform(put("/api/wines/styles/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/grapes/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.id").value(w.getId()))
@@ -179,69 +179,69 @@ public class WineStyleControllerE2EIT {
 		@Test
 		@DisplayName("400 on invalid body")
 		void badRequestOnInvalidBody() throws Exception {
-			var w = persistWineStyle("Old Name");
+			var w = persistGrape("Old Name");
 			String invalidJson = "{\"name\":\"\"}";
 
 			mockMvc
-				.perform(put("/api/wines/styles/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/grapes/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(invalidJson))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Invalid request body"))
 				.andExpect(jsonPath("$.status").value(400))
 				.andExpect(jsonPath("$.detail").value("Invalid request content."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles/" + w.getId()));
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/" + w.getId()));
 		}
 
 		@Test
 		@DisplayName("400 on existing name")
 		void badRequestOnExistingName() throws Exception {
-			persistWineStyle("Existing Style");
-			var w = persistWineStyle("Another Style");
-			var req = new WineStyleUpsertRequest("Existing Style");
+			persistGrape("Existing Grape");
+			var w = persistGrape("Another Grape");
+			var req = new GrapeUpsertRequest("Existing Grape");
 
 			mockMvc
-				.perform(put("/api/wines/styles/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/grapes/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Constraint violation"))
 				.andExpect(jsonPath("$.status").value(409))
 				.andExpect(jsonPath("$.detail").value("Data integrity violation."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles/" + w.getId()));
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/" + w.getId()));
 		}
 
 		@Test
 		@DisplayName("when grape not available returns 404 json problem response")
-		void whenStyleNotAvailable_thenReturns404() throws Exception {
-			var req = new WineStyleUpsertRequest("Existing Style");
+		void whenGrapeNotAvailable_thenReturns404() throws Exception {
+			var req = new GrapeUpsertRequest("Existing Grape");
 
 			mockMvc
-				.perform(put("/api/wines/styles/{id}", 404).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/grapes/{id}", 404).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isNotFound())
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Not Found"))
 				.andExpect(jsonPath("$.status").value(404))
-				.andExpect(jsonPath("$.detail").value("Could not find wine style 404"))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles/404"));
+				.andExpect(jsonPath("$.detail").value("Could not find grape 404"))
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/404"));
 		}
 
 	}
 
 	@Nested
-	@DisplayName("DELETE /api/wines/styles/{id}")
+	@DisplayName("DELETE /api/wines/grapes/{id}")
 	class Delete {
 
 		@Test
 		@DisplayName("deletes and returns 204")
 		void deletes() throws Exception {
-			var w = persistWineStyle("To Delete");
+			var w = persistGrape("To Delete");
 
-			mockMvc.perform(delete("/api/wines/styles/{id}", w.getId())).andExpect(status().isNoContent());
+			mockMvc.perform(delete("/api/wines/grapes/{id}", w.getId())).andExpect(status().isNoContent());
 
 			// Ensure it’s gone
-			mockMvc.perform(get("/api/wines/styles/{id}", w.getId())).andExpect(status().isNotFound());
+			mockMvc.perform(get("/api/wines/grapes/{id}", w.getId())).andExpect(status().isNotFound());
 		}
 
 	}
