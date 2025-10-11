@@ -1,21 +1,13 @@
 <script lang="ts" setup>
 import { type Pageable } from '@/generated/api'
-import { createApiControllers } from '@/api'
 import { columns } from './columns'
-import { useQuery } from '@tanstack/vue-query'
 import DataTable from '@/components/datatable/DataTable.vue'
 import { ref } from 'vue'
+import { useListWines } from '@/composables'
 
 const pageRequest = ref<Pageable>({})
-const { wineApi } = createApiControllers()
+const { data } = useListWines(pageRequest)
 
-const { data } = useQuery({
-  queryKey: ['wines', pageRequest],
-  queryFn: async () => {
-    const response = await wineApi.listWines(pageRequest.value)
-    return response.data
-  },
-})
 const previousPage = () => {
   pageRequest.value = {
     page: (data.value?.page?.number ?? 0) - 1,
