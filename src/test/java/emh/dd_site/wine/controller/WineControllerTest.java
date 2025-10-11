@@ -71,11 +71,11 @@ class WineControllerTest {
 	class ListWinesByEventTests {
 
 		@Test
-		@DisplayName("should return paged list of wines sorted by event date")
-		void shouldReturnPagedListWithEventDateSort() {
+		@DisplayName("should return paged list of wines sorted by course no")
+		void shouldReturnPagedListWithCourseNoSort() {
 			long eventId = 2L;
 			Pageable pageRequest = PageRequest.of(0, 10);
-			Pageable alteredPageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "event.date"));
+			Pageable alteredPageRequest = PageRequest.of(0, 10, Sort.by(Sort.Direction.ASC, "c.courseNo"));
 			Page<WineResponse> page = new PageImpl<>(Collections.singletonList(testResponse), alteredPageRequest, 1);
 
 			given(wineService.listByEvent(eventId, alteredPageRequest)).willReturn(page);

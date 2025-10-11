@@ -27,25 +27,26 @@ Small tool to manage dinner parties and keep track of recipes and wine pairings.
 
 ### TODO
 
-- layout improvements (switch ui lib) (frontend)
-- add frontend component tests (frontend) (after layout improvements)
+- layout improvements (switch ui lib) [frontend]
+- error handling, map data integrity violations to end user error messages (??and maybe form fields??) [backend]
+- add frontend component tests (after layout improvements) [frontend]
 - security
-    - make a distinction between reader and writer users (frontend + backend)
+    - make a distinction between reader and writer users [frontend] [backend]
   - introduce user entity
-  - invite users?
-  - oidc?
+    - ?invite users?
+    - ?oidc?
 - event
-    - datatable search, filter & sorting
+    - datatable search, filter & sorting [frontend] [backend]
 - courses
-    - add wine to course (frontend + backend)
+    - add wine to course [frontend] [backend]
 - dish
-    - datatable search, filter & sorting
-    - course 1 <-> 1 dish to course 1 <-> * dish (backend)
-    - data table (frontend)
-    - image upload (frontend + backend)
-    - dish * <-> * ingredient relationship (frontend + backend)
-    - recipe url (frontend + backend)
-    - recipe text (frontend + backend)
+    - datatable search, filter & sorting [frontend] [backend]
+    - course 1 <-> 1 dish to course 1 <-> * dish [backend]
+    - data table [frontend]
+    - image upload [frontend] [backend]
+    - dish * <-> * ingredient relationship [frontend] [backend]
+    - recipe url [frontend] [backend]
+    - recipe text [frontend] [backend]
 - wine
-    - overview (table / search / filter)
-  - vivino lookup integration in wine edit form?? (frontend + backend)
+    - overview (table / search / filter) [frontend] [backend]
+    - vivino lookup integration in wine edit form?? [frontend] [backend]

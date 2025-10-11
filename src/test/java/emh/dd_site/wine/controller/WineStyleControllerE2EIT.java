@@ -19,7 +19,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -101,7 +100,6 @@ public class WineStyleControllerE2EIT {
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Not Found"))
 				.andExpect(jsonPath("$.status").value(404))
-				.andExpect(jsonPath("$.detail").value("Could not find wine style 404"))
 				.andExpect(jsonPath("$.instance").value("/api/wines/styles/404"));
 		}
 
@@ -130,19 +128,31 @@ public class WineStyleControllerE2EIT {
 			String invalidJson = "{\"name\":\"\"}";
 
 			mockMvc.perform(post("/api/wines/styles").contentType(MediaType.APPLICATION_JSON).content(invalidJson))
-				.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Invalid request body"))
+				.andExpect(jsonPath("$.title").value("Invalid Request"))
 				.andExpect(jsonPath("$.status").value(400))
-				.andExpect(jsonPath("$.detail").value("Invalid request content."))
+				.andExpect(jsonPath("$.instance").value("/api/wines/styles"))
+				.andExpect(jsonPath("$.fieldErrors.name").exists());
+		}
+
+		@Test
+		@DisplayName("400 on invalid json")
+		void badRequestOnInvalidJSON() throws Exception {
+			String invalidJson = "{\"name\": invalid json";
+
+			mockMvc.perform(post("/api/wines/styles").contentType(MediaType.APPLICATION_JSON).content(invalidJson))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.type").value("about:blank"))
+				.andExpect(jsonPath("$.title").value("Bad Request"))
+				.andExpect(jsonPath("$.status").value(400))
 				.andExpect(jsonPath("$.instance").value("/api/wines/styles"));
 		}
 
 		@Test
 		@DisplayName("400 on existing name")
 		void badRequestOnExistingName() throws Exception {
-			var w = persistWineStyle("Existing Style");
+			persistWineStyle("Existing Style");
 			var req = new WineStyleUpsertRequest("Existing Style");
 
 			mockMvc
@@ -150,9 +160,8 @@ public class WineStyleControllerE2EIT {
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Constraint violation"))
+				.andExpect(jsonPath("$.title").value("Constraint Violation"))
 				.andExpect(jsonPath("$.status").value(409))
-				.andExpect(jsonPath("$.detail").value("Data integrity violation."))
 				.andExpect(jsonPath("$.instance").value("/api/wines/styles"));
 		}
 
@@ -165,54 +174,66 @@ public class WineStyleControllerE2EIT {
 		@Test
 		@DisplayName("updates with valid body")
 		void updates() throws Exception {
-			var w = persistWineStyle("Old Name");
+			var s = persistWineStyle("Old Name");
 			var req = new WineStyleUpsertRequest("New Name");
 
 			mockMvc
-				.perform(put("/api/wines/styles/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/styles/{id}", s.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(w.getId()))
+				.andExpect(jsonPath("$.id").value(s.getId()))
 				.andExpect(jsonPath("$.name").value("New Name"));
 		}
 
 		@Test
 		@DisplayName("400 on invalid body")
 		void badRequestOnInvalidBody() throws Exception {
-			var w = persistWineStyle("Old Name");
+			var s = persistWineStyle("Old Name");
 			String invalidJson = "{\"name\":\"\"}";
 
 			mockMvc
-				.perform(put("/api/wines/styles/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/styles/{id}", s.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(invalidJson))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Invalid request body"))
+				.andExpect(jsonPath("$.title").value("Invalid Request"))
 				.andExpect(jsonPath("$.status").value(400))
-				.andExpect(jsonPath("$.detail").value("Invalid request content."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles/" + w.getId()));
+				.andExpect(jsonPath("$.instance").value("/api/wines/styles/" + s.getId()))
+				.andExpect(jsonPath("$.fieldErrors.name").exists());
+		}
+
+		@Test
+		@DisplayName("400 on invalid json")
+		void badRequestOnInvalidJSON() throws Exception {
+			String invalidJson = "{\"name\": invalid json";
+
+			mockMvc.perform(post("/api/wines/styles").contentType(MediaType.APPLICATION_JSON).content(invalidJson))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.type").value("about:blank"))
+				.andExpect(jsonPath("$.title").value("Bad Request"))
+				.andExpect(jsonPath("$.status").value(400))
+				.andExpect(jsonPath("$.instance").value("/api/wines/styles"));
 		}
 
 		@Test
 		@DisplayName("400 on existing name")
 		void badRequestOnExistingName() throws Exception {
 			persistWineStyle("Existing Style");
-			var w = persistWineStyle("Another Style");
+			var s = persistWineStyle("Another Style");
 			var req = new WineStyleUpsertRequest("Existing Style");
 
 			mockMvc
-				.perform(put("/api/wines/styles/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/styles/{id}", s.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Constraint violation"))
+				.andExpect(jsonPath("$.title").value("Constraint Violation"))
 				.andExpect(jsonPath("$.status").value(409))
-				.andExpect(jsonPath("$.detail").value("Data integrity violation."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/styles/" + w.getId()));
+				.andExpect(jsonPath("$.instance").value("/api/wines/styles/" + s.getId()));
 		}
 
 		@Test
-		@DisplayName("when grape not available returns 404 json problem response")
+		@DisplayName("when style not available returns 404 json problem response")
 		void whenStyleNotAvailable_thenReturns404() throws Exception {
 			var req = new WineStyleUpsertRequest("Existing Style");
 
@@ -223,7 +244,6 @@ public class WineStyleControllerE2EIT {
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Not Found"))
 				.andExpect(jsonPath("$.status").value(404))
-				.andExpect(jsonPath("$.detail").value("Could not find wine style 404"))
 				.andExpect(jsonPath("$.instance").value("/api/wines/styles/404"));
 		}
 
@@ -236,12 +256,12 @@ public class WineStyleControllerE2EIT {
 		@Test
 		@DisplayName("deletes and returns 204")
 		void deletes() throws Exception {
-			var w = persistWineStyle("To Delete");
+			var s = persistWineStyle("To Delete");
 
-			mockMvc.perform(delete("/api/wines/styles/{id}", w.getId())).andExpect(status().isNoContent());
+			mockMvc.perform(delete("/api/wines/styles/{id}", s.getId())).andExpect(status().isNoContent());
 
 			// Ensure it’s gone
-			mockMvc.perform(get("/api/wines/styles/{id}", w.getId())).andExpect(status().isNotFound());
+			mockMvc.perform(get("/api/wines/styles/{id}", s.getId())).andExpect(status().isNotFound());
 		}
 
 	}

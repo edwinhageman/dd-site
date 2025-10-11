@@ -97,7 +97,7 @@ public class WineControllerIT {
 	class ListByEvent {
 
 		@Test
-		@DisplayName("should sort by event date desc")
+		@DisplayName("should sort by course no asc")
 		void shouldSortByEventDateDesc() throws Exception {
 			var eventId = 1L;
 			var page = new PageImpl<>(List.of(testResponse, testResponse2), PageRequest.of(0, 15), 2);
@@ -112,7 +112,7 @@ public class WineControllerIT {
 			Pageable pageReq = captor.getValue();
 			assertThat(pageReq.getPageNumber()).isEqualTo(0);
 			assertThat(pageReq.getPageSize()).isEqualTo(15);
-			assertThat(pageReq.getSort()).isEqualTo(Sort.by(Sort.Direction.DESC, "event.date"));
+			assertThat(pageReq.getSort()).isEqualTo(Sort.by(Sort.Direction.ASC, "c.courseNo"));
 		}
 
 	}

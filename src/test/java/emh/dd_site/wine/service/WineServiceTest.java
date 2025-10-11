@@ -149,7 +149,7 @@ class WineServiceTest {
 			var id = 123L;
 			Wine wine = mock(Wine.class);
 
-			given(wineRepository.findById(id)).willReturn(Optional.of(wine));
+			given(wineRepository.findWithStylesAndGrapesById(id)).willReturn(Optional.of(wine));
 			given(wineMapper.toWineResponse(wine)).willReturn(response1);
 
 			WineResponse result = wineService.findById(id);
@@ -162,7 +162,7 @@ class WineServiceTest {
 		void shouldThrowNotFoundException_whenWineDoesNotExist() {
 			var id = 999L;
 
-			given(wineRepository.findById(id)).willReturn(Optional.empty());
+			given(wineRepository.findWithStylesAndGrapesById(id)).willReturn(Optional.empty());
 
 			assertThatThrownBy(() -> wineService.findById(id)).isInstanceOf(WineNotFoundException.class)
 				.hasMessageContaining(String.valueOf(id));
@@ -230,7 +230,7 @@ class WineServiceTest {
 					"Updated Appellation", Year.of(2024), "https://vivino.com", Collections.emptyList(),
 					Collections.emptyList());
 
-			given(wineRepository.findById(id)).willReturn(Optional.of(wine));
+			given(wineRepository.findWithStylesAndGrapesById(id)).willReturn(Optional.of(wine));
 			given(wineMapper.mergeWithWineUpsertRequest(wine, request)).willReturn(wine);
 			given(wineRepository.save(wine)).willReturn(wine);
 			given(wineMapper.toWineResponse(wine)).willReturn(response);
@@ -255,7 +255,7 @@ class WineServiceTest {
 					"Updated Appellation", Year.of(2024), "https://vivino.com", Collections.emptyList(),
 					Collections.emptyList());
 
-			given(wineRepository.findById(id)).willReturn(Optional.empty());
+			given(wineRepository.findWithStylesAndGrapesById(id)).willReturn(Optional.empty());
 
 			assertThatThrownBy(() -> wineService.update(id, request)).isInstanceOf(WineNotFoundException.class)
 				.hasMessageContaining(String.valueOf(id));

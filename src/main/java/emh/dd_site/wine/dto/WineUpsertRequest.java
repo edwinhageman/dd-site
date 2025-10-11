@@ -10,6 +10,6 @@ import java.util.List;
 public record WineUpsertRequest(@NotBlank String name, String winery, String country, String region, String appellation,
 		Year vintage, @URL(host = "vivino.com") String vivinoUrl, List<Integer> styles, List<GrapeComposition> grapes) {
 
-	record GrapeComposition(Integer grapeId, BigDecimal percentage) {
+	public record GrapeComposition(Integer grapeId, BigDecimal percentage) {
 	}
 }

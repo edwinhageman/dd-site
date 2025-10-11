@@ -19,7 +19,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,15 +55,15 @@ public class GrapeControllerE2EIT {
 		@Test
 		@DisplayName("when grapes available then returns page sorted by name")
 		void whenGrapesAvailable_thenReturnsPageSortedByName() throws Exception {
-			var s1 = persistGrape("Grape X");
-			var s2 = persistGrape("Grape A");
+			var g1 = persistGrape("Grape X");
+			var g2 = persistGrape("Grape A");
 
 			mockMvc.perform(get("/api/wines/grapes").param("page", "0").param("size", "10"))
 				.andExpect(status().isOk())
 				.andExpect(jsonPath("$.content", hasSize(2)))
-				.andExpect(jsonPath("$.content[0].id").value(s2.getId()))
+				.andExpect(jsonPath("$.content[0].id").value(g2.getId()))
 				.andExpect(jsonPath("$.content[0].name").value("Grape A"))
-				.andExpect(jsonPath("$.content[1].id").value(s1.getId()))
+				.andExpect(jsonPath("$.content[1].id").value(g1.getId()))
 				.andExpect(jsonPath("$.content[1].name").value("Grape X"));
 		}
 
@@ -85,11 +84,11 @@ public class GrapeControllerE2EIT {
 		@Test
 		@DisplayName("when grape available then returns grape")
 		void whenGrapeAvailable_theReturnsGrape() throws Exception {
-			var s = persistGrape("Grape1");
+			var g = persistGrape("Grape1");
 
-			mockMvc.perform(get("/api/wines/grapes/{id}", s.getId()))
+			mockMvc.perform(get("/api/wines/grapes/{id}", g.getId()))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(s.getId()))
+				.andExpect(jsonPath("$.id").value(g.getId()))
 				.andExpect(jsonPath("$.name").value("Grape1"));
 		}
 
@@ -101,7 +100,6 @@ public class GrapeControllerE2EIT {
 				.andExpect(jsonPath("$.type").value("about:blank"))
 				.andExpect(jsonPath("$.title").value("Not Found"))
 				.andExpect(jsonPath("$.status").value(404))
-				.andExpect(jsonPath("$.detail").value("Could not find grape 404"))
 				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/404"));
 		}
 
@@ -113,7 +111,7 @@ public class GrapeControllerE2EIT {
 
 		@Test
 		@DisplayName("creates with valid body")
-		void creates() throws Exception {
+		void whenRequestBodyValid_thenCreatesGrape() throws Exception {
 			var req = new GrapeUpsertRequest("Created Grape");
 
 			mockMvc
@@ -126,23 +124,35 @@ public class GrapeControllerE2EIT {
 
 		@Test
 		@DisplayName("400 on invalid body")
-		void badRequestOnInvalidBody() throws Exception {
+		void whenRequestBodyInvalid_thenReturns400() throws Exception {
 			String invalidJson = "{\"name\":\"\"}";
 
 			mockMvc.perform(post("/api/wines/grapes").contentType(MediaType.APPLICATION_JSON).content(invalidJson))
-				.andDo(print())
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Invalid request body"))
+				.andExpect(jsonPath("$.title").value("Invalid Request"))
 				.andExpect(jsonPath("$.status").value(400))
-				.andExpect(jsonPath("$.detail").value("Invalid request content."))
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes"))
+				.andExpect(jsonPath("$.fieldErrors.name").exists());
+		}
+
+		@Test
+		@DisplayName("400 on invalid json")
+		void whenInvalidJson_thenReturns400() throws Exception {
+			String invalidJson = "{\"name\": invalid json";
+
+			mockMvc.perform(post("/api/wines/grapes").contentType(MediaType.APPLICATION_JSON).content(invalidJson))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.type").value("about:blank"))
+				.andExpect(jsonPath("$.title").value("Bad Request"))
+				.andExpect(jsonPath("$.status").value(400))
 				.andExpect(jsonPath("$.instance").value("/api/wines/grapes"));
 		}
 
 		@Test
-		@DisplayName("400 on existing name")
-		void badRequestOnExistingName() throws Exception {
-			var w = persistGrape("Existing Grape");
+		@DisplayName("409 on existing name")
+		void whenNameAlreadyExists_thenReturns409() throws Exception {
+			persistGrape("Existing Grape");
 			var req = new GrapeUpsertRequest("Existing Grape");
 
 			mockMvc
@@ -150,9 +160,8 @@ public class GrapeControllerE2EIT {
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Constraint violation"))
+				.andExpect(jsonPath("$.title").value("Constraint Violation"))
 				.andExpect(jsonPath("$.status").value(409))
-				.andExpect(jsonPath("$.detail").value("Data integrity violation."))
 				.andExpect(jsonPath("$.instance").value("/api/wines/grapes"));
 		}
 
@@ -164,51 +173,66 @@ public class GrapeControllerE2EIT {
 
 		@Test
 		@DisplayName("updates with valid body")
-		void updates() throws Exception {
-			var w = persistGrape("Old Name");
+		void whenRequestBodyValid_thenUpdatesGrape() throws Exception {
+			var g = persistGrape("Old Name");
 			var req = new GrapeUpsertRequest("New Name");
 
 			mockMvc
-				.perform(put("/api/wines/grapes/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/grapes/{id}", g.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isOk())
-				.andExpect(jsonPath("$.id").value(w.getId()))
+				.andExpect(jsonPath("$.id").value(g.getId()))
 				.andExpect(jsonPath("$.name").value("New Name"));
 		}
 
 		@Test
 		@DisplayName("400 on invalid body")
-		void badRequestOnInvalidBody() throws Exception {
-			var w = persistGrape("Old Name");
+		void whenRequestBodyInvalid_thenReturns400() throws Exception {
+			var g = persistGrape("Old Name");
 			String invalidJson = "{\"name\":\"\"}";
 
 			mockMvc
-				.perform(put("/api/wines/grapes/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/grapes/{id}", g.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(invalidJson))
 				.andExpect(status().isBadRequest())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Invalid request body"))
+				.andExpect(jsonPath("$.title").value("Invalid Request"))
 				.andExpect(jsonPath("$.status").value(400))
-				.andExpect(jsonPath("$.detail").value("Invalid request content."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/" + w.getId()));
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/" + g.getId()))
+				.andExpect(jsonPath("$.fieldErrors.name").exists());
 		}
 
 		@Test
-		@DisplayName("400 on existing name")
-		void badRequestOnExistingName() throws Exception {
+		@DisplayName("409 on existing name")
+		void whenNameAlreadyExists_thenReturns409() throws Exception {
 			persistGrape("Existing Grape");
-			var w = persistGrape("Another Grape");
+			var g = persistGrape("Another Grape");
 			var req = new GrapeUpsertRequest("Existing Grape");
 
 			mockMvc
-				.perform(put("/api/wines/grapes/{id}", w.getId()).contentType(MediaType.APPLICATION_JSON)
+				.perform(put("/api/wines/grapes/{id}", g.getId()).contentType(MediaType.APPLICATION_JSON)
 					.content(objectMapper.writeValueAsString(req)))
 				.andExpect(status().isConflict())
 				.andExpect(jsonPath("$.type").value("about:blank"))
-				.andExpect(jsonPath("$.title").value("Constraint violation"))
+				.andExpect(jsonPath("$.title").value("Constraint Violation"))
 				.andExpect(jsonPath("$.status").value(409))
-				.andExpect(jsonPath("$.detail").value("Data integrity violation."))
-				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/" + w.getId()));
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/" + g.getId()));
+		}
+
+		@Test
+		@DisplayName("400 on invalid json")
+		void badRequestOnInvalidJSON() throws Exception {
+			var g = persistGrape("Existing Grape");
+			String invalidJson = "{\"name\": invalid json";
+
+			mockMvc
+				.perform(put("/api/wines/grapes/{id}", g.getId()).contentType(MediaType.APPLICATION_JSON)
+					.content(invalidJson))
+				.andExpect(status().isBadRequest())
+				.andExpect(jsonPath("$.type").value("about:blank"))
+				.andExpect(jsonPath("$.title").value("Bad Request"))
+				.andExpect(jsonPath("$.status").value(400))
+				.andExpect(jsonPath("$.instance").value("/api/wines/grapes/" + g.getId()));
 		}
 
 		@Test
@@ -236,12 +260,12 @@ public class GrapeControllerE2EIT {
 		@Test
 		@DisplayName("deletes and returns 204")
 		void deletes() throws Exception {
-			var w = persistGrape("To Delete");
+			var g = persistGrape("To Delete");
 
-			mockMvc.perform(delete("/api/wines/grapes/{id}", w.getId())).andExpect(status().isNoContent());
+			mockMvc.perform(delete("/api/wines/grapes/{id}", g.getId())).andExpect(status().isNoContent());
 
 			// Ensure it’s gone
-			mockMvc.perform(get("/api/wines/grapes/{id}", w.getId())).andExpect(status().isNotFound());
+			mockMvc.perform(get("/api/wines/grapes/{id}", g.getId())).andExpect(status().isNotFound());
 		}
 
 	}

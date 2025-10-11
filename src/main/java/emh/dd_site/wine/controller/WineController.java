@@ -18,7 +18,7 @@ public class WineController {
 
 	private final Sort SORT_BY_NAME = Sort.by(Sort.Direction.ASC, "name");
 
-	private final Sort SORT_BY_EVENT_DATE = Sort.by(Sort.Direction.DESC, "event.date");
+	private final Sort SORT_BY_COURSE_NO = Sort.by(Sort.Direction.ASC, "c.courseNo");
 
 	private final WineService wineService;
 
@@ -31,7 +31,7 @@ public class WineController {
 
 	@GetMapping("/api/events/{eventId}/wines")
 	public PagedModel<WineResponse> listWinesByEvent(@PathVariable long eventId, Pageable pageable) {
-		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_EVENT_DATE);
+		var pageRequest = PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), SORT_BY_COURSE_NO);
 		var page = wineService.listByEvent(eventId, pageRequest);
 		return new PagedModel<>(page);
 	}

@@ -64,7 +64,7 @@ public class WineService {
 	}
 
 	private Wine getById(long id) {
-		return wineRepository.findById(id).orElseThrow(() -> new WineNotFoundException(id));
+		return wineRepository.findWithStylesAndGrapesById(id).orElseThrow(() -> new WineNotFoundException(id));
 	}
 
 	private Page<Wine> mapToPageWithEntities(Page<Long> page) {

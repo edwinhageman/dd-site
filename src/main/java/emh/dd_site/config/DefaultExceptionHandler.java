@@ -29,8 +29,8 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 			.filter(d -> d.getDefaultMessage() != null)
 			.collect(Collectors.toMap(ObjectError::getObjectName, DefaultMessageSourceResolvable::getDefaultMessage));
 
-		var body = ProblemDetail.forStatusAndDetail(status, "Invalid request content.");
-		body.setTitle("Invalid request body");
+		var body = ProblemDetail.forStatusAndDetail(status, "Failed request body validation");
+		body.setTitle("Invalid Request");
 		if (!fieldErrors.isEmpty()) {
 			body.setProperty("fieldErrors", fieldErrors);
 		}
@@ -43,8 +43,8 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler({ DataIntegrityViolationException.class })
 	public ProblemDetail handleDataIntegrityViolationException(@Nonnull DataIntegrityViolationException ex) {
-		var body = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Data integrity violation.");
-		body.setTitle("Constraint violation");
+		var body = ProblemDetail.forStatusAndDetail(HttpStatus.CONFLICT, "Data integrity violation");
+		body.setTitle("Constraint Violation");
 		return body;
 	}
 
