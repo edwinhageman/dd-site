@@ -25,7 +25,7 @@ export class CourseService {
   }
 
   async delete(id: number) {
-    unwrapRequest(() => this.api.deleteCourse(id))
+    return unwrapRequest(() => this.api.deleteCourse(id))
   }
 }
 

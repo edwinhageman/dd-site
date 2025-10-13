@@ -20,7 +20,7 @@ export class WineService {
   }
 
   async delete(id: number) {
-    unwrapRequest(() => this.api.deleteWine(id))
+    return unwrapRequest(() => this.api.deleteWine(id))
   }
 }
 

@@ -21,7 +21,7 @@ export class EventService {
   }
 
   async delete(id: number) {
-    unwrapRequest(() => this.api.deleteEvent(id))
+    return unwrapRequest(() => this.api.deleteEvent(id))
   }
 }
 
