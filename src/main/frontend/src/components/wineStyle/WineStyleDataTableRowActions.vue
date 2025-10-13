@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { AlertCircle, MoreVertical } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
-import { useDeleteGrape, useGetGrapeById, useUpdateGrape } from '@/composables'
+import { useDeleteWineStyle, useGetWineStyleById, useUpdateWineStyle } from '@/composables'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,10 +28,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import GrapeForm from '@/components/grape/GrapeForm.vue'
+import WineStyleForm from '@/components/wineStyle/WineStyleForm.vue'
 
 const props = defineProps<{
-  grapeId: number
+  wineStyleId: number
 }>()
 
 const updateDialogOpen = ref(false)
@@ -39,26 +39,26 @@ const deleteDialogOpen = ref(false)
 const fetchId = ref<number | undefined>(undefined)
 
 const {
-  data: grape,
-  isPending: isFetchingGrapePending,
-  error: fetchGrapeError,
-} = useGetGrapeById(fetchId)
+  data: style,
+  isPending: isFetchingStylePending,
+  error: fetchStyleError,
+} = useGetWineStyleById(fetchId)
 watch(updateDialogOpen, (isOpen) => {
-  if (isOpen && !grape.value) {
+  if (isOpen && !style.value) {
     // set the fetchId when the update dialog is opened to delay fetching the data from the API
-    // this delayed fetching is to prevent every row to fetch grape data when being rendered
-    fetchId.value = props.grapeId
+    // this delayed fetching is to prevent every row to fetch style data when being rendered
+    fetchId.value = props.wineStyleId
   }
 })
 
-const { mutate: updateGrape, isPending: isUpdatePending, error: updateError } = useUpdateGrape()
+const { mutate: updateStyle, isPending: isUpdatePending, error: updateError } = useUpdateWineStyle()
 watch(isUpdatePending, (isPending) => {
   if (!isPending && !updateError.value) {
     updateDialogOpen.value = false
   }
 })
 
-const { mutate: deleteGrape, isPending: isDeletePending, error: deleteError } = useDeleteGrape()
+const { mutate: deleteStyle, isPending: isDeletePending, error: deleteError } = useDeleteWineStyle()
 watch(isDeletePending, (isPending) => {
   if (!isPending && !deleteError.value) {
     deleteDialogOpen.value = false
@@ -68,7 +68,7 @@ const onDeleteConfirm = () => {
   if (isDeletePending.value) {
     return
   }
-  deleteGrape({ grapeId: props.grapeId })
+  deleteStyle({ wineStyleId: props.wineStyleId })
 }
 </script>
 
@@ -90,10 +90,10 @@ const onDeleteConfirm = () => {
   <Dialog v-model:open="updateDialogOpen">
     <DialogContent>
       <DialogHeader>
-        <DialogTitle>Druif bewerken</DialogTitle>
+        <DialogTitle>Stijl bewerken</DialogTitle>
         <DialogDescription> </DialogDescription>
       </DialogHeader>
-      <Alert variant="destructive" v-if="updateError || fetchGrapeError">
+      <Alert variant="destructive" v-if="updateError || fetchStyleError">
         <AlertCircle class="w-4 h-4" />
         <AlertTitle>Error</AlertTitle>
         <AlertDescription>
@@ -101,16 +101,16 @@ const onDeleteConfirm = () => {
             {{ updateError?.payload?.detail ?? 'Er is iets misgegaan' }}
           </div>
           <div>
-            {{ fetchGrapeError?.payload?.detail ?? 'Er is iets misgegaan' }}
+            {{ fetchStyleError?.payload?.detail ?? 'Er is iets misgegaan' }}
           </div>
         </AlertDescription>
       </Alert>
       <div class="grid gap-4 py-4">
-        <GrapeForm
-          :is-pending="isUpdatePending || isFetchingGrapePending"
-          :data="grape"
+        <WineStyleForm
+          :is-pending="isUpdatePending || isFetchingStylePending"
+          :data="style"
           :errors="updateError?.payload?.fieldErrors"
-          @submit="(payload) => updateGrape({ grapeId, payload })"
+          @submit="(payload) => updateStyle({ wineStyleId, payload })"
         />
       </div>
     </DialogContent>
@@ -119,7 +119,7 @@ const onDeleteConfirm = () => {
   <AlertDialog v-model:open="deleteDialogOpen">
     <AlertDialogContent>
       <AlertDialogHeader>
-        <AlertDialogTitle>Bevestig verwijderen druif</AlertDialogTitle>
+        <AlertDialogTitle>Bevestig verwijderen stijl</AlertDialogTitle>
         <Alert variant="destructive" v-if="deleteError">
           <AlertCircle class="w-4 h-4" />
           <AlertTitle>Error</AlertTitle>
@@ -128,7 +128,7 @@ const onDeleteConfirm = () => {
           </AlertDescription>
         </Alert>
         <AlertDialogDescription>
-          Weet je zeker dat je deze druif wilt verwijderen?
+          Weet je zeker dat je deze stijl wilt verwijderen?
         </AlertDialogDescription>
       </AlertDialogHeader>
       <AlertDialogFooter>
