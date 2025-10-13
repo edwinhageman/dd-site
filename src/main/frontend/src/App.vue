@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { RouterView, useRoute } from 'vue-router'
 import { SidebarInset, SidebarProvider, SidebarTrigger } from '@/components/ui/sidebar'
+import AppHeaderActions from '@/components/layout/AppHeaderActions.vue'
 import AppSidebar from '@/components/layout/AppSidebar.vue'
 import { Separator } from '@/components/ui/separator'
 import {
@@ -30,6 +31,9 @@ const route = useRoute()
               </BreadcrumbItem>
             </BreadcrumbList>
           </Breadcrumb>
+        </div>
+        <div class="ml-auto px-3">
+          <AppHeaderActions />
         </div>
       </header>
 

@@ -1,1 +1,1 @@
-export * from './useListWines.ts'
+export * from './useListWines'

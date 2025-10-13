@@ -2,7 +2,9 @@ import {
   Configuration,
   CourseControllerApi,
   EventControllerApi,
+  GrapeControllerApi,
   WineControllerApi,
+  WineStyleControllerApi,
 } from '@/generated/api'
 import { envBrowser } from '../env.browser.ts'
 import axios from 'axios'
@@ -11,6 +13,8 @@ export interface ApiControllers {
   eventApi: EventControllerApi
   courseApi: CourseControllerApi
   wineApi: WineControllerApi
+  grapeApi: GrapeControllerApi
+  wineStyleApi: WineStyleControllerApi
 }
 
 let instance: ApiControllers | null = null
@@ -31,7 +35,9 @@ export function createApiControllers(): ApiControllers {
   const eventApi = new EventControllerApi(config, undefined, axiosInstance)
   const courseApi = new CourseControllerApi(config, undefined, axiosInstance)
   const wineApi = new WineControllerApi(config, undefined, axiosInstance)
+  const grapeApi = new GrapeControllerApi(config, undefined, axiosInstance)
+  const wineStyleApi = new WineStyleControllerApi(config, undefined, axiosInstance)
 
-  instance = { eventApi, courseApi, wineApi }
+  instance = { eventApi, courseApi, wineApi, grapeApi, wineStyleApi }
   return instance
 }

@@ -1,3 +1,5 @@
 export * from './event'
 export * from './course'
 export * from './wine'
+export * from './grape'
+export * from './datatable'

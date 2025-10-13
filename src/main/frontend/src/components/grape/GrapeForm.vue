@@ -21,9 +21,7 @@ const emits = defineEmits<{
 }>()
 
 const schema = z.object({
-  date: z.iso.date(),
-  host: z.string().trim().min(1),
-  location: z.string().optional(),
+  name: z.string().trim().min(1),
 })
 
 const form = useForm({
@@ -34,9 +32,7 @@ watch(
   () => props.data,
   (data) => {
     form.setValues({
-      date: data?.date ?? '',
-      host: data?.host ?? '',
-      location: data?.location ?? '',
+      name: data?.name ?? '',
     })
   },
   { immediate: true },
@@ -57,27 +53,9 @@ const onSubmit = form.handleSubmit((values) => {
 
 <template>
   <form @submit="onSubmit" class="space-y-2">
-    <FormField v-slot="{ componentField }" name="date">
+    <FormField v-slot="{ componentField }" name="name">
       <FormItem>
-        <FormLabel>Datum</FormLabel>
-        <FormControl>
-          <Input v-bind="componentField" type="date" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="host">
-      <FormItem>
-        <FormLabel>Host</FormLabel>
-        <FormControl>
-          <Input v-bind="componentField" type="text" />
-        </FormControl>
-        <FormMessage />
-      </FormItem>
-    </FormField>
-    <FormField v-slot="{ componentField }" name="location">
-      <FormItem>
-        <FormLabel>Locatie</FormLabel>
+        <FormLabel>Naam</FormLabel>
         <FormControl>
           <Input v-bind="componentField" type="text" />
         </FormControl>

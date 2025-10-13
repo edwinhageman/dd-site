@@ -15,6 +15,7 @@ const props = defineProps<{
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   pageMetadata: PageMetadata
+  isLoading?: boolean
 }>()
 
 const emits = defineEmits(['nextPage', 'previousPage'])
@@ -35,7 +36,7 @@ table.setPageSize(() => props.pageMetadata.size ?? 20)
 
 <template>
   <div>
-    <Table>
+    <Table class="border-b-1">
       <TableHeader>
         <TableRow v-for="headerGroup in table.getHeaderGroups()" :key="headerGroup.id">
           <TableHead v-for="header in headerGroup.headers" :key="header.id">
@@ -67,23 +68,30 @@ table.setPageSize(() => props.pageMetadata.size ?? 20)
       </TableBody>
     </Table>
   </div>
-  <div class="flex items-center justify-center py-4 space-x-2">
-    <Button
-      variant="outline"
-      size="sm"
-      :disabled="pageMetadata.number === 0"
-      @click="emits('previousPage')"
-    >
-      Vorige
-    </Button>
-    <div>Pagina {{ (pageMetadata?.number ?? 0) + 1 }} van {{ pageMetadata.totalPages }}</div>
-    <Button
-      variant="outline"
-      size="sm"
-      :disabled="pageMetadata.number === pageMetadata.totalPages! - 1"
-      @click="emits('nextPage')"
-    >
-      Volgende
-    </Button>
+  <div class="flex justify-between mx-4 mt-4">
+    <div>
+      <span class="align-middle text-muted-foreground" v-if="isLoading">Laden...</span>
+    </div>
+    <div class="space-x-2">
+      <span class="text-muted-foreground">
+        Pagina {{ (pageMetadata?.number ?? 0) + 1 }} van {{ pageMetadata.totalPages }}
+      </span>
+      <Button
+        variant="outline"
+        size="sm"
+        :disabled="pageMetadata.number === 0"
+        @click="emits('previousPage')"
+      >
+        Vorige
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        :disabled="pageMetadata.number === pageMetadata.totalPages! - 1"
+        @click="emits('nextPage')"
+      >
+        Volgende
+      </Button>
+    </div>
   </div>
 </template>
