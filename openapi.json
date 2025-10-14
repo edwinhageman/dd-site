@@ -1,1 +1,1256 @@
-{"openapi":"3.1.0","info":{"title":"OpenAPI definition","version":"v0"},"servers":[{"url":"http://localhost:8080","description":"Generated server url"}],"paths":{"/api/wines/{id}":{"get":{"tags":["wine-controller"],"operationId":"getWineById","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WineResponse"}}}}}},"put":{"tags":["wine-controller"],"operationId":"updateWine","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/WineUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WineResponse"}}}}}},"delete":{"tags":["wine-controller"],"operationId":"deleteWine","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK"}}}},"/api/wines/styles/{id}":{"get":{"tags":["wine-style-controller"],"operationId":"getWineStyleById","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WineStyleResponse"}}}}}},"put":{"tags":["wine-style-controller"],"operationId":"updateWineStyle","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/WineStyleUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WineStyleResponse"}}}}}},"delete":{"tags":["wine-style-controller"],"operationId":"deleteWineStyle","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK"}}}},"/api/wines/grapes/{id}":{"get":{"tags":["grape-controller"],"operationId":"getGrapeById","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/GrapeResponse"}}}}}},"put":{"tags":["grape-controller"],"operationId":"updateGrape","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/GrapeUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/GrapeResponse"}}}}}},"delete":{"tags":["grape-controller"],"operationId":"deleteGrape","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int32"}}],"responses":{"200":{"description":"OK"}}}},"/api/events/{id}":{"get":{"tags":["event-controller"],"operationId":"getEventById","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/EventResponse"}}}}}},"put":{"tags":["event-controller"],"operationId":"updateEvent","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/EventUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/EventResponse"}}}}}},"delete":{"tags":["event-controller"],"operationId":"deleteEvent","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK"}}}},"/api/courses/{id}":{"get":{"tags":["course-controller"],"operationId":"getCourseById","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CourseResponse"}}}}}},"put":{"tags":["course-controller"],"operationId":"updateCourse","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CourseUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CourseResponse"}}}}}},"delete":{"tags":["course-controller"],"operationId":"deleteCourse","parameters":[{"name":"id","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"responses":{"200":{"description":"OK"}}}},"/api/wines":{"get":{"tags":["wine-controller"],"operationId":"listWines","parameters":[{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagedModelWineResponse"}}}}}},"post":{"tags":["wine-controller"],"operationId":"createWine","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/WineUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WineResponse"}}}}}}},"/api/wines/styles":{"get":{"tags":["wine-style-controller"],"operationId":"listWineStyles","parameters":[{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagedModelWineStyleResponse"}}}}}},"post":{"tags":["wine-style-controller"],"operationId":"createWineStyle","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/WineStyleUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/WineStyleResponse"}}}}}}},"/api/wines/grapes":{"get":{"tags":["grape-controller"],"operationId":"listGrapes","parameters":[{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagedModelGrapeResponse"}}}}}},"post":{"tags":["grape-controller"],"operationId":"createGrape","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/GrapeUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/GrapeResponse"}}}}}}},"/api/events":{"get":{"tags":["event-controller"],"operationId":"listEvents","parameters":[{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagedModelEventResponse"}}}}}},"post":{"tags":["event-controller"],"operationId":"createEvent","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/EventUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/EventResponse"}}}}}}},"/api/events/{eventId}/courses":{"get":{"tags":["course-controller"],"operationId":"listCoursesByEvent","parameters":[{"name":"eventId","in":"path","required":true,"schema":{"type":"integer","format":"int64"}},{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagedModelCourseResponse"}}}}}},"post":{"tags":["course-controller"],"operationId":"createCourse","parameters":[{"name":"eventId","in":"path","required":true,"schema":{"type":"integer","format":"int64"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CourseUpsertRequest"}}},"required":true},"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CourseResponse"}}}}}}},"/api/events/{eventId}/wines":{"get":{"tags":["wine-controller"],"operationId":"listWinesByEvent","parameters":[{"name":"eventId","in":"path","required":true,"schema":{"type":"integer","format":"int64"}},{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagedModelWineResponse"}}}}}}},"/api/courses":{"get":{"tags":["course-controller"],"operationId":"listCourses","parameters":[{"name":"pageable","in":"query","required":true,"schema":{"$ref":"#/components/schemas/Pageable"}}],"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/PagedModelCourseResponse"}}}}}}}},"components":{"schemas":{"GrapeComposition":{"type":"object","properties":{"grapeId":{"type":"integer","format":"int32"},"percentage":{"type":"number"}}},"WineUpsertRequest":{"type":"object","properties":{"name":{"type":"string","minLength":1},"winery":{"type":"string"},"country":{"type":"string"},"region":{"type":"string"},"appellation":{"type":"string"},"vintage":{"type":"string"},"vivinoUrl":{"type":"string"},"styles":{"type":"array","items":{"type":"integer","format":"int32"}},"grapes":{"type":"array","items":{"$ref":"#/components/schemas/GrapeComposition"}}},"required":["name"]},"GrapeResponse":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"name":{"type":"string"}},"required":["id","name"]},"WineResponse":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"},"winery":{"type":"string"},"country":{"type":"string"},"region":{"type":"string"},"appellation":{"type":"string"},"vintage":{"type":"string"},"vivinoUrl":{"type":"string"},"styles":{"type":"array","items":{"$ref":"#/components/schemas/WineStyleResponse"}},"grapeComposition":{"type":"array","items":{"$ref":"#/components/schemas/GrapeComposition"}}},"required":["grapeComposition","id","name","styles"]},"WineStyleResponse":{"type":"object","properties":{"id":{"type":"integer","format":"int32"},"name":{"type":"string"}},"required":["id","name"]},"WineStyleUpsertRequest":{"type":"object","properties":{"name":{"type":"string","minLength":1}},"required":["name"]},"GrapeUpsertRequest":{"type":"object","properties":{"name":{"type":"string","minLength":1}},"required":["name"]},"EventUpsertRequest":{"type":"object","properties":{"date":{"type":"string","format":"date"},"host":{"type":"string","minLength":1},"location":{"type":"string"}},"required":["date","host"]},"EventResponse":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"date":{"type":"string","format":"date"},"host":{"type":"string"},"location":{"type":"string"}},"required":["date","host","id"]},"CourseUpsertRequest":{"type":"object","properties":{"courseNo":{"type":"integer","format":"int32"},"cook":{"type":"string","minLength":1},"dish":{"$ref":"#/components/schemas/DishUpsertRequest"}},"required":["cook","courseNo"]},"DishUpsertRequest":{"type":"object","properties":{"name":{"type":"string","minLength":1},"mainIngredient":{"type":"string"}},"required":["name"]},"CourseResponse":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"event":{"$ref":"#/components/schemas/EventResponse"},"courseNo":{"type":"integer","format":"int32"},"cook":{"type":"string"},"dish":{"$ref":"#/components/schemas/DishResponse"}},"required":["cook","courseNo","dish","event","id"]},"DishResponse":{"type":"object","properties":{"id":{"type":"integer","format":"int64"},"name":{"type":"string"},"mainIngredient":{"type":"string"}},"required":["id","name"]},"Pageable":{"type":"object","properties":{"page":{"type":"integer","format":"int32","minimum":0},"size":{"type":"integer","format":"int32","minimum":1},"sort":{"type":"array","items":{"type":"string"}}}},"PageMetadata":{"type":"object","properties":{"size":{"type":"integer","format":"int64"},"number":{"type":"integer","format":"int64"},"totalElements":{"type":"integer","format":"int64"},"totalPages":{"type":"integer","format":"int64"}}},"PagedModelWineResponse":{"type":"object","properties":{"content":{"type":"array","items":{"$ref":"#/components/schemas/WineResponse"}},"page":{"$ref":"#/components/schemas/PageMetadata"}}},"PagedModelWineStyleResponse":{"type":"object","properties":{"content":{"type":"array","items":{"$ref":"#/components/schemas/WineStyleResponse"}},"page":{"$ref":"#/components/schemas/PageMetadata"}}},"PagedModelGrapeResponse":{"type":"object","properties":{"content":{"type":"array","items":{"$ref":"#/components/schemas/GrapeResponse"}},"page":{"$ref":"#/components/schemas/PageMetadata"}}},"PagedModelEventResponse":{"type":"object","properties":{"content":{"type":"array","items":{"$ref":"#/components/schemas/EventResponse"}},"page":{"$ref":"#/components/schemas/PageMetadata"}}},"PagedModelCourseResponse":{"type":"object","properties":{"content":{"type":"array","items":{"$ref":"#/components/schemas/CourseResponse"}},"page":{"$ref":"#/components/schemas/PageMetadata"}}}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "OpenAPI definition",
+    "version": "v0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:8080",
+      "description": "Generated server url"
+    }
+  ],
+  "paths": {
+    "/api/wines/{id}": {
+      "get": {
+        "tags": [
+          "wine-controller"
+        ],
+        "operationId": "getWineById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WineResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "wine-controller"
+        ],
+        "operationId": "updateWine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WineUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WineResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "wine-controller"
+        ],
+        "operationId": "deleteWine",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/wines/styles/{id}": {
+      "get": {
+        "tags": [
+          "wine-style-controller"
+        ],
+        "operationId": "getWineStyleById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WineStyleResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "wine-style-controller"
+        ],
+        "operationId": "updateWineStyle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WineStyleUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WineStyleResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "wine-style-controller"
+        ],
+        "operationId": "deleteWineStyle",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/wines/grapes/{id}": {
+      "get": {
+        "tags": [
+          "grape-controller"
+        ],
+        "operationId": "getGrapeById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrapeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "grape-controller"
+        ],
+        "operationId": "updateGrape",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrapeUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrapeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "grape-controller"
+        ],
+        "operationId": "deleteGrape",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/events/{id}": {
+      "get": {
+        "tags": [
+          "event-controller"
+        ],
+        "operationId": "getEventById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "event-controller"
+        ],
+        "operationId": "updateEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "event-controller"
+        ],
+        "operationId": "deleteEvent",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/courses/{id}": {
+      "get": {
+        "tags": [
+          "course-controller"
+        ],
+        "operationId": "getCourseById",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "course-controller"
+        ],
+        "operationId": "updateCourse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "course-controller"
+        ],
+        "operationId": "deleteCourse",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/wines": {
+      "get": {
+        "tags": [
+          "wine-controller"
+        ],
+        "operationId": "listWines",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelWineResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "wine-controller"
+        ],
+        "operationId": "createWine",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WineUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WineResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wines/styles": {
+      "get": {
+        "tags": [
+          "wine-style-controller"
+        ],
+        "operationId": "listWineStyles",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelWineStyleResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "wine-style-controller"
+        ],
+        "operationId": "createWineStyle",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WineStyleUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/WineStyleResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/wines/grapes": {
+      "get": {
+        "tags": [
+          "grape-controller"
+        ],
+        "operationId": "listGrapes",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelGrapeResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "grape-controller"
+        ],
+        "operationId": "createGrape",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GrapeUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GrapeResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events": {
+      "get": {
+        "tags": [
+          "event-controller"
+        ],
+        "operationId": "listEvents",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelEventResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "event-controller"
+        ],
+        "operationId": "createEvent",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EventUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/EventResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events/{eventId}/courses": {
+      "get": {
+        "tags": [
+          "course-controller"
+        ],
+        "operationId": "listCoursesByEvent",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelCourseResponse"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "course-controller"
+        ],
+        "operationId": "createCourse",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CourseUpsertRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/CourseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/events/{eventId}/wines": {
+      "get": {
+        "tags": [
+          "wine-controller"
+        ],
+        "operationId": "listWinesByEvent",
+        "parameters": [
+          {
+            "name": "eventId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelWineResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/courses": {
+      "get": {
+        "tags": [
+          "course-controller"
+        ],
+        "operationId": "listCourses",
+        "parameters": [
+          {
+            "name": "pageable",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "$ref": "#/components/schemas/Pageable"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PagedModelCourseResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "GrapeComposition": {
+        "type": "object",
+        "properties": {
+          "grapeId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "percentage": {
+            "type": "number"
+          }
+        }
+      },
+      "WineUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "winery": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "appellation": {
+            "type": "string"
+          },
+          "vintage": {
+            "type": "string"
+          },
+          "vivinoUrl": {
+            "type": "string"
+          },
+          "styles": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          "grapeComposition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrapeComposition"
+            }
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "GrapeResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "WineResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "winery": {
+            "type": "string"
+          },
+          "country": {
+            "type": "string"
+          },
+          "region": {
+            "type": "string"
+          },
+          "appellation": {
+            "type": "string"
+          },
+          "vintage": {
+            "type": "string"
+          },
+          "vivinoUrl": {
+            "type": "string"
+          },
+          "styles": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WineStyleResponse"
+            }
+          },
+          "grapeComposition": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrapeComposition"
+            }
+          }
+        },
+        "required": [
+          "grapeComposition",
+          "id",
+          "name",
+          "styles"
+        ]
+      },
+      "WineStyleResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "WineStyleUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "GrapeUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "EventUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "host": {
+            "type": "string",
+            "minLength": 1
+          },
+          "location": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "host"
+        ]
+      },
+      "EventResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "date": {
+            "type": "string",
+            "format": "date"
+          },
+          "host": {
+            "type": "string"
+          },
+          "location": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "date",
+          "host",
+          "id"
+        ]
+      },
+      "CourseUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "courseNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cook": {
+            "type": "string",
+            "minLength": 1
+          },
+          "dish": {
+            "$ref": "#/components/schemas/DishUpsertRequest"
+          }
+        },
+        "required": [
+          "cook",
+          "courseNo"
+        ]
+      },
+      "DishUpsertRequest": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "mainIngredient": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "CourseResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "event": {
+            "$ref": "#/components/schemas/EventResponse"
+          },
+          "courseNo": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cook": {
+            "type": "string"
+          },
+          "dish": {
+            "$ref": "#/components/schemas/DishResponse"
+          }
+        },
+        "required": [
+          "cook",
+          "courseNo",
+          "dish",
+          "event",
+          "id"
+        ]
+      },
+      "DishResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string"
+          },
+          "mainIngredient": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "name"
+        ]
+      },
+      "Pageable": {
+        "type": "object",
+        "properties": {
+          "page": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 0
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1
+          },
+          "sort": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "PageMetadata": {
+        "type": "object",
+        "properties": {
+          "size": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "number": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PagedModelWineResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WineResponse"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "PagedModelWineStyleResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/WineStyleResponse"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "PagedModelGrapeResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/GrapeResponse"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "PagedModelEventResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/EventResponse"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      },
+      "PagedModelCourseResponse": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CourseResponse"
+            }
+          },
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          }
+        }
+      }
+    }
+  }
+}

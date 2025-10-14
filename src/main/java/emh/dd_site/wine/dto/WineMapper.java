@@ -116,7 +116,7 @@ public class WineMapper {
 
 	private void mapGrapesFromRequest(Wine wine, WineUpsertRequest request) {
 		// when we don't receive a grape composition, leave the current composition as is
-		if (request.grapes() == null) {
+		if (request.grapeComposition() == null) {
 			return;
 		}
 
@@ -124,11 +124,11 @@ public class WineMapper {
 
 		wine.clearGrapeComposition();
 
-		if (request.grapes().isEmpty()) {
+		if (request.grapeComposition().isEmpty()) {
 			return;
 		}
 
-		var lookupTable = request.grapes()
+		var lookupTable = request.grapeComposition()
 			.stream()
 			.collect(Collectors.toMap(WineUpsertRequest.GrapeComposition::grapeId,
 					WineUpsertRequest.GrapeComposition::percentage));
