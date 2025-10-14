@@ -1,13 +1,13 @@
 <script setup lang="ts">
 import { AlertCircle, MoreVertical } from 'lucide-vue-next'
 import { Button } from '@/components/ui/button'
-import { useDeleteWine, useGetWineById, useUpdateWine } from '@/composables'
+import { useDeleteWine } from '@/composables'
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 } from '@/components/ui/dropdown-menu'
 import {
   AlertDialog,
@@ -17,7 +17,7 @@ import {
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
-  AlertDialogTitle,
+  AlertDialogTitle
 } from '@/components/ui/alert-dialog'
 import { ref, watch } from 'vue'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
@@ -26,29 +26,7 @@ const props = defineProps<{
   wineId: number
 }>()
 
-const updateDialogOpen = ref(false)
 const deleteDialogOpen = ref(false)
-const fetchId = ref<number | undefined>(undefined)
-
-const {
-  data: wine,
-  isPending: isFetchingWinePending,
-  error: fetchWineError,
-} = useGetWineById(fetchId)
-watch(updateDialogOpen, (isOpen) => {
-  if (isOpen && !wine.value) {
-    // set the fetchId when the update dialog is opened to delay fetching the data from the API
-    // this delayed fetching is to prevent every row to fetch wine data when being rendered
-    fetchId.value = props.wineId
-  }
-})
-
-const { mutate: updateWine, isPending: isUpdatePending, error: updateError } = useUpdateWine()
-watch(isUpdatePending, (isPending) => {
-  if (!isPending && !updateError.value) {
-    updateDialogOpen.value = false
-  }
-})
 
 const { mutate: deleteWine, isPending: isDeletePending, error: deleteError } = useDeleteWine()
 watch(isDeletePending, (isPending) => {
