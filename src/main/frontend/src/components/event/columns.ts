@@ -32,7 +32,7 @@ export const columns: ColumnDef<EventResponse>[] = [
       return h(
         'div',
         { class: 'text-right' },
-        h(EventDataTableRowActions, { id: row.original.id! }),
+        h(EventDataTableRowActions, { eventId: row.original.id! }),
       )
     },
   },

@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/vue-query'
 import { getEventService } from '@/service'
+import { ApiError } from '@/api'
 
 export type DeleteEventParams = {
   eventId: number
@@ -8,7 +9,7 @@ export type DeleteEventParams = {
 export function useDeleteEvent() {
   const qc = useQueryClient()
   const service = getEventService()
-  return useMutation({
+  return useMutation<void, ApiError, DeleteEventParams>({
     mutationFn: async ({ eventId }: DeleteEventParams) => {
       return service.delete(eventId)
     },
