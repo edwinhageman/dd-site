@@ -1,4 +1,4 @@
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import type { Pageable } from '@/generated/api'
 
 export function usePageRequest(
@@ -22,11 +22,18 @@ export function usePageRequest(
   const setPage = (page: number) => {
     pageRequest.value = { ...pageRequest.value, page }
   }
-  const nextPage = (current?: number) => {
-    setPage((current ?? 0) + 1)
+  const nextPage = () => {
+    setPage((pageRequest.value.page ?? 0) + 1)
   }
-  const previousPage = (current?: number) => {
-    setPage((current ?? 0) - 1)
+  const previousPage = () => {
+    setPage((pageRequest.value.page ?? 0) - 1)
   }
-  return { pageRequest, setSort, setSize, setPage, nextPage, previousPage }
+  return {
+    pageRequest: computed(() => pageRequest.value),
+    setSort,
+    setSize,
+    setPage,
+    nextPage,
+    previousPage,
+  }
 }

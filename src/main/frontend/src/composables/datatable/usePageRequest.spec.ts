@@ -43,9 +43,9 @@ describe('usePageRequest tests', () => {
 
     expect(pageRequest.value.page).toBe(1)
 
-    nextPage(pageRequest.value.page)
+    nextPage()
     expect(pageRequest.value.page).toBe(2)
-    previousPage(pageRequest.value.page!)
+    previousPage()
     expect(pageRequest.value.page).toBe(1)
   })
 })
