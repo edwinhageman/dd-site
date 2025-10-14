@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -23,6 +24,7 @@ public class WineService {
 
 	private final WineMapper wineMapper;
 
+	@Transactional(readOnly = true)
 	public Page<WineResponse> listAll(Pageable pageable) {
 		var page = wineRepository.findAllIds(pageable);
 		if (page.isEmpty()) {
@@ -32,6 +34,7 @@ public class WineService {
 		return entities.map(wineMapper::toWineResponse);
 	}
 
+	@Transactional(readOnly = true)
 	public Page<WineResponse> listByEvent(long eventId, Pageable pageable) {
 		var page = wineRepository.findIdsByCourseEventId(eventId, pageable);
 		if (page.isEmpty()) {
@@ -41,17 +44,20 @@ public class WineService {
 		return entities.map(wineMapper::toWineResponse);
 	}
 
+	@Transactional(readOnly = true)
 	public WineResponse findById(long id) {
 		var entity = getById(id);
 		return wineMapper.toWineResponse(entity);
 	}
 
+	@Transactional
 	public WineResponse create(@NonNull WineUpsertRequest request) {
 		var entity = wineMapper.fromWineUpsertRequest(request);
 		entity = wineRepository.save(entity);
 		return wineMapper.toWineResponse(entity);
 	}
 
+	@Transactional
 	public WineResponse update(long id, @NonNull WineUpsertRequest request) {
 		var entity = getById(id);
 		entity = wineMapper.mergeWithWineUpsertRequest(entity, request);
@@ -59,6 +65,7 @@ public class WineService {
 		return wineMapper.toWineResponse(entity);
 	}
 
+	@Transactional
 	public void delete(long id) {
 		wineRepository.deleteById(id);
 	}

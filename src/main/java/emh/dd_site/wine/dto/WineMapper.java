@@ -12,7 +12,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Component
@@ -104,13 +106,30 @@ public class WineMapper {
 			return;
 		}
 
-		// reset and reinitialize the wine styles
+		// clear wine styles
+		if (request.styles().isEmpty()) {
+			wine.clearStyles();
+			return;
+		}
 
-		wine.clearStyles();
+		// create lookup table
+		var currentById = wine.getStyles().stream().collect(Collectors.toMap(WineStyle::getId, Function.identity()));
 
-		if (!request.styles().isEmpty()) {
-			var styles = getWineStylesById(request.styles());
-			styles.forEach(wine::addStyle);
+		var desiredStyleIds = request.styles();
+
+		// find new styles
+		var styleIdsToFetch = request.styles()
+			.stream()
+			.filter(id -> !currentById.containsKey(id))
+			.collect(Collectors.toSet());
+
+		// remove styles that are no longer desired
+		var stylesToRemove = wine.getStyles().stream().filter(s -> !desiredStyleIds.contains(s.getId())).toList();
+		stylesToRemove.forEach(wine::removeStyle);
+
+		// fetch and relate new styles
+		if (!styleIdsToFetch.isEmpty()) {
+			getWineStylesById(styleIdsToFetch).forEach(wine::addStyle);
 		}
 	}
 
@@ -120,25 +139,51 @@ public class WineMapper {
 			return;
 		}
 
-		// reset and reinitialize the wine's grape composition
-
-		wine.clearGrapeComposition();
-
+		// clear grape composition
 		if (request.grapeComposition().isEmpty()) {
+			wine.clearGrapeComposition();
 			return;
 		}
 
-		var lookupTable = request.grapeComposition()
+		// create lookup tables
+		var newById = request.grapeComposition()
 			.stream()
 			.collect(Collectors.toMap(WineUpsertRequest.GrapeComposition::grapeId,
 					WineUpsertRequest.GrapeComposition::percentage));
+		var currentByGrapeId = wine.getGrapeComposition()
+			.stream()
+			.collect(Collectors.toMap(c -> c.getGrape().getId(), Function.identity()));
 
-		var grapes = getGrapesById(lookupTable.keySet());
+		var desiredGrapeIds = new HashSet<Integer>();
+		var grapeIdsToFetch = new HashSet<Integer>();
 
-		grapes.forEach(grape -> {
-			var blendPercentage = lookupTable.get(grape.getId());
-			wine.addGrape(grape, blendPercentage);
-		});
+		// find and update existing grapes
+		for (var gc : request.grapeComposition()) {
+			desiredGrapeIds.add(gc.grapeId());
+			var existing = currentByGrapeId.get(gc.grapeId());
+			if (existing != null) {
+				existing.setPercentage(gc.percentage());
+			}
+			else {
+				grapeIdsToFetch.add(gc.grapeId());
+			}
+		}
+
+		// remove grapes that are no longer desired
+		var grapesToRemove = wine.getGrapeComposition()
+			.stream()
+			.map(WineGrapeComposition::getGrape)
+			.filter(g -> !desiredGrapeIds.contains(g.getId()))
+			.toList();
+
+		grapesToRemove.forEach(wine::removeGrape);
+
+		// load and relate new grapes
+		if (!grapeIdsToFetch.isEmpty()) {
+			getGrapesById(grapeIdsToFetch).forEach(g -> {
+				wine.addGrape(g, newById.get(g.getId()));
+			});
+		}
 	}
 
 	private List<WineStyle> getWineStylesById(Collection<Integer> ids) {

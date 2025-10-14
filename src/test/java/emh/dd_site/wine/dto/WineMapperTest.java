@@ -18,11 +18,13 @@ import java.math.BigDecimal;
 import java.time.Year;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("WineMapper tests")
@@ -247,10 +249,11 @@ class WineMapperTest {
 		@Test
 		@DisplayName("should fetch and map styles from repository")
 		void shouldFetchAndMapStylesFromRepository() {
-			var styleIds = List.of(testStyle1.getId(), testStyle2.getId());
-			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, styleIds, null);
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null,
+					List.of(testStyle1.getId(), testStyle2.getId()), null);
 
-			given(wineStyleRepository.findAllById(styleIds)).willReturn(List.of(testStyle1, testStyle2));
+			given(wineStyleRepository.findAllById(Set.of(testStyle1.getId(), testStyle2.getId())))
+				.willReturn(List.of(testStyle1, testStyle2));
 
 			var result = mapper.fromWineUpsertRequest(request);
 
@@ -259,7 +262,7 @@ class WineMapperTest {
 				assertThat(wine.getStyles()).extracting(WineStyle::getId).containsExactlyInAnyOrder(1, 2);
 			});
 
-			verify(wineStyleRepository).findAllById(styleIds);
+			verify(wineStyleRepository).findAllById(Set.of(testStyle1.getId(), testStyle2.getId()));
 		}
 
 		@Test
@@ -356,15 +359,13 @@ class WineMapperTest {
 		@Test
 		@DisplayName("should fetch and map styles from repository")
 		void shouldFetchAndMapStylesFromRepository() {
-			var style11 = TestWineStyleBuilder.builder().withId(11).withName("Style 11").build();
-			var style12 = TestWineStyleBuilder.builder().withId(12).withName("Style 12").build();
-
-			var styleIds = List.of(testStyle1.getId(), testStyle2.getId(), 999);
+			var testStyle3 = TestWineStyleBuilder.builder().withId(3).withName("Style 3").build();
+			var styleIds = List.of(testStyle3.getId(), testStyle2.getId(), 999);
 
 			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, styleIds, null);
 
 			// won't return grape with id 999
-			given(wineStyleRepository.findAllById(styleIds)).willReturn(List.of(style11, style12));
+			given(wineStyleRepository.findAllById(Set.of(testStyle3.getId(), 999))).willReturn(List.of(testStyle3));
 
 			var result = mapper.mergeWithWineUpsertRequest(testWine, request);
 
@@ -372,10 +373,31 @@ class WineMapperTest {
 				// should have cleared the existing grape composition
 				// grape with id 999 should be ignored because it doesn't exist
 				assertThat(wine.getStyles()).hasSize(2);
-				assertThat(wine.getStyles()).extracting(WineStyle::getId).containsExactlyInAnyOrder(11, 12);
+				assertThat(wine.getStyles()).extracting(WineStyle::getId)
+					.containsExactlyInAnyOrder(testStyle3.getId(), testStyle2.getId());
 			});
 
-			verify(wineStyleRepository).findAllById(styleIds);
+			verify(wineStyleRepository).findAllById(Set.of(testStyle3.getId(), 999));
+		}
+
+		@Test
+		@DisplayName("should not fetch styles from repository if no changes")
+		void shouldNotFetchStylesFromRepositoryIfNoChanges() {
+			var styleIds = List.of(testStyle1.getId(), testStyle2.getId());
+
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, styleIds, null);
+
+			var result = mapper.mergeWithWineUpsertRequest(testWine, request);
+
+			assertThat(result).isNotNull().satisfies(wine -> {
+				// should have cleared the existing grape composition
+				// grape with id 999 should be ignored because it doesn't exist
+				assertThat(wine.getStyles()).hasSize(2);
+				assertThat(wine.getStyles()).extracting(WineStyle::getId)
+					.containsExactlyInAnyOrder(testStyle1.getId(), testStyle2.getId());
+			});
+
+			verifyNoInteractions(wineStyleRepository);
 		}
 
 		@Test
@@ -397,13 +419,52 @@ class WineMapperTest {
 
 			var result = mapper.mergeWithWineUpsertRequest(testWine, request);
 
-			assertThat(result).isNotNull().satisfies(grape -> {
+			assertThat(result).isNotNull().satisfies(wine -> {
 				// should have cleared the existing grape composition
 				// grape with id 999 should be ignored because it doesn't exist
-				assertThat(grape.getGrapeComposition()).hasSize(2);
-				assertThat(grape.getGrapeComposition()).extracting(WineGrapeComposition::getGrape)
+				assertThat(wine.getGrapeComposition()).hasSize(2);
+				assertThat(wine.getGrapeComposition()).extracting(WineGrapeComposition::getGrape)
 					.containsExactlyInAnyOrder(grape11, grape12);
 			});
+		}
+
+		@Test
+		@DisplayName("should not fetch grapes from repository when no changes")
+		void shouldNotFetchGrapesFromRepositoryWhenNoChanges() {
+			var grapeCompositions = List.of(
+					new WineUpsertRequest.GrapeComposition(testGrape1.getId(), BigDecimal.valueOf(.4)),
+					new WineUpsertRequest.GrapeComposition(testGrape2.getId(), BigDecimal.valueOf(.6)));
+
+			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null,
+					grapeCompositions);
+
+			var result = mapper.mergeWithWineUpsertRequest(testWine, request);
+
+			assertThat(result).isNotNull().satisfies(wine -> {
+				// should have cleared the existing grape composition
+				// grape with id 999 should be ignored because it doesn't exist
+				assertThat(wine.getGrapeComposition()).hasSize(2);
+				assertThat(wine.getGrapeComposition()).extracting(WineGrapeComposition::getGrape)
+					.containsExactlyInAnyOrder(testGrape1, testGrape2);
+				var gc1 = wine.getGrapeComposition()
+					.stream()
+					.filter(gc -> Objects.equals(gc.getGrape().getId(), testGrape1.getId()))
+					.findFirst();
+				var gc2 = wine.getGrapeComposition()
+					.stream()
+					.filter(gc -> Objects.equals(gc.getGrape().getId(), testGrape2.getId()))
+					.findFirst();
+
+				assertThat(gc1).hasValueSatisfying(gc -> {
+					assertThat(gc.getPercentage()).isEqualByComparingTo(BigDecimal.valueOf(.4));
+				});
+
+				assertThat(gc2).hasValueSatisfying(gc -> {
+					assertThat(gc.getPercentage()).isEqualByComparingTo(BigDecimal.valueOf(.6));
+				});
+			});
+
+			verifyNoInteractions(grapeRepository);
 		}
 
 		@Test
