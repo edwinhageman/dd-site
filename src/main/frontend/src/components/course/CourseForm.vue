@@ -22,8 +22,7 @@ const emits = defineEmits<{
 
 const schema = z.object({
   courseNo: z.coerce.number().positive(),
-  // cook: z.string().trim().min(1),
-  cook: z.string().trim(),
+  cook: z.string().trim().min(1),
   dishName: z.string().trim().min(1),
   dishMainIngredient: z.string().optional(),
 })
