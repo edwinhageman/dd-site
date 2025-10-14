@@ -16,6 +16,7 @@ const id = computed(() => {
 const { data: wine, isError } = useGetWineById(id)
 const formData = computed(() => ({
   ...wine.value,
+  name: wine.value?.name ?? '',
   styles: wine.value?.styles.map((style) => style.id) ?? [],
   grapeComposition:
     wine.value?.grapeComposition.map((composition) => ({
@@ -47,7 +48,7 @@ const { mutate: updateWine, isPending, error } = useUpdateWine()
         </CardHeader>
         <CardContent>
           <WineForm
-            v-if="wine"
+            v-if="formData"
             :is-pending="isPending"
             :errors="error?.payload?.fieldErrors"
             :data="formData"

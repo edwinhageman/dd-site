@@ -267,7 +267,7 @@ public class WineControllerE2EIT {
 		void creates() throws Exception {
 			var req = new WineUpsertRequest("Created Wine", "Created Winery", "Created Country", "Created Region",
 					"Created Appellation", Year.of(2025), "https://vivino.com/created", List.of(style1.getId()),
-					List.of(new WineUpsertRequest.GrapeComposition(grape1.getId(), BigDecimal.ONE)));
+					List.of(new WineUpsertRequest.GrapeCompositionRequest(grape1.getId(), BigDecimal.ONE)));
 
 			mockMvc
 				.perform(post("/api/wines").contentType(MediaType.APPLICATION_JSON)

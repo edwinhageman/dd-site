@@ -43,7 +43,7 @@ public class WineMapper {
 			styles = entity.getStyles().stream().map(wineStyleMapper::toWineStyleResponse).toList();
 		}
 
-		List<WineResponse.GrapeComposition> grapes = Collections.emptyList();
+		List<WineResponse.GrapeCompositionResponse> grapes = Collections.emptyList();
 		if (util.isLoaded(entity, "grapeComposition")) {
 			grapes = entity.getGrapeComposition().stream().map(this::toWineGrapeCompositionResponse).toList();
 		}
@@ -82,11 +82,11 @@ public class WineMapper {
 		return wine;
 	}
 
-	public WineResponse.GrapeComposition toWineGrapeCompositionResponse(WineGrapeComposition entity) {
+	public WineResponse.GrapeCompositionResponse toWineGrapeCompositionResponse(WineGrapeComposition entity) {
 		if (entity == null) {
 			return null;
 		}
-		return new WineResponse.GrapeComposition(grapeMapper.toGrapeResponse(entity.getGrape()),
+		return new WineResponse.GrapeCompositionResponse(grapeMapper.toGrapeResponse(entity.getGrape()),
 				entity.getPercentage());
 	}
 
@@ -148,8 +148,8 @@ public class WineMapper {
 		// create lookup tables
 		var newById = request.grapeComposition()
 			.stream()
-			.collect(Collectors.toMap(WineUpsertRequest.GrapeComposition::grapeId,
-					WineUpsertRequest.GrapeComposition::percentage));
+			.collect(Collectors.toMap(WineUpsertRequest.GrapeCompositionRequest::grapeId,
+					WineUpsertRequest.GrapeCompositionRequest::percentage));
 		var currentByGrapeId = wine.getGrapeComposition()
 			.stream()
 			.collect(Collectors.toMap(c -> c.getGrape().getId(), Function.identity()));

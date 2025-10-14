@@ -9,7 +9,7 @@ import java.util.List;
 
 public record WineResponse(@NotNull Long id, @NotNull String name, String winery, String country, String region,
 		String appellation, Year vintage, String vivinoUrl, @NotNull List<WineStyleResponse> styles,
-		@NotNull List<GrapeComposition> grapeComposition) {
+		@NotNull List<GrapeCompositionResponse> grapeComposition) {
 
 	public WineResponse(Long id, String name, String winery, String country, String region, String appellation,
 			Year vintage, String vivinoUrl) {
@@ -17,6 +17,6 @@ public record WineResponse(@NotNull Long id, @NotNull String name, String winery
 				Collections.emptyList());
 	}
 
-	public record GrapeComposition(@NotNull GrapeResponse grape, BigDecimal percentage) {
+	public record GrapeCompositionResponse(@NotNull GrapeResponse grape, BigDecimal percentage) {
 	}
 }

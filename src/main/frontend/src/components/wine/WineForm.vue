@@ -52,7 +52,7 @@ const schema = z.object({
   grapeComposition: z.array(
     z.object({
       grapeId: z.number(),
-      percentage: z.number().min(0).max(1),
+      percentage: z.number().min(0).max(1).optional(),
     }),
   ),
 })
@@ -125,7 +125,7 @@ function removeGrapeAt(idx: number) {
   form.setFieldValue('grapeComposition', copy)
 }
 
-function updateGrapeAt(idx: number, composition: { grapeId: number; percentage: number }) {
+function updateGrapeAt(idx: number, composition: { grapeId: number; percentage?: number }) {
   const copy = [...(form.values.grapeComposition ?? [])]
   copy[idx] = composition
   form.setFieldValue('grapeComposition', copy)

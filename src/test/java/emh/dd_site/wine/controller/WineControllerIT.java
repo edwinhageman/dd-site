@@ -54,8 +54,8 @@ public class WineControllerIT {
 	private final WineResponse testResponse = new WineResponse(1L, "Test Wine", "Test Winery", "Test Country",
 			"Test Region", "Test Appellation", Year.of(2020), "https://vivino.com",
 			List.of(new WineStyleResponse(1, "style1"), new WineStyleResponse(2, "style2")),
-			List.of(new WineResponse.GrapeComposition(grape1, BigDecimal.ONE),
-					new WineResponse.GrapeComposition(grape2, BigDecimal.ZERO)));
+			List.of(new WineResponse.GrapeCompositionResponse(grape1, BigDecimal.ONE),
+					new WineResponse.GrapeCompositionResponse(grape2, BigDecimal.ZERO)));
 
 	private final WineResponse testResponse2 = new WineResponse(2L, "Test Wine 2", "Test Winery 2", "Test Country 2",
 			"Test Region 2", "Test Appellation 2", Year.of(2022), "https://vivino.com");

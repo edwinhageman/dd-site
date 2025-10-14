@@ -270,9 +270,9 @@ class WineMapperTest {
 		void shouldFetchGrapesFromRepositorAndMapGrapeComposition() {
 			var grapeIds = Set.of(testGrapeComposition1.getGrape().getId(), testGrapeComposition2.getGrape().getId());
 			var grapeCompositions = List.of(
-					new WineUpsertRequest.GrapeComposition(testGrapeComposition1.getGrape().getId(),
+					new WineUpsertRequest.GrapeCompositionRequest(testGrapeComposition1.getGrape().getId(),
 							BigDecimal.valueOf(.6)),
-					new WineUpsertRequest.GrapeComposition(testGrapeComposition2.getGrape().getId(),
+					new WineUpsertRequest.GrapeCompositionRequest(testGrapeComposition2.getGrape().getId(),
 							BigDecimal.valueOf(.4)));
 			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null,
 					grapeCompositions);
@@ -407,9 +407,9 @@ class WineMapperTest {
 			var grape12 = TestGrapeBuilder.builder().withId(12).withName("Grape 12").build();
 
 			var grapeCompositions = List.of(
-					new WineUpsertRequest.GrapeComposition(grape11.getId(), BigDecimal.valueOf(.6)),
-					new WineUpsertRequest.GrapeComposition(grape12.getId(), BigDecimal.valueOf(.4)),
-					new WineUpsertRequest.GrapeComposition(999, BigDecimal.valueOf(1)));
+					new WineUpsertRequest.GrapeCompositionRequest(grape11.getId(), BigDecimal.valueOf(.6)),
+					new WineUpsertRequest.GrapeCompositionRequest(grape12.getId(), BigDecimal.valueOf(.4)),
+					new WineUpsertRequest.GrapeCompositionRequest(999, BigDecimal.valueOf(1)));
 
 			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null,
 					grapeCompositions);
@@ -432,8 +432,8 @@ class WineMapperTest {
 		@DisplayName("should not fetch grapes from repository when no changes")
 		void shouldNotFetchGrapesFromRepositoryWhenNoChanges() {
 			var grapeCompositions = List.of(
-					new WineUpsertRequest.GrapeComposition(testGrape1.getId(), BigDecimal.valueOf(.4)),
-					new WineUpsertRequest.GrapeComposition(testGrape2.getId(), BigDecimal.valueOf(.6)));
+					new WineUpsertRequest.GrapeCompositionRequest(testGrape1.getId(), BigDecimal.valueOf(.4)),
+					new WineUpsertRequest.GrapeCompositionRequest(testGrape2.getId(), BigDecimal.valueOf(.6)));
 
 			var request = new WineUpsertRequest("Upsert Name", null, null, null, null, null, null, null,
 					grapeCompositions);

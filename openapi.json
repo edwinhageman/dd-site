@@ -853,7 +853,7 @@
   },
   "components": {
     "schemas": {
-      "GrapeComposition": {
+      "GrapeCompositionRequest": {
         "type": "object",
         "properties": {
           "grapeId": {
@@ -900,12 +900,26 @@
           "grapeComposition": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GrapeComposition"
+              "$ref": "#/components/schemas/GrapeCompositionRequest"
             }
           }
         },
         "required": [
           "name"
+        ]
+      },
+      "GrapeCompositionResponse": {
+        "type": "object",
+        "properties": {
+          "grape": {
+            "$ref": "#/components/schemas/GrapeResponse"
+          },
+          "percentage": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "grape"
         ]
       },
       "GrapeResponse": {
@@ -961,7 +975,7 @@
           "grapeComposition": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/GrapeComposition"
+              "$ref": "#/components/schemas/GrapeCompositionResponse"
             }
           }
         },

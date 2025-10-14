@@ -16,13 +16,13 @@ import { Trash2 } from 'lucide-vue-next'
 import type { AcceptableValue } from 'reka-ui'
 
 const props = defineProps<{
-  modelValue: { grapeId: number; percentage: number }
+  modelValue: { grapeId: number; percentage?: number }
   grapes: GrapeResponse[]
   removable?: boolean
 }>()
 
 const emits = defineEmits<{
-  (e: 'update:modelValue', value: { grapeId: number; percentage: number }): void
+  (e: 'update:modelValue', value: { grapeId: number; percentage?: number }): void
   (e: 'remove'): void
 }>()
 
