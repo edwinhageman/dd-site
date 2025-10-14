@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 import Events from '../views/Events.vue'
 import Event from '../views/Event.vue'
 import Wines from '../views/Wines.vue'
+import NewWine from '../views/NewWine.vue'
+import Wine from '../views/Wine.vue'
 import Settings from '../views/Settings.vue'
 
 const router = createRouter({
@@ -30,6 +32,22 @@ const router = createRouter({
       component: Wines,
       meta: {
         title: 'Wijnen',
+      },
+    },
+    {
+      path: '/wines/new',
+      name: 'new-wine',
+      component: NewWine,
+      meta: {
+        title: 'Nieuwe wijn',
+      },
+    },
+    {
+      path: '/wines/:id',
+      name: 'wine',
+      component: Wine,
+      meta: {
+        title: 'Wijn',
       },
     },
     {

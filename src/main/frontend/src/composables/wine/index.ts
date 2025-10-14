@@ -1,1 +1,5 @@
 export * from './useListWines'
+export * from './useGetWineById'
+export * from './useCreateWine'
+export * from './useUpdateWine'
+export * from './useDeleteWine'
